@@ -40,8 +40,6 @@ function PricingPage() {
     }>;
   };
 
-  const featureRows = Array.from(new Set(pricingPackages.flatMap((pkg) => pkg.features)));
-
   const pricingSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -170,83 +168,6 @@ function PricingPage() {
             >
               <Download className="h-4 w-4" /> Brochure coming soon
             </button>
-          </div>
-
-          <div className="mt-16 overflow-hidden rounded-[2rem] border border-border bg-card shadow-soft">
-            <div className="hidden overflow-x-auto md:block">
-              <table className="w-full min-w-[720px] text-sm">
-                <thead className="gradient-royal text-marble">
-                  <tr>
-                    <th className="border-b border-white/10 p-4 text-left font-display text-base">
-                      Inclusions
-                    </th>
-                    {pricingPackages.map((pkg) => (
-                      <th
-                        key={pkg.name}
-                        className="border-b border-white/10 p-4 font-display text-base text-[var(--gold)]"
-                      >
-                        {pkg.name}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="bg-card">
-                  {featureRows.map((feature, index) => (
-                    <tr
-                      key={feature}
-                      className={`border-t border-border ${index % 2 === 0 ? "bg-muted/20" : ""}`}
-                    >
-                      <td className="p-4 align-middle font-medium text-foreground">{feature}</td>
-                      {pricingPackages.map((pkg) => (
-                        <td key={`${pkg.name}-${feature}`} className="p-4 align-middle text-center">
-                          {pkg.features.some(
-                            (item) => item.toLowerCase() === feature.toLowerCase(),
-                          ) ? (
-                            <Check className="mx-auto h-4 w-4 text-[var(--gold)]" />
-                          ) : (
-                            <span className="text-muted-foreground/40">—</span>
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="grid gap-4 p-5 md:hidden">
-              {pricingPackages.map((pkg, index) => (
-                <article
-                  key={pkg.name}
-                  className="rounded-2xl border border-border bg-background p-5"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <div className="text-[10px] uppercase tracking-widest text-[var(--purple-deep)]">
-                        Package {index + 1}
-                      </div>
-                      <h3 className="mt-1 font-display text-2xl text-[var(--royal)]">{pkg.name}</h3>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-xs text-muted-foreground line-through">
-                        Rs {(pkg.price + 1500).toLocaleString("en-IN")}
-                      </div>
-                      <div className="font-display text-2xl font-bold gradient-gold-text">
-                        Rs {pkg.price.toLocaleString("en-IN")}
-                      </div>
-                    </div>
-                  </div>
-                  <ul className="mt-5 space-y-2 text-sm">
-                    {pkg.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-2">
-                        <Check className="mt-0.5 h-4 w-4 text-[var(--gold)]" />
-                        <span className="font-medium text-foreground/85">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </article>
-              ))}
-            </div>
           </div>
         </div>
       </section>

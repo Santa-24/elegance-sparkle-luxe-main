@@ -32,6 +32,7 @@ export async function recordAdminAuditLog(input: {
   await supabaseInsert("audit_logs", {
     user_id: userId,
     action: input.action,
+    table_name: input.resourceType,
     resource_type: input.resourceType,
     resource_id: input.resourceId,
     metadata: input.metadata ?? {},
