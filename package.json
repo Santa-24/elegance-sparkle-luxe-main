@@ -7,6 +7,7 @@
     "dev": "vite --configLoader runner dev",
     "build": "vite --configLoader runner build",
     "build:dev": "vite --configLoader runner build --mode development",
+    "start": "node server.mjs",
     "preview": "vite --configLoader runner preview",
     "lint": "eslint .",
     "format": "prettier --write ."
