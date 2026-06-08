@@ -275,4 +275,4 @@ This project was built as a custom client engagement. All code and assets are pr
 
 ---
 
-*Built by Rasmirekha Swain*
+*Built by Santanu Barik*
