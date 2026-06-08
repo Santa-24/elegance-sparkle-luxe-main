@@ -1,0 +1,25 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="96" y1="72" x2="1110" y2="580" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1B2D66"/>
+      <stop offset="0.52" stop-color="#2D1F54"/>
+      <stop offset="1" stop-color="#C9A84C"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="154" y1="152" x2="517" y2="415" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F0DCA3"/>
+      <stop offset="1" stop-color="#C9A84C"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" rx="48" fill="url(#bg)"/>
+  <circle cx="1020" cy="132" r="154" fill="#FFFFFF" fill-opacity="0.08"/>
+  <circle cx="1030" cy="132" r="86" fill="#FFFFFF" fill-opacity="0.07"/>
+  <circle cx="184" cy="520" r="184" fill="#FFFFFF" fill-opacity="0.06"/>
+  <path d="M128 122C235 84 371 64 600 64C829 64 965 84 1072 122" stroke="#F0DCA3" stroke-opacity="0.45" stroke-width="2"/>
+  <path d="M128 508C235 546 371 566 600 566C829 566 965 546 1072 508" stroke="#F0DCA3" stroke-opacity="0.22" stroke-width="2"/>
+  <text x="96" y="192" fill="#F8F3E3" font-size="28" letter-spacing="6" font-family="Georgia, serif">ELEGANCE MAKEOVER & ACADEMY</text>
+  <text x="96" y="296" fill="url(#gold)" font-size="78" font-weight="700" font-family="Georgia, serif">Bridal Beauty</text>
+  <text x="96" y="372" fill="#F8F3E3" font-size="54" font-weight="600" font-family="Georgia, serif">in Jajpur Road, Odisha</text>
+  <text x="96" y="442" fill="#F2E9CF" font-size="28" font-family="Arial, sans-serif">Premium makeup, salon care and certified academy training.</text>
+  <rect x="96" y="488" width="252" height="62" rx="31" fill="#F0DCA3"/>
+  <text x="148" y="527" fill="#1B2D66" font-size="24" font-weight="700" font-family="Arial, sans-serif">Book your slot</text>
+</svg>
