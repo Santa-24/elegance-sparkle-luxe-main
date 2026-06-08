@@ -7,6 +7,7 @@ import { Readable } from "node:stream";
 const PORT = Number.parseInt(process.env.PORT || "3000", 10);
 const HOST = "0.0.0.0";
 const CLIENT_DIR = resolve(process.cwd(), "dist/client");
+const SOURCE_ASSET_DIR = resolve(process.cwd(), "src/assets");
 const SERVER_ENTRY_URL = new URL("./dist/server/server.js", import.meta.url);
 
 function log(level, message, details) {
@@ -84,9 +85,10 @@ async function serveStaticAsset(urlPath) {
   }
 
   const decodedPath = decodeURIComponent(urlPath);
-  const candidatePath = resolve(CLIENT_DIR, `.${decodedPath}`);
+  const staticRoot = decodedPath.startsWith("/src/assets/") ? SOURCE_ASSET_DIR : CLIENT_DIR;
+  const candidatePath = resolve(staticRoot, `.${decodedPath.replace(/^\/src\/assets/, "")}`);
 
-  if (!isWithinDirectory(CLIENT_DIR, candidatePath) || !existsSync(candidatePath)) {
+  if (!isWithinDirectory(staticRoot, candidatePath) || !existsSync(candidatePath)) {
     return null;
   }
 
@@ -103,6 +105,8 @@ async function serveStaticAsset(urlPath) {
 
   if (decodedPath.startsWith("/assets/")) {
     headers.set("cache-control", "public, max-age=31536000, immutable");
+  } else if (decodedPath.startsWith("/src/assets/")) {
+    headers.set("cache-control", "public, max-age=0, must-revalidate");
   } else {
     headers.set("cache-control", "public, max-age=0, must-revalidate");
   }
