@@ -14,7 +14,6 @@ const exploreLinks = [
   ["/faq", "FAQ"],
   ["/blog", "Blog"],
   ["/service-areas", "Service Areas"],
-  ["/admin", "Admin"],
 ] as const;
 
 export function Footer() {
