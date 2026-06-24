@@ -31,8 +31,8 @@ export function getSiteConfig(): SiteConfig {
     contactEmail: import.meta.env.VITE_CONTACT_EMAIL ?? "elegancemakeover.2021@gmail.com",
     contactAddress: import.meta.env.VITE_CONTACT_ADDRESS ?? "Jajpur Road, Odisha, India",
     contactHours: import.meta.env.VITE_CONTACT_HOURS ?? "Mon - Sun | 10:00 AM - 8:00 PM",
-    instagramUrl: import.meta.env.VITE_INSTAGRAM_URL ?? "#",
-    facebookUrl: import.meta.env.VITE_FACEBOOK_URL ?? "#",
+    instagramUrl: import.meta.env.VITE_INSTAGRAM_URL ?? "https://www.instagram.com/rasmirekha2011",
+    facebookUrl: import.meta.env.VITE_FACEBOOK_URL ?? "https://www.facebook.com/share/1FhWXcqbUY/",
     ga4Id: import.meta.env.VITE_GA4_ID ?? "",
     clarityId: import.meta.env.VITE_CLARITY_ID ?? "",
   };

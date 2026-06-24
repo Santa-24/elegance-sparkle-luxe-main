@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { X, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { getLiveGalleryFn } from "@/lib/content/live.functions";
@@ -29,10 +29,35 @@ export const Route = createFileRoute("/gallery")({
 
 const categories = ["All", "Bridal", "Parlour", "Before & After", "Academy"];
 
+function useScrollReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    const elements = document.querySelectorAll(".reveal");
+    elements.forEach((el) => observer.observe(el));
+
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
+}
+
 function GalleryPage() {
   const { images } = Route.useLoaderData();
   const [filter, setFilter] = useState("All");
   const [open, setOpen] = useState<number | null>(null);
+  const lightboxRef = useRef<HTMLDivElement>(null);
+
+  useScrollReveal();
 
   const items = filter === "All" ? images : images.filter((g) => g.cat === filter);
 
@@ -46,6 +71,53 @@ function GalleryPage() {
     }
   }, [items, open]);
 
+  useEffect(() => {
+    if (open !== null && lightboxRef.current) {
+      lightboxRef.current.focus();
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (open === null) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(null);
+      }
+      if (items.length > 1 && event.key === "ArrowLeft") {
+        setOpen((v) => (v === null ? 0 : (v - 1 + items.length) % items.length));
+      }
+      if (items.length > 1 && event.key === "ArrowRight") {
+        setOpen((v) => (v === null ? 0 : (v + 1) % items.length));
+      }
+      if (event.key === "Tab") {
+        if (!lightboxRef.current) return;
+        const focusable = lightboxRef.current.querySelectorAll("button, [tabindex]");
+        if (focusable.length === 0) return;
+        const first = focusable[0] as HTMLElement;
+        const last = focusable[focusable.length - 1] as HTMLElement;
+        if (event.shiftKey) {
+          if (document.activeElement === first) {
+            last.focus();
+            event.preventDefault();
+          }
+        } else {
+          if (document.activeElement === last) {
+            first.focus();
+            event.preventDefault();
+          }
+        }
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [items.length, open]);
+
   return (
     <SiteLayout>
       <PageHero
@@ -53,16 +125,16 @@ function GalleryPage() {
         eyebrow="Portfolio"
         title={
           <>
-            Our <span className="gradient-gold-text italic">artistry</span> in frames
+            Our <span className="text-gold-safe italic">artistry</span> in frames
           </>
         }
         subtitle="A glimpse of the beautiful transformations we've crafted."
       />
 
-      <section className="bg-[linear-gradient(180deg,rgba(250,244,236,0.8),rgba(255,255,255,1))] py-14">
+      <section className="bg-gradient-to-b from-gold-soft/10 to-background py-24 md:py-[120px] reveal">
         <div className="mx-auto max-w-7xl px-5 lg:px-10">
           <div className="mx-auto mb-10 max-w-3xl text-center">
-            <div className="text-[10px] uppercase tracking-[0.45em] text-[var(--purple-deep)]">
+            <div className="text-xs uppercase tracking-[0.45em] text-[var(--purple-deep)]">
               Curated Gallery
             </div>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground md:text-base">
@@ -76,10 +148,10 @@ function GalleryPage() {
               <button
                 key={c}
                 onClick={() => setFilter(c)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
                   filter === c
                     ? "gradient-gold text-[var(--royal-deep)] shadow-gold"
-                    : "bg-card border border-border text-foreground/75 hover:border-[var(--gold)] hover:text-[var(--royal)]"
+                    : "bg-card border border-border text-foreground/75 hover:border-gold hover:text-[var(--royal)]"
                 }`}
               >
                 {c}
@@ -93,12 +165,12 @@ function GalleryPage() {
                 <button
                   key={i}
                   onClick={() => setOpen(i)}
-                  className="img-zoom group relative block w-full overflow-hidden rounded-[1.75rem] border border-border/60 bg-card shadow-soft break-inside-avoid"
+                  className="img-zoom group relative block w-full overflow-hidden rounded-[1.75rem] border border-border/60 bg-card shadow-soft break-inside-avoid cursor-pointer"
                 >
                   <img src={g.src} alt={g.alt} loading="lazy" className="w-full h-auto" />
                   <div className="absolute inset-0 bg-[var(--royal-deep)]/0 transition-all group-hover:bg-[var(--royal-deep)]/55" />
                   <div className="absolute inset-x-0 bottom-0 p-5 opacity-0 transition-all group-hover:opacity-100">
-                    <div className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.35em] text-[var(--gold)] backdrop-blur-sm">
+                    <div className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.35em] text-gold backdrop-blur-sm">
                       {g.cat}
                     </div>
                     <div className="mt-2 flex items-end justify-between gap-3 text-left text-marble">
@@ -111,7 +183,7 @@ function GalleryPage() {
                 </button>
               ))
             ) : (
-              <div className="rounded-[1.75rem] border border-border/60 bg-card p-10 text-center text-muted-foreground">
+              <div className="col-span-full rounded-[1.75rem] border border-border/60 bg-card p-10 text-center text-muted-foreground">
                 No gallery images are published yet. Add or activate images in the admin panel to
                 show them here.
               </div>
@@ -121,10 +193,18 @@ function GalleryPage() {
       </section>
 
       {open !== null && items[open] && (
-        <div className="fixed inset-0 z-[60] bg-[var(--royal-deep)]/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-up">
+        <div
+          ref={lightboxRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image gallery lightbox"
+          tabIndex={-1}
+          className="fixed inset-0 z-[60] bg-[var(--royal-deep)]/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-up outline-none"
+        >
           <button
             onClick={() => setOpen(null)}
-            className="absolute top-5 right-5 w-12 h-12 rounded-full glass text-marble flex items-center justify-center"
+            className="absolute top-5 right-5 w-12 h-12 rounded-full glass text-marble flex items-center justify-center cursor-pointer"
+            aria-label="Close gallery lightbox (Escape)"
           >
             <X className="w-5 h-5" />
           </button>
@@ -132,13 +212,15 @@ function GalleryPage() {
             onClick={() =>
               setOpen((v) => (v === null ? null : (v - 1 + items.length) % items.length))
             }
-            className="absolute left-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full glass text-marble flex items-center justify-center"
+            className="absolute left-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full glass text-marble flex items-center justify-center cursor-pointer"
+            aria-label="Previous image (Left Arrow)"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={() => setOpen((v) => (v === null ? null : (v + 1) % items.length))}
-            className="absolute right-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full glass text-marble flex items-center justify-center"
+            className="absolute right-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full glass text-marble flex items-center justify-center cursor-pointer"
+            aria-label="Next image (Right Arrow)"
           >
             <ChevronRight className="w-5 h-5" />
           </button>

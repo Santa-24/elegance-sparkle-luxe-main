@@ -1,4 +1,5 @@
-﻿import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { MapPin, Sparkles, ArrowRight } from "lucide-react";
 
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
@@ -34,8 +35,30 @@ export const Route = createFileRoute("/service-areas")({
   component: ServiceAreasPage,
 });
 
+function useScrollReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
+    );
+
+    const elements = document.querySelectorAll(".reveal");
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+}
+
 function ServiceAreasPage() {
   const { serviceAreas } = Route.useLoaderData() as { serviceAreas: ServiceArea[] };
+  useScrollReveal();
+
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": ["LocalBusiness", "BeautySalon", "Service"],
@@ -78,13 +101,13 @@ function ServiceAreasPage() {
         subtitle="We regularly work with clients from Jajpur Road, Jajpur, Cuttack, Bhubaneswar, Bhadrak and nearby service regions."
       />
 
-      <section className="bg-background py-16 md:py-20">
+      <section className="bg-background py-24 md:py-[120px]">
         <div className="mx-auto max-w-7xl px-5 lg:px-10">
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {serviceAreas.map((area) => (
               <article
                 key={area.name}
-                className="rounded-[2rem] border border-border bg-card p-6 shadow-soft"
+                className="reveal rounded-[2rem] border border-border bg-card p-6 shadow-soft tilt-card"
               >
                 <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl gradient-royal">
                   <MapPin className="h-5 w-5 text-[var(--gold)]" />
@@ -92,7 +115,7 @@ function ServiceAreasPage() {
                 <h2 className="mt-4 font-display text-2xl text-[var(--royal)]">{area.name}</h2>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{area.summary}</p>
                 <div className="mt-4 rounded-2xl bg-muted p-4">
-                  <div className="text-[10px] uppercase tracking-[0.35em] text-[var(--purple-deep)]">
+                  <div className="text-xs uppercase tracking-[0.35em] text-[var(--purple-deep)]">
                     Search intent
                   </div>
                   <p className="mt-2 text-sm text-foreground/80">{area.searchIntent}</p>
@@ -109,7 +132,7 @@ function ServiceAreasPage() {
             ))}
           </div>
 
-          <div className="mt-10 rounded-[2rem] gradient-luxe p-8 text-marble md:p-10">
+          <div className="reveal mt-10 rounded-[2rem] gradient-luxe p-8 text-marble md:p-10">
             <div className="max-w-3xl">
               <h2 className="font-display text-3xl md:text-4xl">
                 Planning a wedding or academy visit from another city?

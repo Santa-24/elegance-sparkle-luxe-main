@@ -66,3 +66,26 @@ export function truncateText(text: string, maxLength: number = 50): string {
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength) + "...";
 }
+
+/**
+ * Get countdown days from a validity string/date
+ */
+export function getCountdownDays(validity?: string): number {
+  if (!validity) {
+    return 15;
+  }
+
+  const dates = validity.match(/\d{4}-\d{2}-\d{2}/g);
+  const endDate = dates?.[dates.length - 1];
+  if (!endDate) {
+    return 15;
+  }
+
+  const target = new Date(`${endDate}T23:59:59`);
+  if (Number.isNaN(target.getTime())) {
+    return 15;
+  }
+
+  return Math.max(1, Math.ceil((target.getTime() - Date.now()) / 86400000));
+}
+

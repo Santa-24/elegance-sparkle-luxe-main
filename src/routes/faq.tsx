@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { StructuredData } from "@/components/seo/StructuredData";
@@ -33,12 +34,38 @@ export const Route = createFileRoute("/faq")({
   component: FaqPage,
 });
 
+function useScrollReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    const elements = document.querySelectorAll(".reveal");
+    elements.forEach((el) => observer.observe(el));
+
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
+}
+
 function FaqPage() {
   const { faqSections } = Route.useLoaderData() as { faqSections: FaqSection[] };
   const allFaqItems = faqSections.flatMap((section) => section.items);
+
+  useScrollReveal();
+
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
+    name: "FAQPage",
     mainEntity: allFaqItems.map((item) => ({
       "@type": "Question",
       name: item.question,
@@ -75,9 +102,9 @@ function FaqPage() {
         subtitle="Clear answers for bookings, services, academy enquiries and local clients."
       />
 
-      <section className="bg-background py-16 md:py-20">
+      <section className="bg-background py-24 md:py-[120px] reveal">
         <div className="mx-auto max-w-7xl px-5 lg:px-10">
-          <div className="grid gap-8">
+          <div className="grid gap-8 md:gap-12">
             {faqSections.map((section) => (
               <article
                 key={section.slug}
@@ -85,18 +112,18 @@ function FaqPage() {
                 className="rounded-[2rem] border border-border bg-card p-7 shadow-soft md:p-8"
               >
                 <div className="max-w-2xl">
-                  <div className="text-xs uppercase tracking-[0.4em] text-[var(--purple-deep)]">
+                  <div className="text-xs uppercase tracking-[0.4em] text-[var(--purple-deep)] font-semibold">
                     {section.title}
                   </div>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                     {section.description}
                   </p>
                 </div>
-                <div className="mt-6 grid gap-4 md:grid-cols-2">
+                <div className="mt-6 grid gap-6 md:grid-cols-2">
                   {section.items.map((item) => (
                     <details
                       key={item.question}
-                      className="group rounded-2xl border border-border bg-background/70 p-5 transition-colors open:border-[var(--gold)]/30"
+                      className="group rounded-2xl border border-border bg-background/70 p-5 transition-colors open:border-gold/30"
                     >
                       <summary className="cursor-pointer list-none font-display text-lg text-[var(--royal)]">
                         {item.question}
@@ -111,7 +138,7 @@ function FaqPage() {
             ))}
           </div>
 
-          <div className="mt-10 flex flex-col items-center justify-between gap-4 rounded-[2rem] gradient-royal px-6 py-8 text-center text-marble md:flex-row md:text-left">
+          <div className="mt-12 flex flex-col items-center justify-between gap-4 rounded-[2rem] gradient-royal px-6 py-8 text-center text-marble md:flex-row md:text-left shadow-luxury">
             <div>
               <h2 className="font-display text-3xl">Still have a question?</h2>
               <p className="mt-2 text-sm text-marble/80">
@@ -121,13 +148,13 @@ function FaqPage() {
             <div className="flex flex-wrap gap-3">
               <Link
                 to="/booking"
-                className="btn-luxe inline-flex items-center justify-center rounded-full gradient-gold px-6 py-3 font-semibold text-[var(--royal-deep)] shadow-gold"
+                className="inline-flex h-11 items-center justify-center rounded-[var(--radius-sm)] gradient-gold px-6 py-2.5 font-semibold text-[var(--royal-deep)] shadow-gold hover:shadow-luxury transition-all cursor-pointer"
               >
                 Book Now
               </Link>
               <Link
                 to="/contact"
-                className="btn-luxe inline-flex items-center justify-center rounded-full border-2 border-[var(--gold)] px-6 py-3 font-semibold text-marble hover:bg-[var(--gold)] hover:text-[var(--royal-deep)]"
+                className="inline-flex h-11 items-center justify-center rounded-[var(--radius-sm)] border border-gold px-6 py-2.5 font-semibold text-marble hover:bg-gold hover:text-[var(--royal-deep)] transition-all cursor-pointer"
               >
                 Contact Us
               </Link>

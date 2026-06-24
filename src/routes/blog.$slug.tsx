@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, CalendarDays, ChevronRight, Link2, Share2, User } from "lucide-react";
 
@@ -76,6 +77,26 @@ export const Route = createFileRoute("/blog/$slug")({
   component: BlogPostPage,
 });
 
+function useScrollReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
+    );
+
+    const elements = document.querySelectorAll(".reveal");
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+}
+
 function BlogPostPage() {
   const loaderData = Route.useLoaderData() as
     | {
@@ -83,6 +104,8 @@ function BlogPostPage() {
         allPosts: BlogPost[];
       }
     | undefined;
+
+  useScrollReveal();
 
   if (!loaderData) {
     return null;
@@ -97,6 +120,7 @@ function BlogPostPage() {
           breadcrumbs={[
             { label: "Home", to: "/" },
             { label: "Blog", to: "/blog" },
+            { label: "Article not found" },
           ]}
           eyebrow="Blog"
           title={
@@ -107,9 +131,9 @@ function BlogPostPage() {
           subtitle="The requested post is unavailable, but the latest blog articles are still ready for you."
         />
 
-        <section className="bg-background py-16 md:py-20">
+        <section className="bg-background py-24 md:py-[120px]">
           <div className="mx-auto max-w-3xl px-5 text-center lg:px-10">
-            <div className="rounded-[2rem] border border-border bg-card p-8 shadow-soft">
+            <div className="reveal rounded-[2rem] border border-border bg-card p-8 shadow-soft">
               <h2 className="font-display text-3xl text-[var(--royal)]">
                 We could not load that article
               </h2>
@@ -185,10 +209,10 @@ function BlogPostPage() {
         subtitle={post.description}
       />
 
-      <section className="bg-background py-16 md:py-20">
+      <section className="bg-background py-24 md:py-[120px]">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-[1.15fr_0.45fr_0.9fr] lg:px-10">
-          <article className="rounded-[2rem] border border-border bg-card p-7 shadow-soft md:p-10 lg:col-span-1">
-            <div className="overflow-hidden rounded-[1.5rem] border border-border">
+          <article className="reveal rounded-[2rem] border border-border bg-card p-7 shadow-soft md:p-10 lg:col-span-1">
+            <div className="overflow-hidden rounded-[1.5rem] border border-border img-zoom">
               <img
                 src={post.featuredImageUrl || "/og-image.svg"}
                 alt={post.title}
@@ -232,7 +256,7 @@ function BlogPostPage() {
               {post.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-full border border-border bg-muted px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-[var(--purple-deep)]"
+                  className="rounded-full border border-border bg-muted px-3 py-1 text-xs uppercase tracking-[0.25em] text-[var(--purple-deep)]"
                 >
                   {tag}
                 </span>
@@ -259,14 +283,14 @@ function BlogPostPage() {
             </div>
           </article>
 
-          <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+          <aside className="reveal space-y-6 lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-[2rem] border border-border bg-card p-6 shadow-soft">
               <div className="flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl gradient-royal text-[var(--gold)]">
                   <User className="h-5 w-5" />
                 </div>
                 <div>
-                  <div className="text-[10px] uppercase tracking-[0.35em] text-[var(--purple-deep)]">
+                  <div className="text-xs uppercase tracking-[0.35em] text-[var(--purple-deep)]">
                     Author
                   </div>
                   <div className="font-display text-2xl text-[var(--royal)]">{post.authorName}</div>
@@ -276,7 +300,7 @@ function BlogPostPage() {
                 Published on {post.publishDate} and last updated on {post.updatedDate}.
               </div>
               <div className="mt-4">
-                <div className="text-[10px] uppercase tracking-[0.35em] text-[var(--purple-deep)]">
+                <div className="text-xs uppercase tracking-[0.35em] text-[var(--purple-deep)]">
                   Category
                 </div>
                 <div className="mt-2 text-sm text-foreground/85">{post.category}</div>
@@ -285,7 +309,7 @@ function BlogPostPage() {
 
             {tocItems.length > 0 ? (
               <div className="rounded-[2rem] gradient-luxe p-6 text-marble shadow-luxury">
-                <div className="text-[10px] uppercase tracking-[0.35em] text-[var(--gold)]">
+                <div className="text-xs uppercase tracking-[0.35em] text-[var(--gold)]">
                   Table of contents
                 </div>
                 <div className="mt-4 space-y-3">
@@ -310,7 +334,7 @@ function BlogPostPage() {
                       params={{ slug: related.slug }}
                       className="block rounded-2xl border border-border bg-muted/30 p-4 transition-colors hover:border-[var(--gold)]"
                     >
-                      <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--purple-deep)]">
+                      <div className="text-xs uppercase tracking-[0.3em] text-[var(--purple-deep)]">
                         {related.category}
                       </div>
                       <div className="mt-1 font-display text-lg text-[var(--royal)]">

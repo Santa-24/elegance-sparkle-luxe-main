@@ -24,7 +24,7 @@ import {
   supabaseUpdate,
 } from "@/lib/supabase.server";
 import { recordAdminAuditLog } from "@/lib/security/audit.server";
-import { galleryImages as staticGalleryImages, resolveGalleryImageSrc } from "@/lib/data/gallery";
+import { galleryImages as staticGalleryImages } from "@/lib/data/gallery";
 import {
   bridalPackages as staticBridalPackages,
   services as staticServices,
@@ -355,10 +355,7 @@ export const listAdminGalleryItems = createServerFn({ method: "GET" }).handler(a
   );
 
   if (rows.length > 0) {
-    return rows.map((row) => ({
-      ...row,
-      image_url: resolveGalleryImageSrc(row.image_url),
-    }));
+    return rows;
   }
 
   const seeded = await Promise.all(

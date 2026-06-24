@@ -9,12 +9,13 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { SkipLink } from "@/components/site/SkipLink";
 
 import appCss from "../styles.css?url";
 import { reportAppError } from "../lib/error-reporting";
 import { getSiteConfig } from "@/lib/site-config";
 import { StructuredData } from "@/components/seo/StructuredData";
-import { buildCanonicalUrl, buildOrganizationSchema, buildWebSiteSchema } from "@/lib/seo";
+import { buildCanonicalUrl, buildOrganizationSchema, buildWebSiteSchema, buildLocalBusinessSchema } from "@/lib/seo";
 import { trackPageView } from "@/lib/analytics";
 import { getLiveSiteContentFn } from "@/lib/content/live.functions";
 import { SiteContentProvider } from "@/lib/content/site-content";
@@ -25,7 +26,7 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="font-display text-7xl font-bold gradient-gold-text">404</h1>
+        <h1 className="font-display text-7xl font-bold text-[var(--gold-accessible)]">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground font-display">Page not found</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           The page you're looking for doesn't exist or has been moved.
@@ -104,7 +105,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Premium bridal makeup, beauty parlour and certified academy by Rasmirekha Swain in Jajpur Road, Odisha. Book your luxury beauty experience today.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "/og-image.svg" },
+      { property: "og:image", content: "/og-image.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       {
         name: "twitter:title",
@@ -115,12 +116,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Premium bridal makeup, beauty parlour and certified academy by Rasmirekha Swain in Jajpur Road, Odisha. Book your luxury beauty experience today.",
       },
-      { name: "twitter:image", content: "/og-image.svg" },
+      { name: "twitter:image", content: "/og-image.webp" },
     ],
     links: [
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml", sizes: "any" },
       { rel: "shortcut icon", href: "/favicon.svg" },
       { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
@@ -134,6 +141,7 @@ function RootShell({ children }: { children: ReactNode }) {
   const canonicalUrl = buildCanonicalUrl(siteConfig.siteUrl, pathname);
   const organizationSchema = buildOrganizationSchema(siteConfig, canonicalUrl);
   const webSiteSchema = buildWebSiteSchema(siteConfig, canonicalUrl);
+  const localBusinessSchema = buildLocalBusinessSchema(siteConfig, canonicalUrl);
 
   return (
     <html lang="en">
@@ -170,8 +178,10 @@ function RootShell({ children }: { children: ReactNode }) {
         ) : null}
         <StructuredData data={organizationSchema} />
         <StructuredData data={webSiteSchema} />
+        <StructuredData data={localBusinessSchema} />
       </head>
       <body>
+        <SkipLink />
         {children}
         <Scripts />
       </body>
@@ -193,7 +203,9 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <SiteContentProvider value={siteContent}>
-        <Outlet />
+        <main id="main-content">
+          <Outlet />
+        </main>
       </SiteContentProvider>
     </QueryClientProvider>
   );

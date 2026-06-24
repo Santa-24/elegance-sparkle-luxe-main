@@ -9,7 +9,7 @@ function diff(target: number) {
   return { d, h, m, s };
 }
 
-export function CountdownTimer({ days = 15 }: { days?: number }) {
+export function CountdownTimer({ days = 15, dark = false }: { days?: number; dark?: boolean }) {
   const [target] = useState(() => Date.now() + days * 86400000);
   const [t, setT] = useState(() => diff(target));
 
@@ -29,10 +29,16 @@ export function CountdownTimer({ days = 15 }: { days?: number }) {
     <div className="flex gap-2 md:gap-4 justify-center">
       {items.map((i) => (
         <div key={i.label} className="text-center">
-          <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl glass flex items-center justify-center font-display text-2xl md:text-3xl font-bold text-[var(--gold)] shadow-soft">
+          <div className={`w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center font-display text-xl sm:text-2xl md:text-3xl font-light ${
+            dark
+              ? "bg-[#0d0a07] text-[#c9a96e]"
+              : "border border-[#c9a96e]/20 bg-[#161009] text-[#c9a96e]"
+          }`}>
             {String(i.value).padStart(2, "0")}
           </div>
-          <div className="text-[10px] md:text-xs tracking-widest uppercase mt-2 text-marble/70">
+          <div className={`text-[9px] tracking-widest uppercase mt-2 ${
+            dark ? "text-[#0d0a07]/80" : "text-[#f9f5ef]/70"
+          }`}>
             {i.label}
           </div>
         </div>

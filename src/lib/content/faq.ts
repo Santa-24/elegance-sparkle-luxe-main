@@ -12,83 +12,63 @@ export type FaqSection = {
 
 export const faqSections: FaqSection[] = [
   {
-    title: "Booking FAQs",
-    slug: "booking",
-    description: "Everything you need to know before confirming a bridal or salon appointment.",
-    items: [
-      {
-        question: "How far in advance should I book bridal makeup?",
-        answer:
-          "For peak wedding dates, we recommend booking 2 to 8 weeks in advance. If your event is sooner, send a WhatsApp message and we’ll confirm the earliest available slot.",
-      },
-      {
-        question: "Do you offer consultation before the final booking?",
-        answer:
-          "Yes. We can guide you on look selection, timing and service combinations before you pay or commit to the final appointment.",
-      },
-      {
-        question: "Can I book multiple services together?",
-        answer:
-          "Absolutely. Bridal makeup, hair styling, draping, facial and prep services can be combined into one booking so the appointment stays organized.",
-      },
-      {
-        question: "What should I bring to my booking?",
-        answer:
-          "Bring your outfit references, jewelry inspiration, and any skin or allergy notes. That helps us tailor the look and products to you.",
-      },
-    ],
-  },
-  {
-    title: "Service FAQs",
+    title: "Bridal & Parlour Service FAQs",
     slug: "services",
-    description: "Helpful answers about bridal, parlour and academy offerings.",
+    description: "Pricing, products, and services offered by Elegance Makeover & Academy in Jajpur Road.",
     items: [
       {
-        question: "What services are most popular for brides?",
-        answer:
-          "The most requested bridal combinations are makeup, hair styling, draping and light touch-up support. We also handle engagement and reception looks.",
+        question: "What is the price of bridal makeup at Elegance Makeover in Jajpur Road?",
+        answer: "Our bridal makeup packages range from ₹6000 to ₹12000. We offer premium options including HD bridal makeup, airbrush makeup, and traditional Odia bridal looks, custom-tailored by internationally certified artist Rasmirekha Swain.",
       },
       {
-        question: "Are premium products used for all services?",
-        answer:
-          "Yes. We focus on premium, skin-friendly products and technique-first application to keep the finish refined, durable and photo-ready.",
+        question: "What makeup brands and products are used at the salon?",
+        answer: "We use only professional, high-end international makeup brands such as MAC, Huda Beauty, Charlotte Tilbury, Estée Lauder, NARS, and Fenty Beauty to guarantee a flawless, skin-friendly, and photo-ready finish that lasts all day.",
       },
       {
-        question: "Do you offer academy classes for beginners?",
-        answer:
-          "Yes. We offer beginner-friendly and advanced training paths with practical classroom work, demonstrations and portfolio guidance.",
+        question: "What is the price of party makeup and special occasion styling?",
+        answer: "Our professional party makeup is priced at ₹2500 per session. It is ideal for wedding guests, reception parties, engagement ceremonies, festivals like Raja, or any special occasion in Jajpur Road.",
       },
       {
-        question: "Can I get help choosing the right service?",
-        answer:
-          "Of course. Share your event type, budget and timing, and we’ll suggest the most suitable service combination for your needs.",
+        question: "What skin facials do you offer, and what are their prices?",
+        answer: "We offer a range of premium facials starting from ₹500 for basic skin prep and hydration up to ₹3000 for advanced luxury glow facials, designed to give you a radiant bridal base.",
+      },
+      {
+        question: "What hair styling and haircut services do you provide?",
+        answer: "We offer professional haircuts, styling, blowouts, and advanced hair treatments. Hair styling and cuts range from ₹100 to ₹400, custom-tailored to complement your features.",
       },
     ],
   },
   {
-    title: "Local FAQs",
-    slug: "local",
-    description: "Location and travel questions for clients visiting from nearby towns.",
+    title: "Booking & Travel FAQs",
+    slug: "booking",
+    description: "Learn how to book appointments and how we handle on-venue travels.",
     items: [
       {
-        question: "Do you serve clients from Cuttack and Bhubaneswar?",
-        answer:
-          "Yes. We regularly work with clients from Cuttack, Bhubaneswar, Bhadrak, Jajpur and nearby Odisha regions, especially for weddings and academy enquiries.",
+        question: "What is the booking process for wedding makeup in Odisha?",
+        answer: "You can book your slot by filling out our online booking form or contacting us via call or WhatsApp at +91 92652 00523. We recommend booking 2 to 8 weeks in advance for peak wedding dates to secure Rasmirekha Swain's personal availability.",
       },
       {
-        question: "Is the salon easy to reach from Jajpur Road?",
-        answer:
-          "Yes. We’re based in Jajpur Road and serve local walk-ins as well as advance bookings from surrounding areas.",
+        question: "Do you offer makeup trials before the wedding date?",
+        answer: "Yes, we offer professional bridal makeup trials. Trials are highly recommended as they allow us to align your makeup, hair, and draping with your wedding attire, jewelry, and skin tone in advance.",
       },
       {
-        question: "Do you share location details before the appointment?",
-        answer:
-          "Yes. Once your booking is confirmed, we can share the location and any arrival guidance by call or WhatsApp.",
+        question: "Do you provide on-venue or home services for bridal makeup in Jajpur Road?",
+        answer: "Yes! We offer premium on-venue services. Our bridal makeup team can travel to wedding venues and homes across Jajpur Road, Kanheipur, Cuttack, Bhubaneswar, Bhadrak, and nearby districts of Odisha.",
+      },
+    ],
+  },
+  {
+    title: "Academy & Location FAQs",
+    slug: "academy-location",
+    description: "Training details and directions to our academy and salon in Jajpur Road.",
+    items: [
+      {
+        question: "What courses are offered at Elegance Makeover Academy, and what are the fees?",
+        answer: "We offer professional certified makeup artist training and beauty parlour courses ranging from 1-month intensive modules to 3-month advanced certification programs. Fees are available on request based on the selected course path. Contact us directly for a customized brochure.",
       },
       {
-        question: "Can outstation clients contact you online first?",
-        answer:
-          "Definitely. Most outstation clients start on WhatsApp or phone, then confirm the service once timing and travel needs are clear.",
+        question: "Where is the academy located, and is it near Jajpur Road railway station?",
+        answer: "Elegance Makeover & Academy is located in Jajpur Road (near the Kanheipur and Byasanagar area). Our location is highly accessible and just a short drive from the Jajpur Road railway station, making it convenient for outstation students and clients.",
       },
     ],
   },

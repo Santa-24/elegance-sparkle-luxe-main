@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, CalendarDays, Filter, Tag } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { getLiveBlogPostsFn } from "@/lib/content/live.functions";
@@ -55,10 +55,32 @@ export const Route = createFileRoute("/blog")({
   component: BlogIndexPage,
 });
 
+function useScrollReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
+    );
+
+    const elements = document.querySelectorAll(".reveal");
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+}
+
 function BlogIndexPage() {
   const { posts } = Route.useLoaderData() as { posts: BlogPost[] };
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeTag, setActiveTag] = useState("All");
+
+  useScrollReveal();
 
   const featured = posts[0] ?? null;
   const categories = useMemo(
@@ -89,9 +111,9 @@ function BlogIndexPage() {
         subtitle="A growing library of bridal advice, academy guidance and local beauty tips."
       />
 
-      <section className="bg-background py-16 md:py-20">
+      <section className="bg-background py-24 md:py-[120px]">
         <div className="mx-auto max-w-7xl px-5 lg:px-10">
-          <div className="mb-8 flex flex-wrap items-center gap-3">
+          <div className="reveal mb-8 flex flex-wrap items-center gap-3">
             <Filter className="h-4 w-4 text-[var(--purple-deep)]" />
             {categories.map((category) => (
               <button
@@ -109,14 +131,14 @@ function BlogIndexPage() {
             ))}
           </div>
 
-          <div className="mb-10 flex flex-wrap items-center gap-2">
+          <div className="reveal mb-10 flex flex-wrap items-center gap-2">
             <Tag className="h-4 w-4 text-[var(--purple-deep)]" />
             {tags.map((tag) => (
               <button
                 key={tag}
                 type="button"
                 onClick={() => setActiveTag(tag)}
-                className={`rounded-full border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.25em] transition-all ${
+                className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] transition-all ${
                   activeTag === tag
                     ? "border-transparent bg-[var(--royal)] text-marble"
                     : "border-border bg-card text-[var(--purple-deep)] hover:border-[var(--gold)]"
@@ -128,8 +150,8 @@ function BlogIndexPage() {
           </div>
 
           {featured ? (
-            <article className="grid gap-8 overflow-hidden rounded-[2rem] border border-border bg-card shadow-soft lg:grid-cols-[1.1fr_0.9fr]">
-              <div className="relative min-h-[320px] bg-[var(--royal-deep)]">
+            <article className="reveal grid gap-8 overflow-hidden rounded-[2rem] border border-border bg-card shadow-soft lg:grid-cols-[1.1fr_0.9fr]">
+              <div className="relative min-h-[320px] bg-[var(--royal-deep)] img-zoom">
                 <img
                   src={featured.featuredImageUrl || "/og-image.svg"}
                   alt={featured.title}
@@ -138,7 +160,7 @@ function BlogIndexPage() {
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(24,19,53,0.15),rgba(24,19,53,0.9))]" />
                 <div className="absolute inset-x-0 bottom-0 p-6 text-marble">
-                  <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.35em] text-[var(--gold)]">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.35em] text-[var(--gold)]">
                     Featured article
                   </div>
                   <h2 className="mt-4 font-display text-4xl leading-tight">{featured.title}</h2>
@@ -167,7 +189,7 @@ function BlogIndexPage() {
                     {featured.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="rounded-full border border-border bg-muted px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-[var(--purple-deep)]"
+                        className="rounded-full border border-border bg-muted px-3 py-1 text-xs uppercase tracking-[0.25em] text-[var(--purple-deep)]"
                       >
                         {tag}
                       </span>
@@ -185,7 +207,7 @@ function BlogIndexPage() {
               </div>
             </article>
           ) : (
-            <div className="rounded-[2rem] border border-border bg-card p-10 text-center text-muted-foreground">
+            <div className="reveal rounded-[2rem] border border-border bg-card p-10 text-center text-muted-foreground">
               No blog posts are published yet.
             </div>
           )}
@@ -194,20 +216,22 @@ function BlogIndexPage() {
             {filteredPosts.map((post) => (
               <article
                 key={post.slug}
-                className="overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-soft"
+                className="reveal overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-soft tilt-card"
               >
-                <img
-                  src={post.featuredImageUrl || "/og-image.svg"}
-                  alt={post.title}
-                  className="h-48 w-full object-cover"
-                  loading="lazy"
-                />
+                <div className="img-zoom h-48 w-full">
+                  <img
+                    src={post.featuredImageUrl || "/og-image.svg"}
+                    alt={post.title}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
                 <div className="p-6">
-                  <div className="text-[10px] uppercase tracking-[0.35em] text-[var(--purple-deep)]">
+                  <div className="text-xs uppercase tracking-[0.35em] text-[var(--purple-deep)]">
                     {post.category}
                   </div>
                   <h3 className="mt-2 font-display text-2xl text-[var(--royal)]">{post.title}</h3>
-                  <div className="mt-3 flex flex-wrap items-center gap-3 text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
+                  <div className="mt-3 flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.25em] text-muted-foreground">
                     <span className="inline-flex items-center gap-2">
                       <CalendarDays className="h-3.5 w-3.5" />
                       {post.publishDate}
@@ -221,7 +245,7 @@ function BlogIndexPage() {
                     {post.tags.slice(0, 3).map((tag) => (
                       <span
                         key={tag}
-                        className="rounded-full bg-muted px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-[var(--purple-deep)]"
+                        className="rounded-full bg-muted px-3 py-1 text-xs uppercase tracking-[0.25em] text-[var(--purple-deep)]"
                       >
                         {tag}
                       </span>

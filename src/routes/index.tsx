@@ -1,8 +1,9 @@
-﻿import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { CountdownTimer } from "@/components/site/CountdownTimer";
 import { trackEvent } from "@/lib/analytics";
 import { useEffect, useState } from "react";
+import { getCountdownDays } from "@/lib/utils/formatting";
 import {
   Crown,
   Sparkles,
@@ -89,6 +90,28 @@ export const Route = createFileRoute("/")({
 
 const iconMap = { Crown, Sparkles, Heart, Scissors, Wand2, GraduationCap };
 
+function useScrollReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    const elements = document.querySelectorAll(".reveal, .img-reveal");
+    elements.forEach((el) => observer.observe(el));
+
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
+}
+
 function HomePage() {
   const { services, gallery, testimonials, offers, advertisements, serviceAreas, blogPosts } =
     Route.useLoaderData() as {
@@ -100,6 +123,7 @@ function HomePage() {
       serviceAreas: Array<{ name: string; summary: string }>;
       blogPosts: Array<{ slug: string; title: string; excerpt: string; category: string }>;
     };
+  useScrollReveal();
   const [openAdIndex, setOpenAdIndex] = useState<number | null>(null);
   const featuredAdvertisement = advertisements[0] ?? null;
   const activeAdvertisement =
@@ -172,7 +196,8 @@ function HomePage() {
 /* ---------------- HERO ---------------- */
 function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
   return (
-    <section className="relative min-h-[calc(100svh-5rem)] flex items-center justify-center overflow-hidden">
+    <section className="relative h-[100dvh] flex items-center justify-center overflow-hidden bg-[#0d0a07]">
+      {/* Background Image */}
       <img
         src={heroBride}
         alt="Luxury bridal makeup by Elegance Makeover"
@@ -181,77 +206,89 @@ function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
         loading="eager"
         fetchPriority="high"
         decoding="async"
-        className="absolute inset-0 w-full h-full object-cover object-center scale-105"
+        className="absolute inset-0 w-full h-full object-cover object-center opacity-30"
       />
-      <div className="absolute inset-0" style={{ background: "var(--gradient-hero-overlay)" }} />
-      <div
-        className="absolute inset-0 opacity-30 mix-blend-overlay"
+      
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-[#0d0a07]/75" />
+      
+      {/* Gold Grid Overlay (3% opacity) */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-[0.03]" 
         style={{
-          backgroundImage: "radial-gradient(circle at 70% 30%, var(--gold) 0, transparent 40%)",
+          backgroundImage: `
+            linear-gradient(to right, #c9a96e 1px, transparent 1px),
+            linear-gradient(to bottom, #c9a96e 1px, transparent 1px)
+          `,
+          backgroundSize: "40px 40px"
         }}
       />
 
-      {/* floating chip top */}
-      <div className="absolute top-20 sm:top-24 md:top-32 left-1/2 -translate-x-1/2 z-10 px-4 w-full flex justify-center">
-        <div className="glass rounded-full px-4 sm:px-5 py-2 text-marble text-[10px] sm:text-xs md:text-sm flex items-center gap-2 animate-fade-up max-w-[92vw]">
-          <span className="w-2 h-2 rounded-full bg-[var(--gold)] animate-pulse" />
-          {advertisement
-            ? `${advertisement.asset_type === "poster" ? "Poster" : "Promotion"} live now`
-            : "Now booking 2026 wedding season"}
-        </div>
-      </div>
+      {/* Dual Vertical Gold Rules */}
+      <div className="absolute left-6 md:left-12 top-0 bottom-0 w-[1px] bg-[#c9a96e]/15 hidden sm:block" />
+      <div className="absolute right-6 md:right-12 top-0 bottom-0 w-[1px] bg-[#c9a96e]/15 hidden sm:block" />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-5 lg:px-10 text-center text-marble">
-        <div className="text-[11px] md:text-xs tracking-[0.5em] uppercase text-[var(--gold)] mb-5 animate-fade-up">
+      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center text-[#f5e6d0] pt-12 md:pt-16">
+        {/* Active Promotion Chip inline to prevent overlap */}
+        <div className="inline-flex justify-center mb-5 animate-fade-up">
+          <div className="border border-[#c9a96e]/30 bg-[#161009]/80 px-4 py-1.5 text-[#f5e6d0] text-[10px] tracking-[0.2em] uppercase flex items-center gap-2 max-w-[92vw]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#c9a96e] animate-pulse" />
+            {advertisement
+              ? `${advertisement.asset_type === "poster" ? "Poster" : "Promotion"} live now`
+              : "Now booking 2026 wedding season"}
+          </div>
+        </div>
+
+        <div className="text-[10px] tracking-[0.4em] uppercase text-[#c9a96e] mb-4 animate-fade-up">
           Bridal · Beauty · Academy
         </div>
-        <h1 className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-bold leading-[1.05] animate-fade-up delay-100">
-          Transform Your Beauty <br />
-          <span className="gradient-gold-text italic">with Elegance</span>
+        
+        <h1 className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-light leading-[1.1] tracking-tight animate-fade-up delay-100">
+          Where every bride <br />
+          becomes <span className="italic font-display text-[#c9a96e]">unforgettable</span>
         </h1>
-        <p className="mt-5 sm:mt-6 text-sm sm:text-base md:text-xl text-marble/85 max-w-2xl mx-auto animate-fade-up delay-200">
+        
+        <p className="mt-6 text-xs sm:text-sm md:text-base text-[#f5e6d0]/80 max-w-xl mx-auto font-light leading-relaxed animate-fade-up delay-200">
           Expert bridal makeup, premium parlour services and certified academy courses by Rasmirekha
-          Swain - in the heart of Jajpur Road, Odisha.
+          Swain — in the heart of Jajpur Road, Odisha.
         </p>
-        <div className="mt-8 sm:mt-9 flex flex-col sm:flex-row gap-3 justify-center animate-fade-up delay-300">
+
+        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-up delay-300">
           <Link
             to="/booking"
             onClick={() => trackEvent("booking_cta_click", { location: "home_hero" })}
-            className="btn-luxe inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full gradient-gold text-[var(--royal-deep)] font-semibold shadow-gold"
+            className="w-full sm:w-auto inline-flex h-11 items-center justify-center gap-2 px-8 bg-[#c9a96e] text-[#0d0a07] font-semibold text-xs tracking-[0.2em] uppercase hover:bg-[#d9c49e] transition-colors rounded-none"
           >
-            Book Appointment <ArrowRight className="w-4 h-4" />
+            Book Appointment <ArrowRight className="w-3.5 h-3.5" />
           </Link>
           <Link
             to="/services"
             onClick={() => trackEvent("service_cta_click", { location: "home_hero" })}
-            className="btn-luxe inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border-2 border-[var(--gold)] text-marble hover:bg-[var(--gold)] hover:text-[var(--royal-deep)] transition-colors"
+            className="w-full sm:w-auto inline-flex h-11 items-center justify-center gap-2 px-8 border border-[#c9a96e]/40 text-[#c9a96e] hover:bg-[#c9a96e]/10 transition-colors font-semibold text-xs tracking-[0.2em] uppercase rounded-none"
           >
             View Services
           </Link>
         </div>
 
-        <div className="mt-12 sm:mt-14 grid grid-cols-1 sm:grid-cols-3 max-w-2xl mx-auto gap-3 sm:gap-4 md:gap-6 animate-fade-up delay-500">
+        {/* Stats Band inside Hero with thin gold lines */}
+        <div className="border-t border-[#c9a96e]/20 pt-8 mt-12 grid grid-cols-3 gap-4 sm:gap-6 max-w-2xl mx-auto animate-fade-up delay-500">
           {[
             ["10+", "Years Experience"],
             ["500+", "Happy Brides"],
             ["50+", "Certified Students"],
           ].map(([n, l]) => (
-            <div key={l} className="glass rounded-2xl px-3 py-4 text-center">
-              <div className="font-display text-2xl md:text-3xl text-[var(--gold)] font-bold">
-                {n}
-              </div>
-              <div className="text-[10px] md:text-xs uppercase tracking-widest text-marble/70 mt-1">
-                {l}
-              </div>
+            <div key={l} className="text-center px-2">
+              <div className="font-display text-2xl sm:text-3xl text-[#c9a96e] font-light">{n}</div>
+              <div className="text-[9px] uppercase tracking-[0.2em] text-[#f5e6d0]/60 mt-1 font-body">{l}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* scroll cue */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-marble/70 text-[10px] uppercase tracking-widest">
+      {/* Scroll indicator */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#f5e6d0]/50 text-[9px] uppercase tracking-[0.3em]">
         <span>Scroll</span>
-        <div className="w-px h-10 bg-gradient-to-b from-[var(--gold)] to-transparent animate-pulse" />
+        <div className="w-[1px] h-8 bg-[#c9a96e]/30" />
       </div>
     </section>
   );
@@ -270,58 +307,49 @@ function AdvertisementShowcase({
   }
 
   return (
-    <section className="px-5 py-8 sm:py-10 lg:px-10">
+    <section className="px-6 py-12 max-w-7xl mx-auto reveal">
       <button
         type="button"
         onClick={onOpen}
         aria-label={`View full ad: ${advertisement.title}`}
-        className="group mx-auto block w-full max-w-7xl overflow-hidden rounded-[2.25rem] border border-border text-left shadow-luxury transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_30px_70px_-20px_rgba(0,0,0,0.35)]"
+        className="group w-full text-left border border-[#c9a96e]/20 bg-[#161009] cursor-pointer transition-colors hover:border-[#c9a96e]/50"
       >
-        <div className="relative isolate min-h-[420px] overflow-hidden sm:min-h-[520px] lg:min-h-[640px]">
+        <div className="relative isolate min-h-[360px] md:min-h-[480px] overflow-hidden flex items-end">
           <img
             src={advertisement.asset_url}
             alt={advertisement.title}
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(15,22,52,0.82)_0%,rgba(15,22,52,0.42)_48%,rgba(15,22,52,0.74)_100%)]" />
-          <div
-            className="absolute inset-0 opacity-30 mix-blend-overlay"
-            style={{
-              backgroundImage: "radial-gradient(circle at 78% 22%, var(--gold) 0, transparent 34%)",
-            }}
-          />
+          {/* Flat overlay */}
+          <div className="absolute inset-0 bg-[#0d0a07]/80" />
+          
+          <div className="relative z-10 max-w-3xl p-6 sm:p-10 md:p-12 text-[#f5e6d0]">
+            <div className="inline-flex items-center gap-2 border border-[#c9a96e]/30 bg-[#0d0a07]/80 px-3.5 py-1 text-[9px] uppercase tracking-[0.25em] text-[#c9a96e]">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#c9a96e] animate-pulse" />
+              Live Advertisement
+            </div>
 
-          <div className="relative z-10 flex min-h-[420px] sm:min-h-[520px] lg:min-h-[640px] items-end">
-            <div className="max-w-3xl px-6 py-8 sm:px-10 sm:py-10 lg:px-14 lg:py-14 text-marble">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[10px] uppercase tracking-[0.35em] text-[var(--gold)] backdrop-blur-md">
-                <span className="h-2 w-2 rounded-full bg-[var(--gold)]" />
-                Live Advertisement
-              </div>
+            <h2 className="mt-4 font-display text-3xl sm:text-4xl lg:text-5xl font-light leading-tight">
+              {advertisement.title}
+            </h2>
 
-              <h2 className="mt-5 font-display text-4xl sm:text-5xl lg:text-6xl leading-[1.02]">
-                {advertisement.title}
-              </h2>
+            <p className="mt-3 max-w-2xl text-xs sm:text-sm leading-relaxed text-[#f5e6d0]/80 font-light">
+              {advertisement.asset_type === "poster"
+                ? "Special brand campaign published live. Tap to see the details."
+                : "Limited-time event creative. Tap to view full size details."}
+            </p>
 
-              <p className="mt-4 max-w-2xl text-sm sm:text-base leading-relaxed text-marble/85">
-                {advertisement.asset_type === "poster"
-                  ? "Poster campaign currently published from admin."
-                  : advertisement.asset_type === "banner"
-                    ? "Banner creative published for the website."
-                    : "Campaign creative published from the admin panel."}
-              </p>
-
-              <div className="mt-6 flex flex-wrap gap-3 text-[10px] uppercase tracking-[0.3em] text-marble/80">
-                <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 backdrop-blur-md">
-                  {advertisement.asset_type}
-                </span>
-                <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 backdrop-blur-md">
-                  {advertisement.platform}
-                </span>
-                <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1 backdrop-blur-md">
-                  Click to view full ad
-                </span>
-              </div>
+            <div className="mt-5 flex flex-wrap gap-2 text-[9px] uppercase tracking-[0.2em]">
+              <span className="border border-[#c9a96e]/25 bg-[#0d0a07] px-2.5 py-1 text-[#c9a96e]">
+                {advertisement.asset_type}
+              </span>
+              <span className="border border-[#c9a96e]/25 bg-[#0d0a07] px-2.5 py-1 text-[#c9a96e]">
+                {advertisement.platform}
+              </span>
+              <span className="border border-[#c9a96e]/25 bg-[#c9a96e] text-[#0d0a07] px-2.5 py-1 font-semibold">
+                Click to Expand
+              </span>
             </div>
           </div>
         </div>
@@ -347,24 +375,24 @@ function AdLightbox({
 }) {
   const showNavigation = advertisements.length > 1;
   return (
-    <div className="fixed inset-0 z-[70] bg-[var(--royal-deep)]/95 backdrop-blur-md flex items-center justify-center p-4 animate-fade-up">
+    <div className="fixed inset-0 z-[70] bg-[#0d0a07]/95 flex items-center justify-center p-4">
       <button
         type="button"
         onClick={onClose}
-        className="absolute top-5 right-5 w-12 h-12 rounded-full glass text-marble flex items-center justify-center"
+        className="absolute top-5 right-5 w-12 h-12 border border-[#c9a96e]/30 bg-[#0d0a07] text-[#c9a96e] flex items-center justify-center hover:bg-[#c9a96e] hover:text-[#0d0a07] transition-colors"
         aria-label="Close ad preview"
       >
         <X className="w-5 h-5" />
       </button>
 
-      <div className="relative max-h-[90vh] max-w-[96vw] overflow-hidden rounded-[2rem] border border-white/10 bg-black shadow-luxury">
+      <div className="relative max-h-[90vh] max-w-[96vw] overflow-hidden border border-[#c9a96e]/20 bg-[#0d0a07]">
         {showNavigation ? (
-          <div className="pointer-events-none absolute inset-y-0 left-0 right-0 z-20 flex items-center justify-between px-2 sm:px-4">
+          <div className="pointer-events-none absolute inset-y-0 left-0 right-0 z-20 flex items-center justify-between px-4">
             <button
               type="button"
               onClick={onPrevious}
               aria-label="View previous ad"
-              className="pointer-events-auto inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-black/35 text-marble backdrop-blur-md transition-transform hover:scale-105"
+              className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center border border-[#c9a96e]/30 bg-[#0d0a07] text-[#c9a96e] hover:bg-[#c9a96e] hover:text-[#0d0a07] transition-colors"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -372,7 +400,7 @@ function AdLightbox({
               type="button"
               onClick={onNext}
               aria-label="View next ad"
-              className="pointer-events-auto inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-black/35 text-marble backdrop-blur-md transition-transform hover:scale-105"
+              className="pointer-events-auto inline-flex h-10 w-10 items-center justify-center border border-[#c9a96e]/30 bg-[#0d0a07] text-[#c9a96e] hover:bg-[#c9a96e] hover:text-[#0d0a07] transition-colors"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
@@ -381,24 +409,25 @@ function AdLightbox({
         <img
           src={advertisement.asset_url}
           alt={advertisement.title}
-          className="max-h-[90vh] max-w-[96vw] object-contain"
+          className="max-h-[85vh] max-w-[92vw] object-contain mx-auto"
         />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
-        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-4 text-marble">
-          <div>
-            <div className="text-[10px] uppercase tracking-[0.35em] text-[var(--gold)]">
-              Ad Preview
-            </div>
-            <div className="mt-1 font-display text-xl">{advertisement.title}</div>
-            {showNavigation ? (
-              <div className="mt-2 text-[10px] uppercase tracking-[0.3em] text-marble/60">
-                {currentIndex + 1} of {advertisements.length}
+        <div className="absolute bottom-0 inset-x-0 bg-[#0d0a07]/90 border-t border-[#c9a96e]/20 p-4 sm:p-6 text-[#f5e6d0]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div className="text-[9px] uppercase tracking-[0.25em] text-[#c9a96e]">
+                Ad Preview
               </div>
-            ) : null}
-          </div>
-          <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-2 text-[10px] uppercase tracking-[0.3em] text-marble/80 backdrop-blur-md">
-            <Eye className="h-3.5 w-3.5 text-[var(--gold)]" />
-            Full size
+              <div className="mt-1 font-display text-lg sm:text-xl font-light">{advertisement.title}</div>
+              {showNavigation ? (
+                <div className="mt-1 text-[9px] uppercase tracking-[0.2em] text-[#f5e6d0]/50">
+                  {currentIndex + 1} of {advertisements.length}
+                </div>
+              ) : null}
+            </div>
+            <div className="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-[#c9a96e]">
+              <Eye className="h-3.5 w-3.5" />
+              Full size view
+            </div>
           </div>
         </div>
       </div>
@@ -409,70 +438,97 @@ function AdLightbox({
 /* ---------------- ABOUT PREVIEW ---------------- */
 function AboutPreview() {
   return (
-    <section className="marble-bg py-20 md:py-28">
-      <div className="max-w-7xl mx-auto px-5 lg:px-10 grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-        <div className="relative">
-          <div className="absolute -inset-4 gradient-gold rounded-3xl opacity-40 blur-2xl" />
-          <div className="relative img-zoom rounded-3xl overflow-hidden shadow-luxury">
-            <img
-              src={owner}
-              alt="Rasmirekha Swain - Founder of Elegance Makeover"
-              width={800}
-              height={1024}
-              loading="lazy"
-              className="w-full h-[520px] object-cover"
-            />
-            <div className="absolute bottom-5 left-5 right-5 glass-light rounded-2xl p-4">
-              <div className="font-display text-lg font-bold text-[var(--royal-deep)]">
-                Rasmirekha Swain
-              </div>
-              <div className="text-xs text-muted-foreground">Founder · Lead Makeup Artist</div>
+    <section className="bg-[#f9f5ef] text-[#0d0a07] py-24 md:py-[120px] reveal border-y border-[#c9a96e]/20">
+      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        {/* Photo Container with Custom Gold Corner Brackets */}
+        <div className="relative max-w-md mx-auto lg:max-w-none w-full">
+          <div className="relative p-4 border border-[#c9a96e]/30">
+            {/* Top Left Bracket */}
+            <div className="absolute top-0 left-0 w-6 h-6 border-t border-l border-[#c9a96e]" />
+            {/* Top Right Bracket */}
+            <div className="absolute top-0 right-0 w-6 h-6 border-t border-r border-[#c9a96e]" />
+            {/* Bottom Left Bracket */}
+            <div className="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-[#c9a96e]" />
+            {/* Bottom Right Bracket */}
+            <div className="absolute bottom-0 right-0 w-6 h-6 border-b border-r border-[#c9a96e]" />
+            
+            <div className="overflow-hidden">
+              <img
+                src={owner}
+                alt="Rasmirekha Swain - Founder of Elegance Makeover"
+                width={800}
+                height={1024}
+                loading="lazy"
+                className="w-full h-[520px] object-cover transition-transform duration-700 hover:scale-105"
+              />
+            </div>
+          </div>
+          
+          <div className="absolute bottom-8 left-8 right-8 bg-[#0d0a07] border border-[#c9a96e]/30 p-4 text-[#f5e6d0]">
+            <div className="font-display text-lg font-light tracking-wide text-[#c9a96e]">
+              Rasmirekha Swain
+            </div>
+            <div className="text-[10px] uppercase tracking-widest text-[#f5e6d0]/70 mt-0.5">
+              Founder · Lead Makeup Artist
             </div>
           </div>
         </div>
 
         <div>
-          <div className="text-xs tracking-[0.4em] uppercase text-[var(--purple-deep)] mb-3">
+          <div className="text-[10px] tracking-[0.3em] uppercase text-[#c9a96e] mb-3">
             About Us
           </div>
-          <h2 className="font-display text-4xl md:text-5xl text-[var(--royal)] leading-tight">
-            A decade of crafting <span className="gradient-gold-text italic">timeless brides</span>.
+          <h2 className="font-display text-3xl md:text-5xl text-[#0d0a07] font-light leading-tight">
+            A decade of crafting <span className="italic font-display text-[#c9a96e]">timeless beauty</span>.
           </h2>
-          <div className="gold-divider !mx-0" />
-          <p className="text-muted-foreground mt-5 text-base md:text-lg leading-relaxed">
-            Elegance Makeover & Academy was founded by Rasmirekha Swain with a simple promise -
+          <div className="w-16 h-[1px] bg-[#c9a96e] my-6" />
+          
+          <p className="text-[#0d0a07]/80 text-sm md:text-base leading-relaxed font-light">
+            Elegance Makeover & Academy was founded by Rasmirekha Swain with a simple promise —
             every woman deserves to feel like royalty. With 10+ years of expertise and an
             internationally certified team, we blend traditional Odia elegance with modern HD
             glamour.
           </p>
 
-          <ul className="mt-6 space-y-3">
+          <div className="mt-8 flex flex-wrap gap-2">
+            <span className="px-3.5 py-1.5 text-[9px] uppercase tracking-[0.2em] border border-[#c9a96e]/40 text-[#0d0a07] font-medium bg-transparent">
+              Certified Bridal Artist
+            </span>
+            <span className="px-3.5 py-1.5 text-[9px] uppercase tracking-[0.2em] border border-[#c9a96e]/40 text-[#0d0a07] font-medium bg-transparent">
+              Premium Imported Products
+            </span>
+            <span className="px-3.5 py-1.5 text-[9px] uppercase tracking-[0.2em] border border-[#c9a96e]/40 text-[#0d0a07] font-medium bg-transparent">
+              Professional Academy
+            </span>
+          </div>
+
+          <ul className="mt-8 space-y-3.5 text-xs text-[#0d0a07]/90 font-light">
             {[
-              "Internationally certified bridal artist",
-              "Premium imported products only",
-              "Professional makeup academy with placement support",
+              "Personally trained under elite international masters",
+              "Individual hygiene protocol with sterile luxury kits",
+              "Comprehensive makeup courses with professional certification",
             ].map((t) => (
-              <li key={t} className="flex items-center gap-3 text-foreground">
-                <span className="w-6 h-6 rounded-full gradient-gold flex items-center justify-center flex-shrink-0">
-                  <Sparkles className="w-3 h-3 text-[var(--royal-deep)]" />
-                </span>
-                {t}
+              <li key={t} className="flex items-center gap-3">
+                <span className="w-1.5 h-1.5 bg-[#c9a96e] shrink-0" />
+                <span>{t}</span>
               </li>
             ))}
           </ul>
 
-          <Link
-            to="/about"
-            onClick={() =>
-              trackEvent("internal_link_click", {
-                location: "home_about_preview",
-                target: "/about",
-              })
-            }
-            className="mt-8 inline-flex items-center gap-2 text-[var(--royal)] font-semibold hover:gap-3 transition-all"
-          >
-            Learn more about us <ArrowRight className="w-4 h-4" />
-          </Link>
+          <div className="mt-10">
+            <Link
+              to="/about"
+              onClick={() =>
+                trackEvent("internal_link_click", {
+                  location: "home_about_preview",
+                  target: "/about",
+                })
+              }
+              className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[#0d0a07] border-b border-[#c9a96e] pb-1 font-semibold hover:text-[#c9a96e] transition-colors"
+            >
+              Explore Our Story
+            </Link>
+          </div>
         </div>
       </div>
     </section>
@@ -482,72 +538,78 @@ function AboutPreview() {
 /* ---------------- SERVICES ---------------- */
 function Services({ services }: { services: Service[] }) {
   return (
-    <section className="bg-background py-20 md:py-28">
-      <div className="max-w-7xl mx-auto px-5 lg:px-10">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="text-xs tracking-[0.4em] uppercase text-[var(--purple-deep)]">
-            Our Services
+    <section className="bg-[#0d0a07] text-[#f5e6d0] py-24 md:py-[120px] reveal">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="flex items-center justify-center gap-4 mb-3">
+            <div className="h-[1px] w-8 bg-[#c9a96e]/40" />
+            <span className="text-[10px] tracking-[0.3em] uppercase text-[#c9a96e]">Our Services</span>
+            <div className="h-[1px] w-8 bg-[#c9a96e]/40" />
           </div>
-          <h2 className="font-display text-4xl md:text-5xl text-[var(--royal)] mt-2">
-            Curated <span className="gradient-gold-text italic">luxury</span> experiences
+          <h2 className="font-display text-3xl md:text-5xl font-light text-[#f5e6d0]">
+            Curated <span className="italic text-[#c9a96e]">luxury</span> experiences
           </h2>
-          <div className="gold-divider" />
-          <p className="text-muted-foreground mt-2">
+          <p className="text-[#f5e6d0]/70 text-xs md:text-sm font-light mt-4 max-w-md mx-auto leading-relaxed">
             Every service is crafted with premium products, expert hands and an unmatched eye for
             detail.
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.length > 0 ? (
             services.map((s, i) => {
               const Icon = iconMap[s.icon as keyof typeof iconMap] ?? Sparkles;
               return (
                 <div
                   key={s.title}
-                  className={`tilt-card group bg-card rounded-3xl p-7 border border-border ${s.featured ? "gold-border" : ""}`}
+                  className="group bg-[#161009] p-6 border-t-2 border-t-[#c9a96e] border-x border-b border-[#c9a96e]/20 hover:border-[#c9a96e] transition-colors duration-500 flex flex-col justify-between min-h-[320px]"
                   style={{ animationDelay: `${i * 80}ms` }}
                 >
-                  {s.featured && (
-                    <div className="inline-block text-[10px] tracking-widest uppercase gradient-gold text-[var(--royal-deep)] px-3 py-1 rounded-full font-semibold mb-4">
-                      Most Popular
+                  <div>
+                    <div className="w-12 h-12 border border-[#c9a96e]/30 flex items-center justify-center mb-6 text-[#c9a96e]">
+                      <Icon className="w-5 h-5" />
                     </div>
-                  )}
-                  <div className="w-14 h-14 rounded-2xl gradient-royal flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
-                    <Icon className="w-6 h-6 text-[var(--gold)]" />
+                    {s.featured && (
+                      <span className="inline-block text-[8px] tracking-[0.2em] uppercase bg-[#c9a96e] text-[#0d0a07] px-2.5 py-0.5 font-semibold mb-3">
+                        Most Popular
+                      </span>
+                    )}
+                    <h3 className="font-display text-xl sm:text-2xl font-light text-[#f5e6d0]">{s.title}</h3>
+                    <p className="text-[#f5e6d0]/70 text-xs mt-2.5 font-light leading-relaxed">{s.desc}</p>
                   </div>
-                  <h3 className="font-display text-2xl text-[var(--royal)]">{s.title}</h3>
-                  <p className="text-muted-foreground text-sm mt-2 leading-relaxed">{s.desc}</p>
-                  <div className="flex items-center justify-between mt-6 pt-5 border-t border-border">
-                    <div>
-                      <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                        Starting
+                  
+                  <div>
+                    <div className="flex items-center justify-between mt-6 pt-4 border-t border-[#c9a96e]/10">
+                      <div>
+                        <div className="text-[8px] uppercase tracking-widest text-[#f5e6d0]/50">
+                          Starting From
+                        </div>
+                        <div className="font-display text-base font-light text-[#c9a96e] mt-0.5">
+                          {s.price}
+                        </div>
                       </div>
-                      <div className="font-display text-lg font-bold gradient-gold-text">
-                        {s.price}
+                      <div className="text-[9px] tracking-wider uppercase border border-[#c9a96e]/20 px-2 py-0.5 text-[#f5e6d0]/80">
+                        {s.duration}
                       </div>
                     </div>
-                    <div className="text-xs px-3 py-1 rounded-full bg-muted text-foreground/70">
-                      {s.duration}
-                    </div>
+                    <Link
+                      to="/booking"
+                      onClick={() =>
+                        trackEvent("booking_cta_click", {
+                          location: "home_service_card",
+                          service: s.title,
+                        })
+                      }
+                      className="mt-4 w-full justify-center inline-flex h-9 items-center gap-2 border border-[#c9a96e]/30 text-[10px] tracking-[0.2em] uppercase text-[#c9a96e] hover:bg-[#c9a96e] hover:text-[#0d0a07] transition-all font-semibold"
+                    >
+                      Book Session <ArrowRight className="w-3 h-3" />
+                    </Link>
                   </div>
-                  <Link
-                    to="/booking"
-                    onClick={() =>
-                      trackEvent("booking_cta_click", {
-                        location: "home_service_card",
-                        service: s.title,
-                      })
-                    }
-                    className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[var(--royal)] hover:text-[var(--purple-deep)]"
-                  >
-                    Book Now <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
                 </div>
               );
             })
           ) : (
-            <div className="col-span-full rounded-3xl border border-border bg-card p-10 text-center text-muted-foreground">
+            <div className="col-span-full border border-[#c9a96e]/20 bg-[#161009] p-10 text-center text-xs text-[#f5e6d0]/75">
               No services are published yet. Add or activate services in the admin panel to show
               them here.
             </div>
@@ -564,106 +626,98 @@ function BridalShowcase({ gallery }: { gallery: GalleryImage[] }) {
     Boolean(image?.src && image?.alt),
   );
   const bridalOnly = bridalImages.filter((image) => image.cat === "Bridal");
-  const featuredImages = bridalOnly;
-  const featuredImage = featuredImages[0];
-  const secondaryImages = featuredImages.slice(1);
+  const featuredImage = bridalOnly[0];
+  const secondaryImages = bridalOnly.slice(1, 5);
 
   return (
-    <section className="gradient-luxe overflow-hidden py-20 text-marble md:py-28">
-      <div className="max-w-7xl mx-auto px-5 lg:px-10">
-        <div className="mx-auto mb-12 max-w-2xl text-center">
-          <div className="text-xs tracking-[0.4em] uppercase text-[var(--gold)]">
+    <section className="bg-[#f9f5ef] text-[#0d0a07] py-24 md:py-[120px] reveal border-t border-[#c9a96e]/20">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="mx-auto mb-16 max-w-2xl text-center">
+          <div className="text-[10px] tracking-[0.3em] uppercase text-[#c9a96e] mb-3">
             Latest Bridal Work
           </div>
-          <h2 className="mt-2 font-display text-4xl md:text-5xl">
-            Bridal stories in <span className="gradient-gold-text italic">focus</span>
+          <h2 className="font-display text-3xl md:text-5xl font-light text-[#0d0a07]">
+            Bridal transformations <span className="italic text-[#c9a96e]">in focus</span>
           </h2>
-          <div className="gold-divider" />
-          <p className="mt-4 text-sm leading-relaxed text-marble/75 md:text-base">
+          <div className="w-16 h-[1px] bg-[#c9a96e] mx-auto mt-4" />
+          <p className="mt-4 text-xs md:text-sm text-[#0d0a07]/80 font-light leading-relaxed max-w-md mx-auto">
             A curated look at our newest bridal transformations, chosen to feel polished, editorial,
             and unmistakably premium.
           </p>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="img-zoom group overflow-hidden rounded-[2rem] border border-white/10 shadow-luxury">
-            <div className="relative aspect-[4/5] md:aspect-[16/10]">
-              {featuredImage ? (
-                <img
-                  src={featuredImage.src}
-                  alt={featuredImage.alt}
-                  loading="lazy"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-white/5 px-8 text-center">
-                  <div>
-                    <div className="text-xs uppercase tracking-[0.35em] text-[var(--gold)]">
-                      Bridal Showcase
-                    </div>
-                    <div className="mt-3 font-display text-2xl md:text-3xl">
-                      New bridal imagery will appear here soon
-                    </div>
-                  </div>
-                </div>
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
-                <div className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.35em] text-[var(--gold)]">
-                  Bridal Highlight
-                </div>
-                <h3 className="mt-4 font-display text-3xl md:text-4xl">
-                  {featuredImage?.alt ?? "Bridal transformations on display"}
+        {/* Asymmetric Grid */}
+        <div className="grid gap-6 md:grid-cols-3">
+          {/* 1 Large Cell (spans 2 columns and 2 rows on desktop) */}
+          {featuredImage ? (
+            <div className="md:col-span-2 md:row-span-2 relative group overflow-hidden border border-[#c9a96e]/20 aspect-[4/3] md:aspect-auto">
+              <img
+                src={featuredImage.src}
+                alt={featuredImage.alt}
+                loading="lazy"
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-[#0d0a07]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 md:p-8" />
+              <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 text-[#f5e6d0] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <span className="inline-block border border-[#c9a96e]/40 bg-[#0d0a07] px-2.5 py-0.5 text-[8px] uppercase tracking-[0.2em] text-[#c9a96e]">
+                  Featured Transformation
+                </span>
+                <h3 className="mt-2 font-display text-2xl font-light">
+                  {featuredImage.alt}
                 </h3>
-                <p className="mt-2 max-w-xl text-sm leading-relaxed text-marble/80">
-                  One frame, fully polished for the kind of bridal presentation that feels
-                  luxurious, modern and editorial.
-                </p>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="md:col-span-2 md:row-span-2 flex min-h-[320px] items-center justify-center border border-[#c9a96e]/20 bg-[#0d0a07]/5 p-8 text-center text-xs text-[#0d0a07]/75">
+              Featured bridal imagery will appear here soon.
+            </div>
+          )}
 
-          <div className="grid grid-cols-2 gap-4">
-            {secondaryImages.length > 0 ? (
-              secondaryImages.map((g, i) => (
-                <div
-                  key={g.alt}
-                  className={`img-zoom group overflow-hidden rounded-[1.75rem] border border-white/10 shadow-soft ${
-                    i === 0 ? "col-span-2 aspect-[16/9]" : "aspect-[4/5]"
-                  }`}
-                >
-                  <div className="relative h-full w-full">
-                    <img
-                      src={g.src}
-                      alt={g.alt}
-                      loading="lazy"
-                      className="h-full w-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-                    <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 transition-opacity group-hover:opacity-100">
-                      <div className="text-[10px] uppercase tracking-[0.35em] text-[var(--gold)]">
-                        {g.cat}
-                      </div>
-                      <div className="mt-1 font-display text-lg">{g.alt}</div>
-                    </div>
-                  </div>
+          {/* 4 Smaller Cells */}
+          {secondaryImages.length > 0 ? (
+            secondaryImages.map((img) => (
+              <div
+                key={img.src}
+                className="relative group overflow-hidden border border-[#c9a96e]/20 aspect-square"
+              >
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-[#0d0a07]/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4" />
+                <div className="absolute inset-x-0 bottom-0 p-4 text-[#f5e6d0] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="text-[8px] uppercase tracking-[0.25em] text-[#c9a96e] block">
+                    {img.cat}
+                  </span>
+                  <h4 className="mt-1 font-display text-sm font-light">{img.alt}</h4>
                 </div>
-              ))
-            ) : (
-              <div className="col-span-2 flex min-h-[18rem] items-center justify-center rounded-[1.75rem] border border-white/10 bg-white/5 px-6 text-center text-marble/70">
-                More bridal work will appear here as soon as the gallery is populated.
               </div>
-            )}
-          </div>
+            ))
+          ) : (
+            <div className="col-span-1 flex items-center justify-center border border-[#c9a96e]/20 bg-[#0d0a07]/5 p-6 text-center text-xs text-[#0d0a07]/60 animate-pulse">
+              Bridal transformations coming soon.
+            </div>
+          )}
+          
+          {/* Fill up if there are fewer than 4 secondary images */}
+          {secondaryImages.length > 0 && secondaryImages.length < 4 && 
+            Array.from({ length: 4 - secondaryImages.length }).map((_, i) => (
+              <div key={i} className="hidden md:flex items-center justify-center border border-[#c9a96e]/20 bg-[#0d0a07]/5 p-6 text-center text-xs text-[#0d0a07]/60 aspect-square">
+                Coming soon
+              </div>
+            ))
+          }
         </div>
 
-        <div className="text-center mt-10">
+        <div className="text-center mt-12">
           <Link
             to="/gallery"
             onClick={() => trackEvent("gallery_cta_click", { location: "home_showcase" })}
-            className="btn-luxe inline-flex items-center gap-2 px-7 py-3.5 rounded-full border-2 border-[var(--gold)] text-[var(--gold)] hover:bg-[var(--gold)] hover:text-[var(--royal-deep)] transition-colors"
+            className="inline-block text-xs uppercase tracking-[0.25em] text-[#0d0a07] border-b border-[#c9a96e] pb-1 font-semibold hover:text-[#c9a96e] transition-colors"
           >
-            Explore Full Gallery <ArrowRight className="w-4 h-4" />
+            Explore Full Gallery
           </Link>
         </div>
       </div>
@@ -682,7 +736,7 @@ function WhyChoose() {
     {
       Icon: ShieldCheck,
       title: "Premium Products",
-      desc: "Only luxury imported brands - MAC, Huda, Charlotte Tilbury & more.",
+      desc: "Only luxury imported brands — MAC, Huda, Charlotte Tilbury & more.",
     },
     {
       Icon: GraduationCap,
@@ -696,28 +750,29 @@ function WhyChoose() {
     },
   ];
   return (
-    <section className="bg-background py-20 md:py-28">
-      <div className="max-w-7xl mx-auto px-5 lg:px-10">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="text-xs tracking-[0.4em] uppercase text-[var(--purple-deep)]">
+    <section className="bg-[#0d0a07] text-[#f5e6d0] py-24 md:py-[120px] reveal border-t border-[#c9a96e]/15">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="text-[10px] tracking-[0.35em] uppercase text-[#c9a96e] mb-3">
             Why Choose Us
           </div>
-          <h2 className="font-display text-4xl md:text-5xl text-[var(--royal)] mt-2">
-            The <span className="gradient-gold-text italic">Elegance</span> difference
+          <h2 className="font-display text-3xl md:text-5xl font-light text-[#f5e6d0]">
+            The <span className="italic text-[#c9a96e]">Elegance</span> difference
           </h2>
-          <div className="gold-divider" />
+          <div className="w-16 h-[1px] bg-[#c9a96e] mx-auto mt-4" />
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {items.map(({ Icon, title, desc }) => (
             <div
               key={title}
-              className="text-center p-6 rounded-3xl bg-card border border-border hover:shadow-luxury hover:-translate-y-1 transition-all duration-500"
+              className="text-center p-8 border border-[#c9a96e]/25 bg-[#161009] hover:border-[#c9a96e] transition-colors duration-500"
             >
-              <div className="w-16 h-16 rounded-2xl mx-auto gradient-gold flex items-center justify-center mb-5 shadow-gold">
-                <Icon className="w-7 h-7 text-[var(--royal-deep)]" />
+              <div className="w-12 h-12 border border-[#c9a96e]/40 mx-auto flex items-center justify-center mb-6 text-[#c9a96e]">
+                <Icon className="w-5 h-5" />
               </div>
-              <h3 className="font-display text-xl text-[var(--royal)]">{title}</h3>
-              <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{desc}</p>
+              <h3 className="font-display text-lg sm:text-xl font-light text-[#f5e6d0]">{title}</h3>
+              <p className="text-[#f5e6d0]/70 text-xs mt-3 font-light leading-relaxed">{desc}</p>
             </div>
           ))}
         </div>
@@ -737,64 +792,63 @@ function OfferBanner({
   const primaryOffer = offers[0];
   const countdownDays = getCountdownDays(primaryOffer?.validity);
   return (
-    <section className="px-5 lg:px-10 py-12">
-      <div className="max-w-7xl mx-auto relative overflow-hidden rounded-[2rem] gradient-luxe text-marble p-8 md:p-14">
-        <div
-          className="absolute -top-24 -right-24 w-80 h-80 rounded-full opacity-30 blur-3xl"
-          style={{ background: "var(--gradient-gold)" }}
-        />
-        <div
-          className="absolute -bottom-32 -left-20 w-96 h-96 rounded-full opacity-20 blur-3xl"
-          style={{ background: "var(--purple-deep)" }}
-        />
+    <section className="px-6 py-12 max-w-7xl mx-auto reveal">
+      <div className="relative overflow-hidden bg-[#c9a96e] text-[#0d0a07] p-8 md:p-14">
+        {/* Editorial border inside banner */}
+        <div className="absolute inset-4 border border-[#0d0a07]/10 pointer-events-none" />
 
-        <div className="relative grid md:grid-cols-2 gap-8 items-center">
+        <div className="relative grid md:grid-cols-2 gap-8 items-center z-10">
           <div>
-            <div className="inline-block text-[10px] tracking-[0.4em] uppercase text-[var(--gold)] mb-3">
-              Festive Special
+            <div className="text-[9px] tracking-[0.3em] uppercase text-[#0d0a07]/80 mb-3 font-semibold">
+              Limited Opportunity
             </div>
-            <h2 className="font-display text-4xl md:text-5xl leading-tight">
+            <h2 className="font-display text-3xl md:text-5xl font-light leading-tight">
               {primaryOffer ? (
                 <>
-                  Flat <span className="gradient-gold-text">{primaryOffer.discount}</span> <br />
+                  Flat <span className="italic font-normal">{primaryOffer.discount}</span> <br />
                   on {primaryOffer.title.toLowerCase()}
                 </>
               ) : (
                 <>
-                  <span className="gradient-gold-text">No active offers</span> <br />
-                  are published yet
+                  Exclusive Bridal <br />
+                  Promotions Available
                 </>
               )}
             </h2>
-            <p className="mt-4 text-marble/80 max-w-md">
+            <p className="mt-4 text-xs md:text-sm text-[#0d0a07]/80 max-w-md font-light leading-relaxed">
               {primaryOffer
                 ? primaryOffer.desc
-                : "Publish an offer in the admin panel to feature it on the homepage."}
+                : "Schedule a personalized consultation with Rasmirekha Swain and design a custom package fits your bridal or academy needs."}
             </p>
-            <Link
-              to="/offers"
-              onClick={() => trackEvent("offer_cta_click", { location: "home_offer_banner" })}
-              className="btn-luxe mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-full gradient-gold text-[var(--royal-deep)] font-semibold shadow-gold"
-            >
-              {primaryOffer ? "Grab Offer" : "Manage Offers"} <ArrowRight className="w-4 h-4" />
-            </Link>
+            
+            <div className="mt-8 flex flex-wrap gap-4">
+              <Link
+                to="/offers"
+                onClick={() => trackEvent("offer_cta_click", { location: "home_offer_banner" })}
+                className="inline-flex h-11 items-center justify-center gap-2 px-8 bg-[#0d0a07] text-[#c9a96e] font-semibold text-xs tracking-[0.2em] uppercase hover:bg-[#161009] transition-colors animate-pulse"
+              >
+                {primaryOffer ? "Grab Offer" : "Explore Offers"} <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+            
             {advertisement ? (
-              <div className="mt-4 inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.3em] text-marble/80">
-                {advertisement.asset_type} campaign
+              <div className="mt-4 inline-block text-[8px] uppercase tracking-[0.2em] border border-[#0d0a07]/20 px-2 py-0.5 text-[#0d0a07]/70">
+                {advertisement.asset_type} active
               </div>
             ) : null}
           </div>
-          <div>
+          
+          <div className="flex flex-col items-center md:items-end justify-center">
             {primaryOffer ? (
               <>
-                <div className="text-center text-xs uppercase tracking-widest text-marble/70 mb-4">
-                  Offer ends in
+                <div className="text-center text-[10px] uppercase tracking-widest text-[#0d0a07]/80 mb-4 font-semibold">
+                  Valid Until Expiration
                 </div>
-                <CountdownTimer days={countdownDays} />
+                <CountdownTimer days={countdownDays} dark={true} />
               </>
             ) : (
-              <div className="rounded-[1.75rem] border border-white/15 bg-white/10 p-8 text-center text-marble/80">
-                Once an active offer is published, its timer and CTA will appear here.
+              <div className="border border-[#0d0a07]/20 p-6 text-center text-xs text-[#0d0a07]/80 max-w-xs">
+                Contact our customer support directly via WhatsApp for any custom bridal seasonal offers.
               </div>
             )}
           </div>
@@ -804,60 +858,45 @@ function OfferBanner({
   );
 }
 
-function getCountdownDays(validity?: string) {
-  if (!validity) {
-    return 15;
-  }
-
-  const dates = validity.match(/\d{4}-\d{2}-\d{2}/g);
-  const endDate = dates?.[dates.length - 1];
-  if (!endDate) {
-    return 15;
-  }
-
-  const target = new Date(`${endDate}T23:59:59`);
-  if (Number.isNaN(target.getTime())) {
-    return 15;
-  }
-
-  return Math.max(1, Math.ceil((target.getTime() - Date.now()) / 86400000));
-}
-
 /* ---------------- TESTIMONIALS ---------------- */
 function Testimonials({ testimonials }: { testimonials: Testimonial[] }) {
   return (
-    <section className="bg-background py-20 md:py-28">
-      <div className="max-w-7xl mx-auto px-5 lg:px-10">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="text-xs tracking-[0.4em] uppercase text-[var(--purple-deep)]">
-            Client Love
+    <section className="bg-[#0d0a07] text-[#f5e6d0] py-24 md:py-[120px] reveal border-t border-[#c9a96e]/15">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="text-[10px] tracking-[0.35em] uppercase text-[#c9a96e] mb-3">
+            Client Stories
           </div>
-          <h2 className="font-display text-4xl md:text-5xl text-[var(--royal)] mt-2">
-            Words from our <span className="gradient-gold-text italic">brides</span>
+          <h2 className="font-display text-3xl md:text-5xl font-light text-[#f5e6d0]">
+            Words from our <span className="italic text-[#c9a96e]">brides</span>
           </h2>
-          <div className="gold-divider" />
+          <div className="w-16 h-[1px] bg-[#c9a96e] mx-auto mt-4" />
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-3 gap-8">
           {testimonials.map((t) => (
             <div
               key={t.name}
-              className="bg-card border border-border rounded-3xl p-7 hover:shadow-luxury hover:-translate-y-1 transition-all duration-500 relative"
+              className="bg-[#161009] border border-[#c9a96e]/20 p-8 flex flex-col justify-between min-h-[260px] relative hover:border-[#c9a96e] transition-colors duration-500"
             >
-              <Quote className="absolute top-5 right-5 w-10 h-10 text-[var(--gold)] opacity-20" />
-              <div className="flex gap-0.5 mb-3">
-                {Array.from({ length: t.rating }).map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-[var(--gold)] text-[var(--gold)]" />
-                ))}
+              <Quote className="absolute top-6 right-6 w-8 h-8 text-[#c9a96e] opacity-10" />
+              <div>
+                <div className="flex gap-1 mb-4">
+                  {Array.from({ length: t.rating }).map((_, i) => (
+                    <Star key={i} className="w-3.5 h-3.5 fill-[#c9a96e] text-[#c9a96e]" />
+                  ))}
+                </div>
+                <p className="text-[#f5e6d0]/90 text-sm italic leading-relaxed font-light font-display">
+                  "{t.text}"
+                </p>
               </div>
-              <p className="text-foreground/85 leading-relaxed italic">"{t.text}"</p>
-              <div className="mt-6 pt-5 border-t border-border flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full gradient-royal flex items-center justify-center text-[var(--gold)] font-display font-bold">
+              <div className="mt-8 pt-5 border-t border-[#c9a96e]/10 flex items-center gap-3">
+                <div className="w-9 h-9 border border-[#c9a96e]/30 flex items-center justify-center text-[#c9a96e] font-display text-sm font-light">
                   {t.name[0]}
                 </div>
                 <div>
-                  <div className="font-semibold text-foreground">{t.name}</div>
-                  <div className="text-xs text-muted-foreground">{t.service}</div>
+                  <div className="font-medium text-[#f5e6d0] text-xs tracking-wide">{t.name}</div>
+                  <div className="text-[9px] uppercase tracking-widest text-[#f5e6d0]/50 mt-0.5">{t.service}</div>
                 </div>
               </div>
             </div>
@@ -875,45 +914,52 @@ function InstaFeed({ gallery }: { gallery: GalleryImage[] }) {
   );
 
   return (
-    <section className="marble-bg py-20 md:py-24">
-      <div className="max-w-7xl mx-auto px-5 lg:px-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+    <section className="bg-[#f9f5ef] text-[#0d0a07] py-24 md:py-[120px] reveal border-y border-[#c9a96e]/20">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
-            <div className="text-xs tracking-[0.4em] uppercase text-[var(--purple-deep)]">
+            <div className="text-[10px] tracking-[0.3em] uppercase text-[#c9a96e] mb-3">
               Instagram
             </div>
-            <h2 className="font-display text-4xl md:text-5xl text-[var(--royal)] mt-2">
-              Follow our <span className="gradient-gold-text italic">stories</span>
+            <h2 className="font-display text-3xl md:text-5xl font-light text-[#0d0a07]">
+              Follow our <span className="italic text-[#c9a96e]">stories</span>
             </h2>
           </div>
           <a
-            href="#"
-            className="btn-luxe inline-flex items-center gap-2 px-6 py-3 rounded-full gradient-royal text-marble self-start md:self-auto"
+            href="https://www.instagram.com/rasmirekha2011"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex h-11 items-center justify-center gap-2 px-6 bg-[#0d0a07] text-[#f5e6d0] hover:bg-[#161009] transition-colors text-xs font-semibold tracking-[0.2em] uppercase self-start md:self-auto"
           >
-            <Instagram className="w-4 h-4" /> @elegancemakeover
+            <Instagram className="w-3.5 h-3.5" /> @rasmirekha2011
           </a>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {feedImages.length > 0 ? (
             feedImages.map((g, i) => (
               <div
                 key={i}
-                className="aspect-square img-zoom rounded-2xl overflow-hidden relative group"
+                className="aspect-square overflow-hidden relative group border border-[#c9a96e]/15 bg-[#0d0a07]/5"
               >
                 <img
                   src={g.src}
                   alt={g.alt}
                   loading="lazy"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-[var(--royal-deep)]/0 group-hover:bg-[var(--royal-deep)]/60 transition-colors flex items-center justify-center">
-                  <Instagram className="w-7 h-7 text-[var(--gold)] opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
+                <a 
+                  href="https://www.instagram.com/rasmirekha2011"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute inset-0 bg-[#0d0a07]/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+                >
+                  <Instagram className="w-6 h-6 text-[#c9a96e]" />
+                </a>
               </div>
             ))
           ) : (
-            <div className="col-span-full rounded-3xl border border-border bg-card p-8 text-center text-muted-foreground">
+            <div className="col-span-full border border-[#c9a96e]/20 bg-white/50 p-8 text-center text-xs text-[#0d0a07]/60">
               Gallery images will appear here once content is published.
             </div>
           )}
@@ -929,38 +975,41 @@ function KnowledgeHub({
   posts: Array<{ slug: string; title: string; excerpt: string; category: string }>;
 }) {
   return (
-    <section className="bg-background py-20 md:py-24">
-      <div className="max-w-7xl mx-auto px-5 lg:px-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+    <section className="bg-[#0d0a07] text-[#f5e6d0] py-24 md:py-[120px] reveal">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
-            <div className="text-xs tracking-[0.4em] uppercase text-[var(--purple-deep)]">
+            <div className="text-[10px] tracking-[0.3em] uppercase text-[#c9a96e] mb-3">
               Knowledge Hub
             </div>
-            <h2 className="font-display text-4xl md:text-5xl text-[var(--royal)] mt-2">
-              Helpful answers and <span className="gradient-gold-text italic">guides</span>
+            <h2 className="font-display text-3xl md:text-5xl font-light text-[#f5e6d0]">
+              Helpful answers and <span className="italic text-[#c9a96e]">guides</span>
             </h2>
           </div>
           <Link
             to="/blog"
             onClick={() => trackEvent("blog_cta_click", { location: "home_knowledge_hub" })}
-            className="btn-luxe inline-flex items-center gap-2 px-6 py-3 rounded-full gradient-royal text-marble self-start md:self-auto"
+            className="inline-flex h-11 items-center justify-center gap-2 px-6 border border-[#c9a96e]/40 text-[#c9a96e] hover:bg-[#c9a96e]/10 transition-colors text-xs font-semibold tracking-[0.2em] uppercase self-start md:self-auto"
           >
-            Visit Blog <ArrowRight className="h-4 w-4" />
+            Visit Blog <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="grid gap-6 md:grid-cols-2">
             {posts.slice(0, 2).map((post) => (
               <article
                 key={post.slug}
-                className="rounded-[1.75rem] border border-border bg-card p-6 shadow-soft"
+                className="border border-[#c9a96e]/20 bg-[#161009] p-6 hover:border-[#c9a96e] transition-colors duration-500 flex flex-col justify-between"
               >
-                <div className="text-[10px] uppercase tracking-[0.35em] text-[var(--purple-deep)]">
-                  {post.category}
+                <div>
+                  <div className="text-[8px] uppercase tracking-[0.25em] text-[#c9a96e]">
+                    {post.category}
+                  </div>
+                  <h3 className="mt-2.5 font-display text-xl sm:text-2xl font-light text-[#f5e6d0]">{post.title}</h3>
+                  <p className="mt-2.5 text-xs text-[#f5e6d0]/70 font-light leading-relaxed">{post.excerpt}</p>
                 </div>
-                <h3 className="mt-2 font-display text-2xl text-[var(--royal)]">{post.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{post.excerpt}</p>
+                
                 <Link
                   to="/blog/$slug"
                   params={{ slug: post.slug }}
@@ -970,17 +1019,17 @@ function KnowledgeHub({
                       slug: post.slug,
                     })
                   }
-                  className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[var(--royal)] hover:text-[var(--purple-deep)]"
+                  className="mt-6 inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[#c9a96e] hover:text-[#f5e6d0] font-semibold"
                 >
-                  Read article <ArrowRight className="h-3.5 w-3.5" />
+                  Read article <ArrowRight className="h-3 w-3" />
                 </Link>
               </article>
             ))}
           </div>
 
-          <div className="rounded-[2rem] gradient-luxe p-7 text-marble shadow-luxury">
-            <div className="text-xs tracking-[0.4em] uppercase text-[var(--gold)]">Fast Links</div>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <div className="border border-[#c9a96e]/30 bg-[#161009] p-7 text-[#f5e6d0]">
+            <div className="text-[10px] tracking-[0.3em] uppercase text-[#c9a96e] mb-5">Quick Resources</div>
+            <div className="grid gap-4 sm:grid-cols-2">
               {[
                 { title: "FAQ", to: "/faq", desc: "Booking, services and local answers." },
                 {
@@ -1000,10 +1049,10 @@ function KnowledgeHub({
                       target: item.to,
                     })
                   }
-                  className="rounded-2xl border border-white/10 bg-white/5 p-4 transition-colors hover:bg-white/10"
+                  className="border border-[#c9a96e]/15 bg-[#0d0a07] p-5 hover:border-[#c9a96e] transition-colors"
                 >
-                  <div className="font-display text-xl text-[var(--gold)]">{item.title}</div>
-                  <p className="mt-1 text-sm leading-relaxed text-marble/75">{item.desc}</p>
+                  <div className="font-display text-lg font-light text-[#c9a96e]">{item.title}</div>
+                  <p className="mt-1.5 text-xs text-[#f5e6d0]/75 font-light leading-relaxed">{item.desc}</p>
                 </Link>
               ))}
             </div>
@@ -1020,15 +1069,15 @@ function LocalCoverage({
   serviceAreas: Array<{ name: string; summary: string }>;
 }) {
   return (
-    <section className="marble-bg py-20 md:py-24">
-      <div className="max-w-7xl mx-auto px-5 lg:px-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+    <section className="bg-[#f9f5ef] text-[#0d0a07] py-24 md:py-[120px] reveal border-y border-[#c9a96e]/20">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
-            <div className="text-xs tracking-[0.4em] uppercase text-[var(--purple-deep)]">
+            <div className="text-[10px] tracking-[0.3em] uppercase text-[#c9a96e] mb-3">
               Nearby Service Areas
             </div>
-            <h2 className="font-display text-4xl md:text-5xl text-[var(--royal)] mt-2">
-              Local coverage that feels <span className="gradient-gold-text italic">close</span>
+            <h2 className="font-display text-3xl md:text-5xl font-light text-[#0d0a07]">
+              Local coverage that feels <span className="italic text-[#c9a96e]">close</span>
             </h2>
           </div>
           <Link
@@ -1036,22 +1085,22 @@ function LocalCoverage({
             onClick={() =>
               trackEvent("service_area_cta_click", { location: "home_local_coverage" })
             }
-            className="btn-luxe inline-flex items-center gap-2 px-6 py-3 rounded-full gradient-royal text-marble self-start md:self-auto"
+            className="inline-flex h-11 items-center justify-center gap-2 px-6 bg-[#0d0a07] text-[#f5e6d0] hover:bg-[#161009] transition-colors text-xs font-semibold tracking-[0.2em] uppercase self-start md:self-auto"
           >
-            View all areas <ArrowRight className="h-4 w-4" />
+            View all areas <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-3">
           {serviceAreas.slice(0, 3).map((area) => (
             <div
               key={area.name}
-              className="rounded-[1.75rem] border border-border bg-card p-6 shadow-soft"
+              className="border border-[#c9a96e]/20 bg-white/70 p-6"
             >
-              <div className="text-[10px] uppercase tracking-[0.35em] text-[var(--purple-deep)]">
+              <div className="text-[10px] uppercase tracking-[0.2em] text-[#c9a96e] font-semibold">
                 {area.name}
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{area.summary}</p>
+              <p className="mt-2.5 text-xs text-[#0d0a07]/80 leading-relaxed font-light">{area.summary}</p>
             </div>
           ))}
         </div>
@@ -1063,28 +1112,29 @@ function LocalCoverage({
 /* ---------------- CONTACT CTA ---------------- */
 function ContactCTA() {
   return (
-    <section className="gradient-royal text-marble py-20 md:py-24">
-      <div className="max-w-5xl mx-auto px-5 lg:px-10 text-center">
-        <div className="text-xs tracking-[0.4em] uppercase text-[var(--gold)] mb-3">Let's Talk</div>
-        <h2 className="font-display text-4xl md:text-6xl">
-          Ready to look <span className="gradient-gold-text italic">stunning?</span>
+    <section className="bg-[#c9a96e] text-[#0d0a07] py-24 md:py-[120px] reveal relative">
+      <div className="absolute inset-4 border border-[#0d0a07]/10 pointer-events-none" />
+      <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+        <div className="text-[10px] tracking-[0.3em] uppercase text-[#0d0a07]/80 mb-3 font-semibold">Let's Talk</div>
+        <h2 className="font-display text-4xl md:text-6xl font-light">
+          Ready to look <span className="italic font-normal">stunning?</span>
         </h2>
-        <p className="text-marble/80 mt-5 max-w-xl mx-auto">
-          Book a free consultation or call us directly - we'll design a beauty experience just for
+        <p className="text-[#0d0a07]/80 text-sm md:text-base mt-4 max-w-lg mx-auto font-light leading-relaxed">
+          Book a free consultation or call us directly — we'll design a customized beauty experience just for
           you.
         </p>
-        <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link
             to="/booking"
             onClick={() => trackEvent("booking_cta_click", { location: "home_contact_cta" })}
-            className="btn-luxe px-7 py-3.5 rounded-full gradient-gold text-[var(--royal-deep)] font-semibold shadow-gold"
+            className="w-full sm:w-auto inline-flex h-11 items-center justify-center gap-2 px-8 bg-[#0d0a07] text-[#c9a96e] font-semibold text-xs tracking-[0.2em] uppercase hover:bg-[#161009] transition-colors"
           >
             Book Appointment
           </Link>
           <a
             href={`tel:${siteConfig.contactPhone.replace(/\s+/g, "")}`}
             onClick={() => trackEvent("phone_click", { location: "home_contact_cta" })}
-            className="btn-luxe px-7 py-3.5 rounded-full border-2 border-[var(--gold)] text-marble hover:bg-[var(--gold)] hover:text-[var(--royal-deep)] transition-colors"
+            className="w-full sm:w-auto inline-flex h-11 items-center justify-center gap-2 px-8 border border-[#0d0a07] text-[#0d0a07] hover:bg-[#0d0a07] hover:text-[#c9a96e] transition-all font-semibold text-xs tracking-[0.2em] uppercase"
           >
             Call {siteConfig.contactPhone}
           </a>

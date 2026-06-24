@@ -8,7 +8,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1 pt-20">{children}</main>
+      <div className="flex-1 pt-20">{children}</div>
       <Footer />
       <FloatingActions />
     </div>
@@ -27,7 +27,7 @@ export function PageHero({
   breadcrumbs?: Array<{ label: string; to?: string }>;
 }) {
   return (
-    <section className="relative gradient-luxe text-marble py-20 md:py-28 overflow-hidden">
+    <section className="relative gradient-luxe text-marble py-24 md:py-32 overflow-hidden">
       <div
         className="absolute inset-0 opacity-20 pointer-events-none"
         style={{
@@ -39,7 +39,7 @@ export function PageHero({
         {breadcrumbs?.length ? (
           <nav
             aria-label="Breadcrumb"
-            className="mb-5 flex flex-wrap items-center justify-center gap-2 text-[10px] md:text-xs uppercase tracking-[0.35em] text-marble/70"
+            className="mb-5 flex flex-wrap items-center justify-center gap-2 text-xs md:text-sm uppercase tracking-[0.35em] text-marble/70"
           >
             {breadcrumbs.map((crumb, index) => (
               <span key={`${crumb.label}-${index}`} className="flex items-center gap-2">
@@ -56,7 +56,7 @@ export function PageHero({
           </nav>
         ) : null}
         {eyebrow && (
-          <div className="inline-block text-[10px] md:text-xs tracking-[0.4em] uppercase text-[var(--gold)] mb-4">
+          <div className="inline-block text-xs md:text-sm tracking-[0.4em] uppercase text-[var(--gold)] mb-4">
             {eyebrow}
           </div>
         )}

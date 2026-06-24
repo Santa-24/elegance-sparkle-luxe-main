@@ -1,7 +1,7 @@
 import { supabaseSelect } from "@/lib/supabase.server";
 
 import type { BridalPackage, GalleryImage, Offer, Service, Testimonial } from "@/lib/data";
-import { galleryImages as staticGalleryImages, resolveGalleryImageSrc } from "@/lib/data/gallery";
+import { galleryImages as staticGalleryImages } from "@/lib/data/gallery";
 import {
   bridalPackages as staticBridalPackages,
   services as staticServices,
@@ -212,7 +212,7 @@ function mapService(row: LiveServiceRow): Service {
 
 function mapGallery(row: LiveGalleryRow): GalleryImage {
   return {
-    src: resolveGalleryImageSrc(row.image_url),
+    src: row.image_url,
     alt: row.alt_text || row.title,
     cat:
       row.category === "before_after"
@@ -390,7 +390,17 @@ export async function getLivePricingPackages() {
     const packages = rows
       .map(mapPricingPackage)
       .filter((pkg) => pkg.name && pkg.features.length > 0);
-    return packages.length > 0 ? packages : staticBridalPackages;
+
+    const uniquePackages: typeof packages = [];
+    const seenNames = new Set<string>();
+    for (const pkg of packages) {
+      if (!seenNames.has(pkg.name)) {
+        seenNames.add(pkg.name);
+        uniquePackages.push(pkg);
+      }
+    }
+
+    return uniquePackages.length > 0 ? uniquePackages : staticBridalPackages;
   } catch {
     return staticBridalPackages;
   }

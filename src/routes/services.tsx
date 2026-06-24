@@ -1,5 +1,5 @@
-﻿import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { faqSections } from "@/lib/content";
@@ -38,11 +38,36 @@ export const Route = createFileRoute("/services")({
 const iconMap = { Crown, Sparkles, Heart, Scissors, Wand2, GraduationCap };
 const categories = ["All", "Bridal", "Parlour", "Academy"] as const;
 
+function useScrollReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    const elements = document.querySelectorAll(".reveal");
+    elements.forEach((el) => observer.observe(el));
+
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
+}
+
 function ServicesPage() {
   const { services } = Route.useLoaderData();
   const [filter, setFilter] = useState<(typeof categories)[number]>("All");
   const filtered = services.filter((s) => filter === "All" || s.category === filter);
   const faqItems = faqSections.find((section) => section.slug === "services")?.items ?? [];
+
+  useScrollReveal();
+
   const serviceSchema = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -89,17 +114,17 @@ function ServicesPage() {
         subtitle="From everyday glamour to once-in-a-lifetime bridal looks - every service crafted to perfection."
       />
 
-      <section className="bg-background py-16">
+      <section className="bg-background py-24 md:py-[120px] reveal">
         <div className="max-w-7xl mx-auto px-5 lg:px-10">
           <div className="flex flex-wrap gap-2 justify-center mb-12">
             {categories.map((c) => (
               <button
                 key={c}
                 onClick={() => setFilter(c)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
                   filter === c
                     ? "gradient-gold text-[var(--royal-deep)] shadow-gold"
-                    : "bg-card border border-border text-foreground/70 hover:border-[var(--gold)]"
+                    : "bg-card border border-border text-foreground/70 hover:border-gold"
                 }`}
               >
                 {c}
@@ -107,34 +132,34 @@ function ServicesPage() {
             ))}
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
             {filtered.length > 0 ? (
               filtered.map((s) => {
-                const Icon = iconMap[s.icon as keyof typeof iconMap];
+                const Icon = iconMap[s.icon as keyof typeof iconMap] ?? Sparkles;
                 return (
                   <div
                     key={s.title}
-                    className={`tilt-card bg-card rounded-3xl p-7 border border-border ${s.featured ? "gold-border" : ""}`}
+                    className={`tilt-card bg-card rounded-3xl p-7 border border-border ${s.featured ? "gold-border animate-pulse-gold-border" : ""}`}
                   >
                     {s.featured && (
-                      <div className="inline-block text-[10px] tracking-widest uppercase gradient-gold text-[var(--royal-deep)] px-3 py-1 rounded-full font-semibold mb-4">
+                      <div className="inline-block text-xs tracking-widest uppercase gradient-gold text-[var(--royal-deep)] px-3 py-1 rounded-full font-semibold mb-4">
                         Bridal Special
                       </div>
                     )}
                     <div className="w-14 h-14 rounded-2xl gradient-royal flex items-center justify-center mb-5">
-                      <Icon className="w-6 h-6 text-[var(--gold)]" />
+                      <Icon className="w-6 h-6 text-gold" />
                     </div>
-                    <div className="text-[10px] uppercase tracking-widest text-[var(--purple-deep)] mb-1">
+                    <div className="text-xs uppercase tracking-widest text-[var(--purple-deep)] mb-1">
                       {s.category}
                     </div>
                     <h3 className="font-display text-2xl text-[var(--royal)]">{s.title}</h3>
                     <p className="text-muted-foreground text-sm mt-2 leading-relaxed">{s.desc}</p>
                     <div className="flex items-center justify-between mt-6 pt-5 border-t border-border">
                       <div>
-                        <div className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                        <div className="text-xs uppercase tracking-widest text-muted-foreground">
                           Price
                         </div>
-                        <div className="font-display text-lg font-bold gradient-gold-text">
+                        <div className="font-display text-lg font-bold text-gold-safe">
                           {s.price}
                         </div>
                       </div>
@@ -148,7 +173,7 @@ function ServicesPage() {
                           service: s.title,
                         })
                       }
-                      className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[var(--royal)] hover:text-[var(--purple-deep)]"
+                      className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[var(--royal)] hover:text-[var(--purple-deep)] animate-hover-arrow"
                     >
                       Book Now <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
@@ -169,23 +194,23 @@ function ServicesPage() {
         <Link
           to="/booking"
           onClick={() => trackEvent("booking_cta_click", { location: "services_page_floating" })}
-          className="btn-luxe inline-flex items-center gap-2 px-6 py-3 rounded-full gradient-gold text-[var(--royal-deep)] font-semibold shadow-gold"
+          className="inline-flex h-11 items-center justify-center gap-2 px-7 py-2.5 rounded-[var(--radius-sm)] gradient-gold text-[var(--royal-deep)] font-semibold shadow-gold hover:shadow-luxury transition-all cursor-pointer"
         >
           Book Appointment <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
 
-      <section className="marble-bg py-16 md:py-20">
+      <section className="marble-bg py-24 md:py-[120px] reveal">
         <div className="max-w-7xl mx-auto px-5 lg:px-10">
           <div className="text-center max-w-2xl mx-auto mb-10">
-            <div className="text-xs tracking-[0.4em] uppercase text-[var(--purple-deep)]">
+            <div className="text-xs tracking-[0.4em] uppercase text-[var(--purple-deep)] font-semibold">
               Service FAQs
             </div>
             <h2 className="font-display text-4xl md:text-5xl text-[var(--royal)] mt-2">
-              Questions about <span className="gradient-gold-text italic">our services</span>
+              Questions about <span className="text-gold-safe italic">our services</span>
             </h2>
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
             {faqItems.length > 0 ? (
               faqItems.map((item) => (
                 <details

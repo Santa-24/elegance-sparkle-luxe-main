@@ -20,10 +20,6 @@ import interior4 from "../../assets/interior4.webp";
 
 import type { GalleryImage } from "./types";
 
-function getFileName(value: string) {
-  return value.split("?")[0].split("#")[0].split("/").pop() ?? value;
-}
-
 // Frontend gallery display data
 export const galleryImages: GalleryImage[] = [
   { src: bridal1, alt: "Editorial bridal look with traditional Odia styling", cat: "Bridal" },
@@ -50,17 +46,6 @@ export const galleryImages: GalleryImage[] = [
     cat: "Academy",
   },
 ];
-
-const galleryAssetMap = new Map(galleryImages.map((image) => [getFileName(image.src), image.src]));
-
-export function resolveGalleryImageSrc(value: string) {
-  const normalized = value.trim();
-  if (!normalized) return "";
-  if (/^(https?:|data:|blob:)/i.test(normalized)) return normalized;
-
-  const fileName = getFileName(normalized);
-  return galleryAssetMap.get(fileName) ?? normalized;
-}
 
 export const getGalleryByCategory = (category: string) => {
   return galleryImages.filter((img) => img.cat === category);

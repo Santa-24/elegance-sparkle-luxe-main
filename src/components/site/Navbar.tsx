@@ -15,14 +15,13 @@ const links = [
 ];
 
 function navLinkClass(active: boolean, mobile = false) {
-  const base = mobile
-    ? "block px-4 py-3 rounded-xl text-base font-medium transition-colors"
-    : "px-3.5 py-2 rounded-full text-sm font-medium transition-colors relative";
-
-  return `${base} ${
-    active
-      ? "text-[var(--royal)] bg-[var(--gold)]/10"
-      : "text-foreground/80 hover:text-[var(--royal)] hover:bg-muted"
+  if (mobile) {
+    return `block py-2 text-center font-display text-2xl tracking-[0.2em] uppercase transition-colors ${
+      active ? "text-[#c9a96e]" : "text-[#f9f5ef]/80 hover:text-[#c9a96e]"
+    }`;
+  }
+  return `font-body text-[10px] tracking-[0.25em] uppercase transition-colors relative py-1.5 ${
+    active ? "text-[#c9a96e]" : "text-[#f9f5ef]/75 hover:text-[#c9a96e]"
   }`;
 }
 
@@ -44,16 +43,19 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-background/85 backdrop-blur-xl border-b border-border shadow-soft"
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+        scrolled || open
+          ? "bg-[#0d0a07] border-b border-[#c9a96e]/15 backdrop-blur-md"
           : "bg-transparent"
       }`}
     >
-      <nav className="max-w-7xl mx-auto px-5 lg:px-10 min-h-[4.5rem] md:min-h-20 flex items-center justify-between">
-        <BrandLogo size="sm" showDecorations={false} />
+      <nav
+        className="max-w-7xl mx-auto px-5 lg:px-10 min-h-[4.5rem] md:min-h-20 flex items-center justify-between"
+        aria-label="Main navigation"
+      >
+        <BrandLogo />
 
-        <ul className="hidden lg:flex items-center gap-1">
+        <ul className="hidden lg:flex items-center gap-6">
           {links.map((l) => {
             const active = location.pathname === l.to;
             return (
@@ -61,7 +63,7 @@ export function Navbar() {
                 <Link to={l.to} className={navLinkClass(active)}>
                   {l.label}
                   {active && (
-                    <span className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-6 h-[2px] gradient-gold rounded-full" />
+                    <span className="absolute -bottom-1 left-0 right-0 h-[1.5px] bg-[#c9a96e]" />
                   )}
                 </Link>
               </li>
@@ -72,32 +74,26 @@ export function Navbar() {
         <div className="hidden lg:block">
           <Link
             to="/booking"
-            className="btn-luxe inline-flex items-center gap-2 px-5 py-2.5 rounded-full gradient-gold text-[var(--royal-deep)] font-semibold text-sm shadow-soft"
+            className="inline-flex h-10 items-center justify-center px-6 rounded-none bg-[#c9a96e] text-[#0d0a07] font-semibold text-[11px] tracking-[0.2em] uppercase hover:brightness-105 transition-all"
           >
-            Book Appointment
+            Book Now
           </Link>
         </div>
 
         <button
-          aria-label="Menu"
+          aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
-          aria-controls="mobile-navigation"
           onClick={() => setOpen((v) => !v)}
-          className="lg:hidden w-11 h-11 rounded-full bg-card border border-border flex items-center justify-center"
+          className="lg:hidden w-11 h-11 flex items-center justify-center text-[#c9a96e] z-50"
         >
-          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </nav>
 
-      {/* Mobile menu */}
-      <div
-        id="mobile-navigation"
-        className={`lg:hidden overflow-hidden transition-[max-height,opacity] duration-500 ${
-          open ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
-        }`}
-      >
-        <div className="px-5 pb-6 pt-2 bg-background/95 backdrop-blur-xl border-b border-border">
-          <ul className="flex flex-col gap-1">
+      {/* Mobile Full-Screen Menu Overlay */}
+      {open && (
+        <div className="lg:hidden fixed inset-0 z-40 bg-[#0d0a07] flex flex-col justify-center px-10 pt-20 animate-fade-in">
+          <ul className="flex flex-col items-center gap-8">
             {links.map((l) => {
               const active = location.pathname === l.to;
               return (
@@ -108,17 +104,17 @@ export function Navbar() {
                 </li>
               );
             })}
-            <li className="mt-2">
+            <li className="mt-4 w-full max-w-[280px]">
               <Link
                 to="/booking"
-                className="block text-center px-4 py-3 rounded-xl gradient-gold text-[var(--royal-deep)] font-semibold"
+                className="block text-center py-4 rounded-none bg-[#c9a96e] text-[#0d0a07] font-semibold tracking-[0.2em] text-xs uppercase"
               >
                 Book Appointment
               </Link>
             </li>
           </ul>
         </div>
-      </div>
+      )}
     </header>
   );
 }

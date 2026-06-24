@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { Check, Facebook, Instagram, Mail, MapPin, Phone, Send } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { StructuredData } from "@/components/seo/StructuredData";
@@ -31,7 +32,30 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
 });
 
+function useScrollReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    const elements = document.querySelectorAll(".reveal");
+    elements.forEach((el) => observer.observe(el));
+
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
+}
+
 function ContactPage() {
+  useScrollReveal();
   const siteContent = useSiteContent();
   const contact = siteContent?.contact;
   const social = siteContent?.social;
@@ -131,7 +155,7 @@ function ContactPage() {
         subtitle="We're here to answer every question - from bridal bookings to academy enrollment."
       />
 
-      <section className="bg-background py-16">
+      <section className="bg-background py-24 md:py-[120px] reveal">
         <div className="mx-auto grid max-w-7xl gap-10 px-5 lg:grid-cols-2 lg:px-10">
           <div className="bg-card rounded-3xl border border-border p-8 shadow-soft">
             <h2 className="font-display text-3xl text-[var(--royal)]">Get in touch</h2>
@@ -144,10 +168,10 @@ function ContactPage() {
                 className="group flex items-center gap-4 rounded-2xl bg-muted p-4 transition-colors hover:bg-[var(--gold)]/15"
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl gradient-royal">
-                  <Phone className="h-5 w-5 text-[var(--gold)]" />
+                  <Phone className="h-5 w-5 text-gold" />
                 </div>
                 <div>
-                  <div className="text-xs text-muted-foreground">Phone</div>
+                  <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Phone</div>
                   <div className="font-semibold text-foreground">{contactPhone}</div>
                 </div>
               </a>
@@ -157,19 +181,19 @@ function ContactPage() {
                 className="flex items-center gap-4 rounded-2xl bg-muted p-4 transition-colors hover:bg-[var(--gold)]/15"
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl gradient-royal">
-                  <Mail className="h-5 w-5 text-[var(--gold)]" />
+                  <Mail className="h-5 w-5 text-gold" />
                 </div>
                 <div>
-                  <div className="text-xs text-muted-foreground">Email</div>
+                  <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Email</div>
                   <div className="break-all font-semibold text-foreground">{contactEmail}</div>
                 </div>
               </a>
               <div className="flex items-center gap-4 rounded-2xl bg-muted p-4">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl gradient-royal">
-                  <MapPin className="h-5 w-5 text-[var(--gold)]" />
+                  <MapPin className="h-5 w-5 text-gold" />
                 </div>
                 <div>
-                  <div className="text-xs text-muted-foreground">Location</div>
+                  <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Location</div>
                   <div className="font-semibold text-foreground">{contactAddress}</div>
                 </div>
               </div>
@@ -179,14 +203,14 @@ function ContactPage() {
               <a
                 href={instagramUrl}
                 aria-label="Visit us on Instagram"
-                className="flex h-11 w-11 items-center justify-center rounded-full gradient-royal text-[var(--gold)] transition-transform hover:scale-110"
+                className="flex h-11 w-11 items-center justify-center rounded-full gradient-royal text-gold transition-transform hover:scale-110"
               >
                 <Instagram className="h-4 w-4" />
               </a>
               <a
                 href={facebookUrl}
                 aria-label="Visit us on Facebook"
-                className="flex h-11 w-11 items-center justify-center rounded-full gradient-royal text-[var(--gold)] transition-transform hover:scale-110"
+                className="flex h-11 w-11 items-center justify-center rounded-full gradient-royal text-gold transition-transform hover:scale-110"
               >
                 <Facebook className="h-4 w-4" />
               </a>
@@ -194,7 +218,7 @@ function ContactPage() {
                 <a
                   href={`https://wa.me/${whatsappNumber}`}
                   aria-label="Message us on WhatsApp"
-                  className="flex h-11 w-11 items-center justify-center rounded-full gradient-royal text-[var(--gold)] transition-transform hover:scale-110"
+                  className="flex h-11 w-11 items-center justify-center rounded-full gradient-royal text-gold transition-transform hover:scale-110"
                 >
                   <Phone className="h-4 w-4" />
                 </a>
@@ -224,33 +248,52 @@ function ContactPage() {
             />
 
             <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field
-                label="Your Name"
-                value={form.name}
-                onChange={(value) => setForm({ ...form, name: value })}
-                required
-              />
-              <Field
-                label="Phone"
-                value={form.phone}
-                onChange={(value) => setForm({ ...form, phone: value })}
-                required
-              />
-              <Field
-                label="Email"
-                type="email"
-                value={form.email}
-                onChange={(value) => setForm({ ...form, email: value })}
-                className="sm:col-span-2"
-              />
-              <div className="sm:col-span-2">
-                <label className="text-xs uppercase tracking-widest text-muted-foreground">
+              <div className="space-y-1.5">
+                <label htmlFor="contact-name" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                  Your Name *
+                </label>
+                <Input
+                  id="contact-name"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label htmlFor="contact-phone" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                  Phone *
+                </label>
+                <Input
+                  id="contact-phone"
+                  type="tel"
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div className="sm:col-span-2 space-y-1.5">
+                <label htmlFor="contact-email" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                  Email
+                </label>
+                <Input
+                  id="contact-email"
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                />
+              </div>
+
+              <div className="sm:col-span-2 space-y-1.5">
+                <label htmlFor="service-select" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
                   Service
                 </label>
                 <select
+                  id="service-select"
                   value={form.service}
                   onChange={(event) => setForm({ ...form, service: event.target.value })}
-                  className="mt-1.5 w-full rounded-xl border border-transparent bg-muted px-4 py-3 text-sm focus:border-[var(--gold)] focus:outline-none"
+                  className="w-full bg-card rounded-lg px-4 py-3 text-[15px] border border-input shadow-sm transition-all duration-200 hover:border-gold/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold focus-visible:border-gold"
                 >
                   <option value="">Select a service</option>
                   <option>Bridal Makeup</option>
@@ -261,15 +304,17 @@ function ContactPage() {
                   <option>Other</option>
                 </select>
               </div>
-              <div className="sm:col-span-2">
-                <label className="text-xs uppercase tracking-widest text-muted-foreground">
+
+              <div className="sm:col-span-2 space-y-1.5">
+                <label htmlFor="message-textarea" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
                   Message
                 </label>
                 <textarea
+                  id="message-textarea"
                   rows={4}
                   value={form.message}
                   onChange={(event) => setForm({ ...form, message: event.target.value })}
-                  className="mt-1.5 w-full rounded-xl border border-transparent bg-muted px-4 py-3 text-sm focus:border-[var(--gold)] focus:outline-none"
+                  className="w-full bg-card rounded-lg px-4 py-3 text-[15px] border border-input shadow-sm transition-all duration-200 hover:border-gold/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold focus-visible:border-gold"
                   placeholder="Tell us about your event or needs..."
                 />
               </div>
@@ -281,7 +326,7 @@ function ContactPage() {
               onClickCapture={() =>
                 trackEvent("contact_submit_click", { location: "contact_form" })
               }
-              className="btn-luxe mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[var(--gold)] to-[#d4af37] px-6 py-3.5 font-semibold text-[var(--royal-deep)] shadow-gold"
+              className="btn-luxe mt-6 flex w-full items-center justify-center gap-2 rounded-[var(--radius-sm)] gradient-gold px-6 py-3.5 font-semibold text-[var(--royal-deep)] shadow-gold hover:shadow-luxury transition-all cursor-pointer"
             >
               {isSubmitting ? (
                 <>Sending...</>
@@ -300,11 +345,11 @@ function ContactPage() {
         </div>
       </section>
 
-      <section className="marble-bg py-16">
+      <section className="marble-bg py-24 md:py-[120px] reveal">
         <div className="mx-auto max-w-5xl px-5 lg:px-10">
           <div className="text-center">
-            <div className="text-xs uppercase tracking-[0.4em] text-[var(--purple-deep)]">FAQs</div>
-            <h2 className="mt-2 font-display text-3xl md:text-4xl text-[var(--royal)]">
+            <div className="text-xs uppercase tracking-[0.4em] text-[var(--purple-deep)] font-semibold">FAQs</div>
+            <h2 className="mt-2 font-display text-4xl md:text-5xl text-[var(--royal)]">
               Questions we hear most often
             </h2>
             <p className="mt-3 text-sm md:text-base text-muted-foreground">
@@ -312,7 +357,7 @@ function ContactPage() {
             </p>
           </div>
 
-          <div className="mt-10 grid gap-4 md:grid-cols-2">
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
             {[
               {
                 q: "Do you handle bridal makeup and draping together?",
@@ -343,37 +388,5 @@ function ContactPage() {
         </div>
       </section>
     </SiteLayout>
-  );
-}
-
-function Field({
-  label,
-  value,
-  onChange,
-  type = "text",
-  required,
-  className = "",
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  type?: string;
-  required?: boolean;
-  className?: string;
-}) {
-  return (
-    <div className={className}>
-      <label className="text-xs uppercase tracking-widest text-muted-foreground">
-        {label}
-        {required && " *"}
-      </label>
-      <input
-        type={type}
-        value={value}
-        required={required}
-        onChange={(event) => onChange(event.target.value)}
-        className="mt-1.5 w-full rounded-xl border border-transparent bg-muted px-4 py-3 text-sm focus:border-[var(--gold)] focus:outline-none"
-      />
-    </div>
   );
 }

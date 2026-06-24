@@ -1,116 +1,242 @@
-# Elegance Makeover & Academy
+<div align="center">
 
-Premium bridal makeup, beauty parlour, and academy website for Elegance Makeover & Academy in Jajpur Road, Odisha.
+# 📦 Elegance Makeover & Academy
 
-## Overview
+> A premium bridal makeup, beauty parlour, and academy website built for Elegance Makeover & Academy in Jajpur Road, Odisha.
+> It includes a polished public-facing site, a Supabase-backed content system, and a secure admin dashboard for managing services, gallery, bookings, and more.
 
-This project includes:
+![License](https://img.shields.io/badge/license-UNLICENSED-lightgrey.svg)
+![Version](https://img.shields.io/badge/version-1.0.0-green.svg)
+![Build](https://img.shields.io/badge/build-passing-brightgreen.svg)
 
-- A public marketing site
-- A booking and contact flow
-- A private admin dashboard
-- Supabase-backed content management
-- SEO metadata, sitemap, and structured data
-- A Render-ready Node server wrapper for production deployment
+</div>
 
-## Tech Stack
+---
 
-- TanStack Start
-- React 19
-- Vite 7
-- TypeScript
-- Tailwind CSS 4
-- Supabase
+## 📋 Table of Contents
 
-## Features
+- [Overview](#overview)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Environment Variables](#environment-variables)
+- [Running Locally](#running-locally)
+- [Build](#build)
+- [Deployment](#deployment)
+- [Database](#database)
+- [Testing](#testing)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
+- [Author](#author)
 
-- Home, about, services, gallery, pricing, booking, contact, FAQ, blog, offers, testimonials, and service areas pages
-- Admin dashboard for services, gallery, bookings, offers, pricing, blog content, SEO, and settings
-- Honeypot-based spam protection on forms
-- Server-side admin authentication using environment variables
+---
 
-## Scripts
+## 🔍 Overview
 
-```bash
-npm run dev
-npm run build
-npm start
-npm run lint
-npm run format
+Elegance Makeover & Academy is a modern salon and academy website designed to showcase bridal makeup, parlour services, gallery work, offers, testimonials, and academy content in one polished experience. The public site is optimized for discovery, branded search, and local visibility around Jajpur Road, Odisha.
+
+The app also includes an admin dashboard for managing bookings, services, gallery entries, offers, testimonials, advertisements, SEO content, and other site data stored in Supabase. It is built as a route-driven React application with server-side functions for content access, authentication, and form submissions.
+
+---
+
+## ✨ Features
+
+- ✅ Public home page with luxury branding, hero content, service highlights, gallery previews, offers, testimonials, and local coverage
+- ✅ Dedicated pages for services, gallery, pricing, booking, contact, FAQ, blog, about, and service areas
+- ✅ Admin dashboard for managing bookings, services, gallery items, testimonials, offers, pricing packages, ads, about content, contact settings, SEO, and more
+- ✅ Supabase-backed CMS and database layer for live content updates
+- ✅ Booking and contact forms with honeypot spam protection
+- ✅ SEO-friendly metadata, canonical URLs, structured data, sitemap route, and social sharing tags
+- ✅ Server-side session-based admin authentication using environment-configured credentials
+- ✅ Responsive UI built with modern React components and Tailwind CSS
+
+---
+
+## 🛠️ Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| Language | TypeScript 5.x |
+| Framework | TanStack Start + React 19 |
+| Build Tool | Vite 7 |
+| Styling | Tailwind CSS 4 |
+| UI Primitives | Radix UI |
+| Forms / Validation | React Hook Form, Zod |
+| Data / CMS | Supabase |
+| Analytics | Google Analytics 4, Microsoft Clarity |
+| Spam Protection | Honeypot + rate limiting |
+| Icons | Lucide React |
+| Testing | No test runner is configured in the repository |
+
+---
+
+## 🏗️ Architecture
+
+The project uses a route-based React architecture powered by TanStack Start. Public pages live under `src/routes`, while reusable UI, SEO helpers, security utilities, content loaders, and API/server functions are split into dedicated folders under `src/components`, `src/lib`, and `src/admin`.
+
+The frontend renders a public website and an admin dashboard from the same codebase. Server functions handle bookings, contact submissions, admin authentication, and content CRUD operations, while Supabase stores the persistent content and operational data. SEO metadata and structured data are assembled at the route level so each page can present strong search and social sharing signals.
+
+---
+
+## 📁 Project Structure
+
+```text
+elegance-sparkle-luxe-main/
+├── docs/
+│   └── schema.sql
+├── public/
+│   ├── favicon.svg
+│   ├── og-image.svg
+│   └── robots.txt
+├── src/
+│   ├── admin/
+│   │   ├── AdminPage.tsx
+│   │   ├── api/
+│   │   ├── data.ts
+│   │   ├── types.ts
+│   │   └── validators.ts
+│   ├── components/
+│   │   ├── seo/
+│   │   ├── security/
+│   │   ├── site/
+│   │   └── ui/
+│   ├── lib/
+│   │   ├── api/
+│   │   ├── config/
+│   │   ├── content/
+│   │   ├── data/
+│   │   ├── security/
+│   │   ├── seo.ts
+│   │   └── supabase.server.ts
+│   └── routes/
+│       ├── about.tsx
+│       ├── admin.tsx
+│       ├── blog.tsx
+│       ├── blog.$slug.tsx
+│       ├── booking.tsx
+│       ├── contact.tsx
+│       ├── faq.tsx
+│       ├── gallery.tsx
+│       ├── index.tsx
+│       ├── offers.tsx
+│       ├── pricing.tsx
+│       ├── service-areas.tsx
+│       ├── services.tsx
+│       ├── sitemap[.]xml.ts
+│       └── testimonials.tsx
+├── .env
+├── .env.example
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+└── README.md
 ```
 
-## Local Setup
+---
 
-1. Install dependencies:
+## ✅ Prerequisites
+
+- Node.js 18+ or 20+
+- npm
+- A Supabase project with the schema from `docs/schema.sql`
+
+---
+
+## 🚀 Installation
 
 ```bash
+# 1. Clone the repository
+git clone <your-repo-url>
+cd elegance-sparkle-luxe-main
+
+# 2. Install dependencies
 npm install
+
+# 3. Configure environment variables
+copy .env.example .env
+# Edit .env with your own values
+
+# 4. Set up the database
+# Apply docs/schema.sql to your Supabase database
 ```
 
-2. Create `.env` from `.env.example` and fill in the values.
+---
 
-3. Apply `docs/schema.sql` to your Supabase project.
+## 🔐 Environment Variables
 
-4. Start the dev server:
+Create a `.env` file in the project root.
+
+| Variable | Description | Required | Default |
+|----------|-------------|----------|---------|
+| `ADMIN_SESSION_SECRET` | Secret used to sign the admin session cookie | ✅ Yes | None |
+| `ADMIN_EMAIL` | Email used for admin panel login | ✅ Yes | None |
+| `ADMIN_PASSWORD` | Password used for admin panel login | ✅ Yes | None |
+| `SESSION_SECRET` | Session encryption/signing secret | ✅ Yes | None |
+| `JWT_SECRET` | Additional server security secret used by the app | ✅ Yes | None |
+| `SUPABASE_URL` | Supabase project URL | ✅ Yes | None |
+| `SUPABASE_ANON_KEY` | Supabase anonymous/public key | ✅ Yes | None |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key for server-side access | ✅ Yes | None |
+| `SUPABASE_MEDIA_BUCKET` | Storage bucket used for admin media uploads | ⚪ No | `cms-media` |
+| `VITE_CONTACT_PHONE` | Public contact phone shown on the site | ⚪ No | `+91 92652 00523` |
+| `VITE_CONTACT_EMAIL` | Public contact email shown on the site | ⚪ No | `hello@example.com` |
+| `VITE_CONTACT_ADDRESS` | Public business address | ⚪ No | `Jajpur Road, Odisha, India` |
+| `VITE_CONTACT_HOURS` | Public opening hours | ⚪ No | `Mon - Sun | 10:00 AM - 8:00 PM` |
+| `VITE_WHATSAPP_NUMBER` | WhatsApp number used in the public UI | ⚪ No | Derived from contact phone |
+| `VITE_SITE_URL` | Canonical site URL used for SEO links | ⚪ No | Empty |
+| `VITE_SITE_NAME` | Public site / brand name | ⚪ No | `Elegance Makeover & Academy` |
+| `VITE_ADMIN_EMAIL` | Prefilled admin email in the login form | ⚪ No | `elegancemakeover.2021@gmail.com` |
+| `VITE_GA4_ID` | Google Analytics 4 measurement ID | ⚪ No | Empty |
+| `VITE_CLARITY_ID` | Microsoft Clarity project ID | ⚪ No | Empty |
+| `VITE_INSTAGRAM_URL` | Instagram profile URL | ⚪ No | `#` |
+| `VITE_FACEBOOK_URL` | Facebook page URL | ⚪ No | `#` |
+
+---
+
+## 💻 Running Locally
 
 ```bash
 npm run dev
 ```
 
-## Environment Variables
+Visit: `http://localhost:5173`
 
-Required:
+---
 
-- `ADMIN_SESSION_SECRET`
-- `ADMIN_EMAIL`
-- `ADMIN_PASSWORD`
-- `SESSION_SECRET`
-- `JWT_SECRET`
-- `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-
-Optional:
-
-- `SUPABASE_MEDIA_BUCKET`
-- `VITE_SITE_URL`
-- `VITE_SITE_NAME`
-- `VITE_CONTACT_PHONE`
-- `VITE_CONTACT_EMAIL`
-- `VITE_CONTACT_ADDRESS`
-- `VITE_CONTACT_HOURS`
-- `VITE_WHATSAPP_NUMBER`
-- `VITE_ADMIN_EMAIL`
-- `VITE_GA4_ID`
-- `VITE_CLARITY_ID`
-- `VITE_INSTAGRAM_URL`
-- `VITE_FACEBOOK_URL`
-
-## Production Build
+## 📦 Build
 
 ```bash
-npm install && npm run build
+npm run build
 ```
 
-Build output:
-
+Output directories:
 - `dist/client`
-- `dist/server/server.js`
+- `dist/server`
 
-## Render Deployment
+---
 
-Use a Render Web Service with:
+## 🌐 Deployment
 
-- Build Command: `npm install && npm run build`
-- Start Command: `npm start`
-- Root Directory: leave blank
-- Branch: `main`
+This project builds as a TanStack Start app with separate client and server outputs. Deploy it to a Node-compatible hosting platform that can serve the generated server bundle and static client assets.
 
-`npm start` runs `server.mjs`, which opens an HTTP server on `process.env.PORT || 3000`, serves static assets from `dist/client`, and forwards SSR requests to TanStack Start.
+Typical deployment flow:
 
-## Database
+```bash
+npm run build
+```
 
-The schema lives in `docs/schema.sql` and includes tables for:
+Then deploy the generated `dist/` output along with the required environment variables.
+
+---
+
+## 🗃️ Database
+
+**Database:** Supabase PostgreSQL
+
+Main tables and objects defined in `docs/schema.sql` include:
 
 - `admin_users`
 - `services`
@@ -120,40 +246,86 @@ The schema lives in `docs/schema.sql` and includes tables for:
 - `advertisements`
 - `bookings`
 - `contact_messages`
-- `pricing_packages`
-- `hero_content`
-- `about_content`
-- `contact_settings`
-- `social_links`
-- `seo_settings`
-- `service_areas`
-- `blog_posts`
-- `blog_categories`
-- `blog_authors`
 - `rate_limits`
 - `audit_logs`
 - `notifications`
 - `customer_preferences`
 - `email_templates`
+- `hero_content`
+- `about_content`
+- `contact_settings`
+- `social_links`
+- `seo_settings`
+- `pricing_packages`
+- `service_areas`
+- `blog_categories`
+- `blog_authors`
+- `blog_posts`
 
-## Troubleshooting
+The schema also includes helper functions, views, and row-level security policies for admin access and operational data management.
 
-### App exits early on Render
+---
 
-Use `npm start` as the Start Command. Do not start the app with `node dist/server/server.js` directly on Render, because that file is a fetch handler and not a listening HTTP server.
+## 🧪 Testing
 
-### Admin login fails
+No automated test runner is configured in `package.json`.
 
-Check `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `ADMIN_SESSION_SECRET`, `SESSION_SECRET`, and `JWT_SECRET`.
+Available quality commands:
 
-### Booking or contact forms fail
+```bash
+# Lint the codebase
+npm run lint
 
-Check the Supabase environment variables and ensure `docs/schema.sql` has been applied.
+# Format the codebase
+npm run format
+```
 
-### Media uploads fail
+---
 
-Check `SUPABASE_MEDIA_BUCKET` and `SUPABASE_SERVICE_ROLE_KEY`.
+## 🔧 Troubleshooting
 
-## License
+**Issue: Admin login fails**
+```bash
+# Check these values in .env
+ADMIN_EMAIL
+ADMIN_PASSWORD
+ADMIN_SESSION_SECRET
+SESSION_SECRET
+JWT_SECRET
+```
 
-This project was built as a custom client engagement.
+**Issue: Booking or contact forms fail to submit**
+> Confirm that your Supabase credentials are valid and that the schema from `docs/schema.sql` has been applied. Booking and contact submissions now rely on honeypot checks and rate limiting rather than CAPTCHA keys.
+
+**Issue: Media upload errors from the admin panel**
+> Verify that `SUPABASE_MEDIA_BUCKET` exists in Supabase Storage and that your `SUPABASE_SERVICE_ROLE_KEY` is valid.
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your branch: `git checkout -b feature/your-feature`
+3. Commit changes: `git commit -m 'Add your feature'`
+4. Push to branch: `git push origin feature/your-feature`
+5. Open a Pull Request
+
+Please follow the existing code style and include tests for new features where practical.
+
+---
+
+## 📄 License
+
+This repository does not currently include a license file. If you plan to publish or share this project, add an appropriate `LICENSE` file first.
+
+---
+
+## 👤 Author
+
+**Rasmirekha Swain**
+
+---
+
+<div align="center">
+⭐ Star this repo if you found it helpful!
+</div>

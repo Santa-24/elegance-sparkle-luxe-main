@@ -1,4 +1,5 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { CountdownTimer } from "@/components/site/CountdownTimer";
 import { Tag, Gift, ArrowRight } from "lucide-react";
@@ -6,6 +7,7 @@ import { StructuredData } from "@/components/seo/StructuredData";
 import { getSiteConfig } from "@/lib/site-config";
 import { getLiveOffersFn } from "@/lib/content/live.functions";
 import { buildBreadcrumbSchema, buildCanonicalUrl } from "@/lib/seo";
+import { getCountdownDays } from "@/lib/utils/formatting";
 
 const siteConfig = getSiteConfig();
 const canonicalUrl = buildCanonicalUrl(siteConfig.siteUrl, "/offers");
@@ -30,11 +32,36 @@ export const Route = createFileRoute("/offers")({
   component: OffersPage,
 });
 
+function useScrollReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    const elements = document.querySelectorAll(".reveal");
+    elements.forEach((el) => observer.observe(el));
+
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
+}
+
 function OffersPage() {
   const { offers } = Route.useLoaderData();
   const primaryOffer =
     offers.find((offer) => offer.discount || offer.title || offer.desc) ?? offers[0];
   const countdownDays = getCountdownDays(primaryOffer?.validity);
+
+  useScrollReveal();
+
   const offerSchema = {
     "@context": "https://schema.org",
     "@type": "OfferCatalog",
@@ -74,13 +101,13 @@ function OffersPage() {
         subtitle="Pamper yourself with our exclusive festive offers. Limited slots only."
       />
 
-      <section className="bg-background py-16">
+      <section className="bg-background py-24 md:py-[120px] reveal">
         <div className="max-w-7xl mx-auto px-5 lg:px-10">
-          <div className="relative overflow-hidden rounded-[2rem] gradient-luxe p-8 md:p-14 text-marble mb-12">
+          <div className="relative overflow-hidden rounded-[2rem] gradient-luxe p-8 md:p-14 text-marble mb-12 shadow-luxury">
             <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full opacity-30 blur-3xl gradient-gold" />
             <div className="relative grid md:grid-cols-2 gap-8 items-center">
               <div>
-                <div className="inline-block text-[10px] tracking-[0.4em] uppercase text-[var(--gold)] mb-3">
+                <div className="inline-block text-xs tracking-[0.4em] uppercase text-gold mb-3">
                   Headline Offer
                 </div>
                 <h2 className="font-display text-4xl md:text-6xl leading-tight">
@@ -109,7 +136,7 @@ function OffersPage() {
                       href={`https://wa.me/${siteConfig.whatsappNumber}?text=I'd%20like%20to%20claim%20${encodeURIComponent(primaryOffer.title)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn-luxe mt-6 inline-flex items-center gap-2 px-6 py-3 rounded-full gradient-gold text-[var(--royal-deep)] font-semibold shadow-gold"
+                      className="inline-flex h-11 items-center justify-center gap-2 px-7 py-2.5 rounded-[var(--radius-sm)] gradient-gold text-[var(--royal-deep)] font-semibold shadow-gold hover:shadow-luxury transition-all cursor-pointer mt-6"
                     >
                       Claim Offer on WhatsApp <ArrowRight className="w-4 h-4" />
                     </a>
@@ -133,15 +160,15 @@ function OffersPage() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
             {offers.length > 0 ? (
               offers.map((o, i) => (
-                <div key={i} className="gold-border p-7 tilt-card">
+                <div key={i} className="gold-border p-7 tilt-card bg-card shadow-soft">
                   <div className="flex items-start justify-between mb-4">
                     <div className="w-12 h-12 rounded-2xl gradient-royal flex items-center justify-center">
-                      <Tag className="w-5 h-5 text-[var(--gold)]" />
+                      <Tag className="w-5 h-5 text-gold" />
                     </div>
-                    <div className="font-display text-2xl font-bold gradient-gold-text">
+                    <div className="font-display text-2xl font-bold text-gold-safe">
                       {o.discount}
                     </div>
                   </div>
@@ -155,7 +182,7 @@ function OffersPage() {
                       href={`https://wa.me/${siteConfig.whatsappNumber}?text=I'd%20like%20to%20claim%20${encodeURIComponent(o.title)}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs font-bold text-[var(--royal)] hover:text-[var(--purple-deep)] flex items-center gap-1"
+                      className="text-xs font-bold text-[var(--royal)] hover:text-[var(--purple-deep)] flex items-center gap-1 cursor-pointer"
                     >
                       <Gift className="w-3.5 h-3.5" /> Claim
                     </a>
@@ -172,23 +199,4 @@ function OffersPage() {
       </section>
     </SiteLayout>
   );
-}
-
-function getCountdownDays(validity?: string) {
-  if (!validity) {
-    return 15;
-  }
-
-  const dates = validity.match(/\d{4}-\d{2}-\d{2}/g);
-  const endDate = dates?.[dates.length - 1];
-  if (!endDate) {
-    return 15;
-  }
-
-  const target = new Date(`${endDate}T23:59:59`);
-  if (Number.isNaN(target.getTime())) {
-    return 15;
-  }
-
-  return Math.max(1, Math.ceil((target.getTime() - Date.now()) / 86400000));
 }

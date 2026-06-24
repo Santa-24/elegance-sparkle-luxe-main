@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Check, Download, Star } from "lucide-react";
 
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
@@ -30,8 +31,30 @@ export const Route = createFileRoute("/pricing")({
   component: PricingPage,
 });
 
+function useScrollReveal() {
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    const elements = document.querySelectorAll(".reveal");
+    elements.forEach((el) => observer.observe(el));
+
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
+}
+
 function PricingPage() {
-  const { pricingPackages } = Route.useLoaderData() as {
+  const { pricingPackages: allPricingPackages } = Route.useLoaderData() as {
     pricingPackages: Array<{
       name: string;
       price: number;
@@ -39,6 +62,20 @@ function PricingPage() {
       features: string[];
     }>;
   };
+
+  // Deduplicate pricing packages by name to prevent duplicate cards
+  const pricingPackages: typeof allPricingPackages = [];
+  const seenNames = new Set<string>();
+  for (const pkg of allPricingPackages) {
+    if (!seenNames.has(pkg.name)) {
+      seenNames.add(pkg.name);
+      pricingPackages.push(pkg);
+    }
+  }
+
+  const featureRows = Array.from(new Set(pricingPackages.flatMap((pkg) => pkg.features)));
+
+  useScrollReveal();
 
   const pricingSchema = {
     "@context": "https://schema.org",
@@ -84,10 +121,10 @@ function PricingPage() {
         subtitle="Every package includes premium products, expert artistry and a stress-free experience."
       />
 
-      <section className="relative overflow-hidden bg-background py-16 md:py-20">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[linear-gradient(180deg,rgba(238,222,188,0.2),transparent)]" />
+      <section className="relative overflow-hidden bg-background py-24 md:py-[120px] reveal">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-gold-soft/10 to-transparent" />
         <div className="mx-auto max-w-7xl px-5 lg:px-10">
-          <div className="grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid items-stretch gap-8 md:gap-12 sm:grid-cols-2 lg:grid-cols-4">
             {pricingPackages.map((pkg) => (
               <div
                 key={pkg.name}
@@ -98,7 +135,7 @@ function PricingPage() {
                 }`}
               >
                 {pkg.popular ? (
-                  <div className="absolute left-1/2 top-0 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-full bg-[var(--gold)] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-[var(--royal-deep)] shadow-gold">
+                  <div className="absolute left-1/2 top-0 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-full bg-[var(--gold)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[var(--royal-deep)] shadow-gold">
                     <Star className="h-3 w-3" /> Most Popular
                   </div>
                 ) : null}
@@ -121,7 +158,7 @@ function PricingPage() {
                   </div>
                   <div
                     className={`font-display text-4xl font-bold ${
-                      pkg.popular ? "text-[var(--gold)]" : "gradient-gold-text"
+                      pkg.popular ? "text-[var(--gold)]" : "text-gold-safe"
                     }`}
                   >
                     Rs {pkg.price.toLocaleString("en-IN")}
@@ -147,10 +184,10 @@ function PricingPage() {
 
                 <Link
                   to="/booking"
-                  className={`mt-6 block rounded-full px-5 py-3 text-center font-semibold btn-luxe ${
+                  className={`mt-6 block rounded-[var(--radius-sm)] px-5 py-3 text-center font-semibold transition-all cursor-pointer ${
                     pkg.popular
-                      ? "gradient-gold text-[var(--royal-deep)] shadow-gold"
-                      : "border-2 border-[var(--royal)] text-[var(--royal)] hover:border-transparent hover:text-[var(--royal-deep)] hover:gradient-gold"
+                      ? "gradient-gold text-[var(--royal-deep)] shadow-gold hover:shadow-luxury"
+                      : "border border-gold text-gold-safe hover:gradient-gold hover:text-[var(--royal-deep)] hover:border-transparent"
                   }`}
                 >
                   Book This Package
@@ -164,10 +201,87 @@ function PricingPage() {
             <button
               type="button"
               disabled
-              className="btn-luxe inline-flex items-center gap-2 rounded-full border-2 border-dashed border-[var(--gold)] bg-card px-6 py-3 font-semibold text-[var(--royal)] opacity-60 shadow-soft"
+              className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-dashed border-gold bg-card px-6 py-3 font-semibold text-gold-safe opacity-60 shadow-soft cursor-not-allowed"
             >
               <Download className="h-4 w-4" /> Brochure coming soon
             </button>
+          </div>
+
+          <div className="mt-16 overflow-hidden rounded-[2rem] border border-border bg-card shadow-soft">
+            <div className="hidden overflow-x-auto md:block">
+              <table className="w-full min-w-[720px] text-sm">
+                <thead className="gradient-royal text-marble">
+                  <tr>
+                    <th className="border-b border-white/10 p-4 text-left font-display text-base">
+                      Inclusions
+                    </th>
+                    {pricingPackages.map((pkg) => (
+                      <th
+                        key={pkg.name}
+                        className="border-b border-white/10 p-4 font-display text-base text-[var(--gold)]"
+                      >
+                        {pkg.name}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="bg-card">
+                  {featureRows.map((feature, index) => (
+                    <tr
+                      key={feature}
+                      className={`border-t border-border ${index % 2 === 0 ? "bg-muted/20" : ""}`}
+                    >
+                      <td className="p-4 align-middle font-medium text-foreground">{feature}</td>
+                      {pricingPackages.map((pkg) => (
+                        <td key={`${pkg.name}-${feature}`} className="p-4 align-middle text-center">
+                          {pkg.features.some(
+                            (item) => item.toLowerCase() === feature.toLowerCase(),
+                          ) ? (
+                            <Check className="mx-auto h-4 w-4 text-[var(--gold)]" />
+                          ) : (
+                            <span className="text-muted-foreground/40">—</span>
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="grid gap-4 p-5 md:hidden">
+              {pricingPackages.map((pkg, index) => (
+                <article
+                  key={pkg.name}
+                  className="rounded-2xl border border-border bg-background p-5"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <div className="text-xs uppercase tracking-widest text-[var(--purple-deep)]">
+                        Package {index + 1}
+                      </div>
+                      <h3 className="mt-1 font-display text-2xl text-[var(--royal)]">{pkg.name}</h3>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs text-muted-foreground line-through">
+                        Rs {(pkg.price + 1500).toLocaleString("en-IN")}
+                      </div>
+                      <div className="font-display text-2xl font-bold text-gold-safe">
+                        Rs {pkg.price.toLocaleString("en-IN")}
+                      </div>
+                    </div>
+                  </div>
+                  <ul className="mt-5 space-y-2 text-sm">
+                    {pkg.features.map((feature) => (
+                      <li key={feature} className="flex items-start gap-2">
+                        <Check className="mt-0.5 h-4 w-4 text-gold" />
+                        <span className="font-medium text-foreground/85">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </section>

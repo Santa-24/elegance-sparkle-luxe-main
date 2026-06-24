@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import { Facebook, Instagram, Mail, MapPin, Phone } from "lucide-react";
-
 import { BrandLogo } from "./BrandLogo";
 import { getSiteConfig } from "@/lib/site-config";
 import { useSiteContent } from "@/lib/content/site-content";
@@ -37,32 +36,27 @@ export function Footer() {
   const phone = contact?.phone || siteConfig.contactPhone;
   const email = contact?.email || siteConfig.contactEmail;
   const address = contact?.address || siteConfig.contactAddress;
-  const whatsappNumber =
-    contact?.whatsapp?.replace(/\D/g, "") ||
-    social?.whatsapp?.replace(/\D/g, "") ||
-    siteConfig.whatsappNumber;
 
   return (
-    <footer className="relative overflow-hidden gradient-luxe text-marble">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(212,175,55,0.14),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.08),transparent_24%)]" />
-      <div className="relative z-10 mx-auto max-w-7xl px-5 py-14 sm:py-16 lg:px-10">
-        <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-4">
-          <div className="space-y-5 text-center md:text-left">
+    <footer className="relative bg-[#090705] text-[#f9f5ef] border-t border-[#c9a96e]/15">
+      <div className="mx-auto max-w-7xl px-5 py-16 lg:px-10">
+        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
+          {/* Column 1: Brand + Tagline */}
+          <div className="space-y-6 text-center md:text-left">
             <BrandLogo />
-            <p className="mx-auto max-w-sm text-sm leading-7 text-white/75 md:mx-0">
-              Premium bridal makeup, beauty services, and academy training for clients across Jajpur
-              Road and nearby Odisha service areas.
+            <p className="mx-auto max-w-sm text-sm leading-relaxed text-[#f9f5ef]/75 md:mx-0 font-body">
+              Premium bridal makeup, beauty parlour services, and professional academy training in Jajpur Road, Odisha. Crafting timeless looks with luxury imports.
             </p>
-            <div className="flex items-center justify-center gap-3 text-white/70 md:justify-start">
+            <div className="flex items-center justify-center gap-4 text-[#c9a96e]/85 md:justify-start">
               {instagramUrl ? (
                 <a
                   aria-label="Instagram"
                   href={instagramUrl}
                   rel="noreferrer"
                   target="_blank"
-                  className="rounded-full border border-white/15 p-2 transition hover:border-[var(--gold)] hover:text-[var(--gold)]"
+                  className="p-2 transition hover:text-[#c9a96e]"
                 >
-                  <Instagram className="h-4 w-4" />
+                  <Instagram className="h-5 w-5" />
                 </a>
               ) : null}
               {facebookUrl ? (
@@ -71,20 +65,23 @@ export function Footer() {
                   href={facebookUrl}
                   rel="noreferrer"
                   target="_blank"
-                  className="rounded-full border border-white/15 p-2 transition hover:border-[var(--gold)] hover:text-[var(--gold)]"
+                  className="p-2 transition hover:text-[#c9a96e]"
                 >
-                  <Facebook className="h-4 w-4" />
+                  <Facebook className="h-5 w-5" />
                 </a>
               ) : null}
             </div>
           </div>
 
+          {/* Column 2: Explore links */}
           <div className="text-center md:text-left">
-            <h4 className="mb-4 font-display text-lg text-[var(--gold)]">Explore</h4>
-            <ul className="space-y-2 text-sm">
+            <h4 className="mb-6 font-display text-xs font-bold tracking-[0.3em] uppercase text-[#c9a96e]">
+              Explore
+            </h4>
+            <ul className="grid grid-cols-2 gap-y-3 gap-x-4 text-xs tracking-wider uppercase font-body">
               {exploreLinks.map(([to, label]) => (
                 <li key={to}>
-                  <Link className="text-white/75 transition hover:text-[var(--gold)]" to={to}>
+                  <Link className="text-[#f9f5ef]/75 transition hover:text-[#c9a96e]" to={to}>
                     {label}
                   </Link>
                 </li>
@@ -92,50 +89,42 @@ export function Footer() {
             </ul>
           </div>
 
+          {/* Column 3: Contact info */}
           <div className="text-center md:text-left">
-            <h4 className="mb-4 font-display text-lg text-[var(--gold)]">Contact</h4>
-            <ul className="space-y-4 text-sm text-white/75">
-              <li className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[var(--gold)]" />
-                <span>{address}</span>
+            <h4 className="mb-6 font-display text-xs font-bold tracking-[0.3em] uppercase text-[#c9a96e]">
+              Contact Info
+            </h4>
+            <ul className="space-y-4 text-sm text-[#f9f5ef]/75 font-body">
+              <li className="flex items-start justify-center md:justify-start gap-3">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#c9a96e]" />
+                <span className="text-xs leading-relaxed">{address}</span>
               </li>
-              <li className="flex items-center gap-3">
-                <Phone className="h-4 w-4 shrink-0 text-[var(--gold)]" />
+              <li className="flex items-center justify-center md:justify-start gap-3">
+                <Phone className="h-4 w-4 shrink-0 text-[#c9a96e]" />
                 <a
-                  className="transition hover:text-[var(--gold)]"
+                  className="text-xs transition hover:text-[#c9a96e]"
                   href={`tel:${phone.replace(/\s+/g, "")}`}
                 >
                   {phone}
                 </a>
               </li>
-              <li className="flex items-center gap-3">
-                <Mail className="h-4 w-4 shrink-0 text-[var(--gold)]" />
-                <a className="transition hover:text-[var(--gold)]" href={`mailto:${email}`}>
+              <li className="flex items-center justify-center md:justify-start gap-3">
+                <Mail className="h-4 w-4 shrink-0 text-[#c9a96e]" />
+                <a className="text-xs transition hover:text-[#c9a96e]" href={`mailto:${email}`}>
                   {email}
                 </a>
               </li>
             </ul>
           </div>
-
-          <div className="text-center md:text-left">
-            <h4 className="mb-4 font-display text-lg text-[var(--gold)]">Service Areas</h4>
-            <ul className="space-y-2 text-sm text-white/75">
-              <li>Jajpur Road</li>
-              <li>Jajpur</li>
-              <li>Cuttack</li>
-              <li>Bhubaneswar</li>
-              <li>Bhadrak</li>
-              <li>Nearby Odisha regions</li>
-            </ul>
-          </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center gap-4 border-t border-white/10 pt-6 text-center text-sm text-white/60 md:flex-row md:justify-between md:text-left">
-          <p className="max-w-xl">
+        {/* Bottom border & Copyright */}
+        <div className="mt-16 pt-8 border-t border-[#c9a96e]/10 text-center text-xs tracking-wider uppercase text-[#f9f5ef]/40 flex flex-col md:flex-row md:justify-between gap-4">
+          <p>
             &copy; {new Date().getFullYear()} {companyName}. All rights reserved.
           </p>
-          <p className="max-w-xl">
-            Bridal beauty, academy learning, and premium salon experiences.
+          <p className="normal-case text-xxs tracking-normal italic text-[#f9f5ef]/30">
+            Timeless bridal beauty & professional academy training.
           </p>
         </div>
       </div>

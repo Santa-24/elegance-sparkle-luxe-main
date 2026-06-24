@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { Check, ChevronRight, ChevronLeft, Sparkles } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { appointmentSlots, workingHours } from "@/admin/data";
 import { createBookingRequest } from "@/lib/api/bookings.functions";
 import { trackEvent } from "@/lib/analytics";
@@ -174,42 +175,72 @@ function BookingPage() {
                 <h2 className="font-display text-2xl text-[var(--royal)]">Your Details</h2>
                 <p className="text-sm text-muted-foreground">So we know who to pamper.</p>
                 <div className="mt-6 space-y-4">
-                  <Input
-                    label="Full Name"
-                    value={data.name}
-                    onChange={(v) => {
-                      setData({ ...data, name: v });
-                      if (fieldErrors.name) {
-                        setFieldErrors((prev) => {
-                          const next = { ...prev };
-                          delete next.name;
-                          return next;
-                        });
-                      }
-                    }}
-                    error={fieldErrors.name}
-                  />
-                  <Input
-                    label="Phone Number"
-                    value={data.phone}
-                    onChange={(v) => {
-                      setData({ ...data, phone: v });
-                      if (fieldErrors.phone) {
-                        setFieldErrors((prev) => {
-                          const next = { ...prev };
-                          delete next.phone;
-                          return next;
-                        });
-                      }
-                    }}
-                    error={fieldErrors.phone}
-                  />
-                  <Input
-                    label="Email (optional)"
-                    type="email"
-                    value={data.email}
-                    onChange={(v) => setData({ ...data, email: v })}
-                  />
+                  <div className="space-y-1.5">
+                    <label htmlFor="name-input" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                      Full Name
+                    </label>
+                    <Input
+                      id="name-input"
+                      value={data.name}
+                      onChange={(e) => {
+                        setData({ ...data, name: e.target.value });
+                        if (fieldErrors.name) {
+                          setFieldErrors((prev) => {
+                            const next = { ...prev };
+                            delete next.name;
+                            return next;
+                          });
+                        }
+                      }}
+                      error={Boolean(fieldErrors.name)}
+                      aria-describedby={fieldErrors.name ? "name-error" : undefined}
+                    />
+                    {fieldErrors.name && (
+                      <p id="name-error" role="alert" aria-live="polite" className="mt-1.5 text-sm text-rose-600 font-medium">
+                        {fieldErrors.name}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label htmlFor="phone-input" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                      Phone Number
+                    </label>
+                    <Input
+                      id="phone-input"
+                      type="tel"
+                      value={data.phone}
+                      onChange={(e) => {
+                        setData({ ...data, phone: e.target.value });
+                        if (fieldErrors.phone) {
+                          setFieldErrors((prev) => {
+                            const next = { ...prev };
+                            delete next.phone;
+                            return next;
+                          });
+                        }
+                      }}
+                      error={Boolean(fieldErrors.phone)}
+                      aria-describedby={fieldErrors.phone ? "phone-error" : undefined}
+                    />
+                    {fieldErrors.phone && (
+                      <p id="phone-error" role="alert" aria-live="polite" className="mt-1.5 text-sm text-rose-600 font-medium">
+                        {fieldErrors.phone}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label htmlFor="email-input" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                      Email (optional)
+                    </label>
+                    <Input
+                      id="email-input"
+                      type="email"
+                      value={data.email}
+                      onChange={(e) => setData({ ...data, email: e.target.value })}
+                    />
+                  </div>
                 </div>
               </div>
             )}
@@ -257,23 +288,34 @@ function BookingPage() {
                   AM.
                 </p>
                 <div className="mt-6 space-y-4">
-                  <Input
-                    label="Preferred Date"
-                    type="date"
-                    value={data.date}
-                    min={getTodayForInput()}
-                    onChange={(v) => {
-                      setData({ ...data, date: v });
-                      if (fieldErrors.date) {
-                        setFieldErrors((prev) => {
-                          const next = { ...prev };
-                          delete next.date;
-                          return next;
-                        });
-                      }
-                    }}
-                    error={fieldErrors.date}
-                  />
+                  <div className="space-y-1.5">
+                    <label htmlFor="date-input" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                      Preferred Date
+                    </label>
+                    <Input
+                      id="date-input"
+                      type="date"
+                      value={data.date}
+                      min={getTodayForInput()}
+                      onChange={(e) => {
+                        setData({ ...data, date: e.target.value });
+                        if (fieldErrors.date) {
+                          setFieldErrors((prev) => {
+                            const next = { ...prev };
+                            delete next.date;
+                            return next;
+                          });
+                        }
+                      }}
+                      error={Boolean(fieldErrors.date)}
+                      aria-describedby={fieldErrors.date ? "date-error" : undefined}
+                    />
+                    {fieldErrors.date && (
+                      <p id="date-error" role="alert" aria-live="polite" className="mt-1.5 text-sm text-rose-600 font-medium">
+                        {fieldErrors.date}
+                      </p>
+                    )}
+                  </div>
                   <div>
                     <label className="text-xs uppercase tracking-widest text-muted-foreground">
                       Time Slot
@@ -325,13 +367,19 @@ function BookingPage() {
                   autoComplete="off"
                   className="sr-only"
                 />
-                <textarea
-                  rows={6}
-                  value={data.notes}
-                  onChange={(e) => setData({ ...data, notes: e.target.value })}
-                  placeholder="E.g. Reception look, preferred shades, allergies..."
-                  className="mt-4 w-full bg-muted rounded-xl px-4 py-3 text-sm border border-transparent focus:border-[var(--gold)] focus:outline-none"
-                />
+                <div className="mt-4 space-y-1.5">
+                  <label htmlFor="notes-textarea" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                    Notes / Preferences
+                  </label>
+                  <textarea
+                    id="notes-textarea"
+                    rows={6}
+                    value={data.notes}
+                    onChange={(e) => setData({ ...data, notes: e.target.value })}
+                    placeholder="E.g. Reception look, preferred shades, allergies..."
+                    className="w-full bg-card rounded-lg px-4 py-3 text-[15px] border border-input shadow-sm transition-all duration-200 hover:border-gold/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold focus-visible:border-gold"
+                  />
+                </div>
               </div>
             )}
 
@@ -349,7 +397,7 @@ function BookingPage() {
                   <div className="text-xs uppercase tracking-widest text-muted-foreground">
                     Booking ID
                   </div>
-                  <div className="font-display text-xl gradient-gold-text font-bold">
+                  <div className="font-display text-xl text-gold-safe font-bold">
                     {bookingId}
                   </div>
                 </div>
@@ -383,7 +431,7 @@ function BookingPage() {
                 <button
                   onClick={prev}
                   disabled={step === 1}
-                  className="px-5 py-2.5 rounded-full bg-muted text-foreground/80 disabled:opacity-40 flex items-center justify-center gap-2"
+                  className="px-5 py-2.5 rounded-full bg-muted text-foreground/80 disabled:opacity-40 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <ChevronLeft className="w-4 h-4" /> Back
                 </button>
@@ -395,7 +443,7 @@ function BookingPage() {
                       ? trackEvent("booking_step_submit_click", { step })
                       : trackEvent("booking_step_next_click", { step })
                   }
-                  className="btn-luxe px-6 py-2.5 rounded-full gradient-gold text-[var(--royal-deep)] font-semibold shadow-gold flex items-center justify-center gap-2"
+                  className="btn-luxe px-6 py-2.5 rounded-full gradient-gold text-[var(--royal-deep)] font-semibold shadow-gold flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {isSubmitting ? "Saving..." : step === 4 ? "Confirm Booking" : "Next"}{" "}
                   <ChevronRight className="w-4 h-4" />
@@ -415,7 +463,7 @@ function BookingPage() {
             </div>
             <h2 className="font-display text-4xl md:text-5xl text-[var(--royal)] mt-2">
               A few things to know before you{" "}
-              <span className="gradient-gold-text italic">confirm</span>
+              <span className="text-gold-safe italic">confirm</span>
             </h2>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
@@ -434,40 +482,5 @@ function BookingPage() {
         </div>
       </section>
     </SiteLayout>
-  );
-}
-
-function Input({
-  label,
-  value,
-  onChange,
-  type = "text",
-  min,
-  error,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  type?: string;
-  min?: string;
-  error?: string;
-}) {
-  return (
-    <div>
-      <label className="text-xs uppercase tracking-widest text-muted-foreground">{label}</label>
-      <input
-        type={type}
-        min={min}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        aria-invalid={Boolean(error)}
-        className={`mt-1.5 w-full rounded-xl px-4 py-3 text-sm outline-none transition focus:border-[var(--gold)] ${
-          error
-            ? "border border-rose-400 bg-rose-50 text-foreground focus:ring-2 focus:ring-rose-200"
-            : "border border-transparent bg-muted focus:outline-none"
-        }`}
-      />
-      {error ? <p className="mt-2 text-sm text-rose-600">{error}</p> : null}
-    </div>
   );
 }
