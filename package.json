@@ -8,6 +8,7 @@
     "build": "vite --configLoader runner build",
     "build:dev": "vite --configLoader runner build --mode development",
     "preview": "vite --configLoader runner preview",
+    "start": "node dist/server/server.js",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
