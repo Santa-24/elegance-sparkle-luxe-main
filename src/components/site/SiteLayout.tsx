@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { FloatingActions } from "./FloatingActions";
+import { CookieBanner } from "./CookieBanner";
 
 export function SiteLayout({ children }: { children: ReactNode }) {
   return (
@@ -11,6 +12,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <div className="flex-1 pt-20">{children}</div>
       <Footer />
       <FloatingActions />
+      <CookieBanner />
     </div>
   );
 }
