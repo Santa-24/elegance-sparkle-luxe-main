@@ -45,7 +45,8 @@ export function Footer() {
           <div className="space-y-6 text-center md:text-left">
             <BrandLogo />
             <p className="mx-auto max-w-sm text-sm leading-relaxed text-[#f9f5ef]/75 md:mx-0 font-body">
-              Premium bridal makeup, beauty parlour services, and professional academy training in Jajpur Road, Odisha. Crafting timeless looks with luxury imports.
+              Premium bridal makeup, beauty parlour services, and professional academy training in
+              Jajpur Road, Odisha. Crafting timeless looks with luxury imports.
             </p>
             <div className="flex items-center justify-center gap-4 text-[#c9a96e]/85 md:justify-start">
               {instagramUrl ? (

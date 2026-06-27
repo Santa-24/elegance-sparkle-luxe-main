@@ -48,7 +48,7 @@ function useScrollReveal() {
           }
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
     );
 
     const elements = document.querySelectorAll(".reveal");
@@ -100,18 +100,21 @@ function ServicesPage() {
     })),
   };
 
-  const faqSchema = faqItems.length > 0 ? {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": faqItems.map((item) => ({
-      "@type": "Question",
-      "name": item.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": item.answer
-      }
-    }))
-  } : null;
+  const faqSchema =
+    faqItems.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqItems.map((item) => ({
+            "@type": "Question",
+            name: item.question,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: item.answer,
+            },
+          })),
+        }
+      : null;
 
   return (
     <SiteLayout>
@@ -188,10 +191,21 @@ function ServicesPage() {
                             Pricing & Courses
                           </div>
                           <div className="text-sm font-medium space-y-1.5 text-foreground/90 font-body">
-                            <div>Basic Course: <span className="text-gold-safe font-bold">₹15,000</span> · 3 months</div>
-                            <div>Advanced Course: <span className="text-gold-safe font-bold">₹35,000</span> · 6 months</div>
-                            <div>Pro Bridal Master: <span className="text-gold-safe font-bold">₹50,000</span> · 4 months</div>
-                            <div className="text-xs text-muted-foreground mt-2 flex items-center gap-1 font-body">📞 Call or WhatsApp for enrollment</div>
+                            <div>
+                              Basic Course:{" "}
+                              <span className="text-gold-safe font-bold">₹15,000</span> · 3 months
+                            </div>
+                            <div>
+                              Advanced Course:{" "}
+                              <span className="text-gold-safe font-bold">₹35,000</span> · 6 months
+                            </div>
+                            <div>
+                              Pro Bridal Master:{" "}
+                              <span className="text-gold-safe font-bold">₹50,000</span> · 4 months
+                            </div>
+                            <div className="text-xs text-muted-foreground mt-2 flex items-center gap-1 font-body">
+                              📞 Call or WhatsApp for enrollment
+                            </div>
                           </div>
                         </div>
                       ) : (
@@ -204,12 +218,18 @@ function ServicesPage() {
                               {s.price}
                             </div>
                           </div>
-                          <div className="text-xs px-3 py-1 rounded-full bg-muted font-body font-semibold">{s.duration}</div>
+                          <div className="text-xs px-3 py-1 rounded-full bg-muted font-body font-semibold">
+                            {s.duration}
+                          </div>
                         </div>
                       )}
                       <div className="mt-5 flex flex-col gap-2">
                         <Link
-                          to={getServiceQueryParam(s.title) ? `/booking?service=${getServiceQueryParam(s.title)}` : "/booking"}
+                          to={
+                            getServiceQueryParam(s.title)
+                              ? `/booking?service=${getServiceQueryParam(s.title)}`
+                              : "/booking"
+                          }
                           onClick={() =>
                             trackEvent("booking_cta_click", {
                               location: "services_page",

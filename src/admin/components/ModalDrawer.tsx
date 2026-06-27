@@ -38,9 +38,7 @@ export function ModalDrawer({
               Modal Editor
             </span>
             <h3 className="mt-1 font-display text-xl text-[#f5e6d0]">{title}</h3>
-            {description && (
-              <p className="mt-1 text-xs text-[#c5b399]/85">{description}</p>
-            )}
+            {description && <p className="mt-1 text-xs text-[#c5b399]/85">{description}</p>}
             {hasUnsavedChanges && (
               <span className="mt-2 inline-block px-2.5 py-0.5 rounded-full bg-[#f59e0b]/10 border border-[#f59e0b]/30 text-[10px] font-bold text-[#f59e0b]">
                 Unsaved changes
@@ -57,9 +55,7 @@ export function ModalDrawer({
         </div>
 
         {/* Scrollable Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          {children}
-        </div>
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">{children}</div>
 
         {/* Sticky Footer */}
         <div className="sticky bottom-0 left-0 right-0 p-6 bg-[#161009] border-t border-[#2a2015] flex items-center justify-between gap-4">

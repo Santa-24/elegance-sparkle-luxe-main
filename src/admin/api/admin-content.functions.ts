@@ -439,14 +439,78 @@ export const listAdminTestimonials = createServerFn({ method: "GET" }).handler(a
   if (list.length === 0) {
     try {
       const seeds = [
-        { customer_name: 'Priyanka Mohanty', service_name: 'Bridal Makeup', rating: 5, review_text: 'Rasmirekha di made me look like a royal bride on my wedding day! The makeup was flawless, sat beautifully all night, and looked amazing in photos. Everyone praised the elegant styling. Highly recommend Elegance Makeover!', status: 'visible', wedding_month_year: 'December 2025' },
-        { customer_name: 'Sunita Sahoo', service_name: 'Academy Enrollment', rating: 5, review_text: 'Enrolling in the basic beauty course at Elegance Academy was the best decision. The hands-on training on real models gave me so much confidence. Rasmirekha di and Anushka di are excellent mentors!', status: 'visible', wedding_month_year: 'December 2025' },
-        { customer_name: 'Arpita Das', service_name: 'Bridal Makeup', rating: 5, review_text: 'Perfect base and stunning eye makeup! Arpita Das here, and I must say Rasmirekha di and her team are highly professional and punctual. Best salon in Jajpur Road!', status: 'visible', wedding_month_year: 'November 2025' },
-        { customer_name: 'Mamata Panda', service_name: 'Hair Styling & Draping', rating: 5, review_text: 'Rasmirekha di styled my hair and saree drape so beautifully! Saree stayed intact for 12+ hours and the hair styling got so many compliments. Highly recommended!', status: 'visible', wedding_month_year: 'November 2025' },
-        { customer_name: 'Reena Biswal', service_name: 'Bridal Makeup', rating: 5, review_text: 'Such a luxury bridal experience! High-quality products and flawless finish. Rasmirekha di takes time to understand what you want. Thank you for making me shine!', status: 'visible', wedding_month_year: 'October 2025' },
-        { customer_name: 'Kavya Nayak', service_name: 'Pre-Bridal Package', rating: 5, review_text: 'Loved their pre-bridal skincare sessions. The glow was visible on my wedding day. Special thanks to Anushka di for the gentle care. Totally worth every rupee!', status: 'visible', wedding_month_year: 'October 2025' },
-        { customer_name: 'Smriti Rath', service_name: 'Bridal Makeup', rating: 5, review_text: 'I was worried about my dry skin, but Rasmirekha di did a phenomenal job with hydrating base. The glow was luminous and lasted all night. Extremely satisfied customer!', status: 'visible', wedding_month_year: 'September 2025' },
-        { customer_name: 'Deepika Mishra', service_name: 'Party Makeup', rating: 5, review_text: 'Got my party makeup done for a cousin wedding. The look was elegant, lightweight, and perfect. The academy team is very polite and professional. Will visit again!', status: 'visible', wedding_month_year: 'September 2025' }
+        {
+          customer_name: "Priyanka Mohanty",
+          service_name: "Bridal Makeup",
+          rating: 5,
+          review_text:
+            "Rasmirekha di made me look like a royal bride on my wedding day! The makeup was flawless, sat beautifully all night, and looked amazing in photos. Everyone praised the elegant styling. Highly recommend Elegance Makeover!",
+          status: "visible",
+          wedding_month_year: "December 2025",
+        },
+        {
+          customer_name: "Sunita Sahoo",
+          service_name: "Academy Enrollment",
+          rating: 5,
+          review_text:
+            "Enrolling in the basic beauty course at Elegance Academy was the best decision. The hands-on training on real models gave me so much confidence. Rasmirekha di and Anushka di are excellent mentors!",
+          status: "visible",
+          wedding_month_year: "December 2025",
+        },
+        {
+          customer_name: "Arpita Das",
+          service_name: "Bridal Makeup",
+          rating: 5,
+          review_text:
+            "Perfect base and stunning eye makeup! Arpita Das here, and I must say Rasmirekha di and her team are highly professional and punctual. Best salon in Jajpur Road!",
+          status: "visible",
+          wedding_month_year: "November 2025",
+        },
+        {
+          customer_name: "Mamata Panda",
+          service_name: "Hair Styling & Draping",
+          rating: 5,
+          review_text:
+            "Rasmirekha di styled my hair and saree drape so beautifully! Saree stayed intact for 12+ hours and the hair styling got so many compliments. Highly recommended!",
+          status: "visible",
+          wedding_month_year: "November 2025",
+        },
+        {
+          customer_name: "Reena Biswal",
+          service_name: "Bridal Makeup",
+          rating: 5,
+          review_text:
+            "Such a luxury bridal experience! High-quality products and flawless finish. Rasmirekha di takes time to understand what you want. Thank you for making me shine!",
+          status: "visible",
+          wedding_month_year: "October 2025",
+        },
+        {
+          customer_name: "Kavya Nayak",
+          service_name: "Pre-Bridal Package",
+          rating: 5,
+          review_text:
+            "Loved their pre-bridal skincare sessions. The glow was visible on my wedding day. Special thanks to Anushka di for the gentle care. Totally worth every rupee!",
+          status: "visible",
+          wedding_month_year: "October 2025",
+        },
+        {
+          customer_name: "Smriti Rath",
+          service_name: "Bridal Makeup",
+          rating: 5,
+          review_text:
+            "I was worried about my dry skin, but Rasmirekha di did a phenomenal job with hydrating base. The glow was luminous and lasted all night. Extremely satisfied customer!",
+          status: "visible",
+          wedding_month_year: "September 2025",
+        },
+        {
+          customer_name: "Deepika Mishra",
+          service_name: "Party Makeup",
+          rating: 5,
+          review_text:
+            "Got my party makeup done for a cousin wedding. The look was elegant, lightweight, and perfect. The academy team is very polite and professional. Will visit again!",
+          status: "visible",
+          wedding_month_year: "September 2025",
+        },
       ];
       for (const seed of seeds) {
         const payload: any = { ...seed };
@@ -455,7 +519,7 @@ export const listAdminTestimonials = createServerFn({ method: "GET" }).handler(a
         }
         await supabaseInsert("testimonials", payload);
       }
-      
+
       if (hasWeddingMonthColumn) {
         list = await supabaseSelect<AdminTestimonialRecord>(
           "testimonials?select=id,customer_name,service_name,rating,review_text,status,wedding_month_year&order=created_at.desc",
@@ -493,7 +557,9 @@ export const upsertAdminTestimonial = createServerFn({ method: "POST" })
           `id=eq.${data.id}`,
           payload,
         );
-        void logAdminMutation("update", "testimonials", row.id, { customer_name: row.customer_name });
+        void logAdminMutation("update", "testimonials", row.id, {
+          customer_name: row.customer_name,
+        });
         return row;
       }
 
@@ -506,19 +572,23 @@ export const upsertAdminTestimonial = createServerFn({ method: "POST" })
         console.warn("wedding_month_year column doesn't exist, retrying upsert without it");
         const fallbackPayload = { ...payload };
         delete (fallbackPayload as any).wedding_month_year;
-        
+
         if (data.id) {
           const [row] = await supabaseUpdate<AdminTestimonialRecord>(
             "testimonials",
             `id=eq.${data.id}`,
             fallbackPayload,
           );
-          void logAdminMutation("update", "testimonials", row.id, { customer_name: row.customer_name });
+          void logAdminMutation("update", "testimonials", row.id, {
+            customer_name: row.customer_name,
+          });
           return row;
         }
 
         const [row] = await supabaseInsert<AdminTestimonialRecord>("testimonials", fallbackPayload);
-        void logAdminMutation("create", "testimonials", row.id, { customer_name: row.customer_name });
+        void logAdminMutation("create", "testimonials", row.id, {
+          customer_name: row.customer_name,
+        });
         return row;
       }
       throw error;

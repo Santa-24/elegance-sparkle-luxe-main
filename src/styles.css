@@ -288,7 +288,7 @@
       radial-gradient(at 50% 50%, oklch(0.95 0.04 82 / 0.3) 0px, transparent 60%) !important;
     color: #0d0a07 !important;
   }
-  
+
   .marble-bg h1,
   .marble-bg h2,
   .marble-bg h3,
@@ -298,12 +298,12 @@
   .marble-bg [class*="text-[var(--royal)]"] {
     color: #0d0a07 !important;
   }
-  
+
   .marble-bg p,
   .marble-bg .text-muted-foreground {
     color: rgba(13, 10, 7, 0.8) !important;
   }
-  
+
   .marble-bg .text-\[var\(--purple-deep\)\] {
     color: #8c7143 !important;
   }
@@ -616,4 +616,3 @@
   position: fixed;
   z-index: 50; /* always above backdrop */
 }
-

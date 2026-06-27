@@ -88,4 +88,3 @@ export function getCountdownDays(validity?: string): number {
 
   return Math.max(1, Math.ceil((target.getTime() - Date.now()) / 86400000));
 }
-

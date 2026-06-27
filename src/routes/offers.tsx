@@ -42,7 +42,7 @@ function useScrollReveal() {
           }
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
     );
 
     const elements = document.querySelectorAll(".reveal");
@@ -55,13 +55,13 @@ function useScrollReveal() {
 }
 
 function formatHeadline(discount: string, title: string) {
-  let cleanDiscount = discount.trim();
+  const cleanDiscount = discount.trim();
   let cleanTitle = title.trim();
-  
+
   if (cleanTitle.toLowerCase().includes("raja festival beauty package")) {
     cleanTitle = "Raja Festival Beauty Package";
   }
-  
+
   let formattedDiscount = cleanDiscount;
   if (!formattedDiscount.toLowerCase().startsWith("flat")) {
     formattedDiscount = `Flat ${formattedDiscount}`;
@@ -69,7 +69,7 @@ function formatHeadline(discount: string, title: string) {
   if (!formattedDiscount.toLowerCase().endsWith("off")) {
     formattedDiscount = `${formattedDiscount} Off`;
   }
-  
+
   return `${formattedDiscount} — ${cleanTitle}`;
 }
 
@@ -131,9 +131,7 @@ function OffersPage() {
                 </div>
                 <h2 className="font-display text-3xl md:text-5xl leading-tight">
                   {primaryOffer ? (
-                    <>
-                      {formatHeadline(primaryOffer.discount, primaryOffer.title)}
-                    </>
+                    <>{formatHeadline(primaryOffer.discount, primaryOffer.title)}</>
                   ) : (
                     <>
                       <span className="gradient-gold-text">No active offers</span> right now

@@ -25,7 +25,9 @@ export function getSiteConfig(): SiteConfig {
     name: import.meta.env.VITE_SITE_NAME ?? "Elegance Makeover & Academy",
     siteName: import.meta.env.VITE_SITE_NAME ?? "Elegance Makeover & Academy",
     adminEmail:
-      import.meta.env.VITE_ADMIN_EMAIL ?? import.meta.env.VITE_CONTACT_EMAIL ?? "elegancemakeover.2021@gmail.com",
+      import.meta.env.VITE_ADMIN_EMAIL ??
+      import.meta.env.VITE_CONTACT_EMAIL ??
+      "elegancemakeover.2021@gmail.com",
     contactPhone,
     whatsappNumber: import.meta.env.VITE_WHATSAPP_NUMBER ?? contactPhone.replace(/\D/g, ""),
     contactEmail: import.meta.env.VITE_CONTACT_EMAIL ?? "elegancemakeover.2021@gmail.com",

@@ -126,7 +126,11 @@ export const adminGallery: AdminGalleryItem[] = [
   { name: "Bridal look with warm tones", category: "Bridal", source: "/assets/bridal-9.webp" },
   { name: "Premium bridal makeup finish", category: "Bridal", source: "/assets/bridal-10.webp" },
   { name: "Luxury bridal close-up portrait", category: "Bridal", source: "/assets/bridal-11.webp" },
-  { name: "Bridal eye makeup close up", category: "Before & After", source: "/assets/bridal-4.webp" },
+  {
+    name: "Bridal eye makeup close up",
+    category: "Before & After",
+    source: "/assets/bridal-4.webp",
+  },
   { name: "Studio interior", category: "Parlour", source: "/assets/interior1.webp" },
   { name: "Elegant salon lounge", category: "Parlour", source: "/assets/interior2.webp" },
   { name: "Premium salon setup", category: "Parlour", source: "/assets/interior3.webp" },

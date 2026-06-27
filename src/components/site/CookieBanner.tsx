@@ -31,13 +31,14 @@ export function CookieBanner() {
   return (
     <div className="fixed bottom-6 left-6 right-6 md:left-auto md:right-8 md:max-w-sm z-[60] bg-[#161009] border border-[#c9a96e]/30 p-6 shadow-[0_15px_30px_rgba(0,0,0,0.6)] animate-fade-up">
       <div className="absolute inset-2 border border-[#c9a96e]/10 pointer-events-none" />
-      
+
       <div className="relative z-10">
         <h4 className="font-display text-base tracking-wide text-[#c9a96e] font-light uppercase">
           Cookie Consent
         </h4>
         <p className="mt-2.5 text-xs text-[#f5e6d0]/80 font-light leading-relaxed">
-          We use essential and analytics cookies to optimize your luxury beauty and academy training experience on our website.
+          We use essential and analytics cookies to optimize your luxury beauty and academy training
+          experience on our website.
         </p>
         <div className="mt-5 flex gap-3">
           <button

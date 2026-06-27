@@ -43,7 +43,11 @@ export async function recordAdminAuditLog(input: {
   } catch (error: any) {
     const errorStr = JSON.stringify(error) || "";
     // If it fails due to old columns (table_name, record_id) violating not-null constraints, retry with them
-    if (errorStr.includes("table_name") || errorStr.includes("record_id") || errorStr.includes("23502")) {
+    if (
+      errorStr.includes("table_name") ||
+      errorStr.includes("record_id") ||
+      errorStr.includes("23502")
+    ) {
       try {
         await supabaseInsert("audit_logs", {
           ...payload,

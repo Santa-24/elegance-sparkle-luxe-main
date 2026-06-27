@@ -90,7 +90,8 @@ export function buildLocalBusinessSchema(config: SiteConfig, canonicalUrl: strin
           itemOffered: {
             "@type": "Service",
             name: "Bridal Makeup",
-            description: "Premium bridal makeup packages by internationally certified artist using HD products.",
+            description:
+              "Premium bridal makeup packages by internationally certified artist using HD products.",
           },
           priceSpecification: {
             "@type": "UnitPriceSpecification",
@@ -117,7 +118,8 @@ export function buildLocalBusinessSchema(config: SiteConfig, canonicalUrl: strin
           itemOffered: {
             "@type": "Service",
             name: "Premium Facial",
-            description: "Luxury facials and skin rejuvenation treatments using professional products.",
+            description:
+              "Luxury facials and skin rejuvenation treatments using professional products.",
           },
           priceSpecification: {
             "@type": "UnitPriceSpecification",

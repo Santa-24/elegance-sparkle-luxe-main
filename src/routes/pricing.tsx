@@ -41,7 +41,7 @@ function useScrollReveal() {
           }
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
     );
 
     const elements = document.querySelectorAll(".reveal");
@@ -174,7 +174,11 @@ function PricingPage() {
                 </ul>
 
                 <Link
-                  to={getServiceQueryParam(pkg.name) ? `/booking?service=${getServiceQueryParam(pkg.name)}` : "/booking"}
+                  to={
+                    getServiceQueryParam(pkg.name)
+                      ? `/booking?service=${getServiceQueryParam(pkg.name)}`
+                      : "/booking"
+                  }
                   className={`mt-6 block rounded-[var(--radius-sm)] px-5 py-3 text-center font-semibold transition-all cursor-pointer ${
                     pkg.popular
                       ? "gradient-gold text-[var(--royal-deep)] shadow-gold hover:shadow-luxury"

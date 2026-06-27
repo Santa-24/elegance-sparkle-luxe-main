@@ -67,9 +67,7 @@ export function Navbar() {
       {/* Desktop Navigation Header (z-index: 30) */}
       <header
         className={`fixed top-0 inset-x-0 z-30 transition-all duration-300 ${
-          scrolled || isMenuOpen
-            ? "border-b border-[#c9a96e]/15 backdrop-blur-md"
-            : ""
+          scrolled || isMenuOpen ? "border-b border-[#c9a96e]/15 backdrop-blur-md" : ""
         }`}
         style={{
           backgroundColor: scrolled || isMenuOpen ? "#0d0a07" : "transparent",
@@ -119,11 +117,7 @@ export function Navbar() {
 
       {/* Nav Backdrop overlay (z-index: 40) */}
       {isMenuOpen && (
-        <div
-          className="nav-backdrop"
-          onClick={() => setIsMenuOpen(false)}
-          aria-hidden="true"
-        />
+        <div className="nav-backdrop" onClick={() => setIsMenuOpen(false)} aria-hidden="true" />
       )}
 
       {/* Mobile Nav Overlay Panel (z-index: 50) */}

@@ -36,12 +36,7 @@ function getTargetTime(props: CountdownTimerProps): number {
   return Date.now() + 15 * 86400000;
 }
 
-export function CountdownTimer({
-  validity,
-  targetDate,
-  days,
-  dark = false,
-}: CountdownTimerProps) {
+export function CountdownTimer({ validity, targetDate, days, dark = false }: CountdownTimerProps) {
   const [target, setTarget] = useState(() => getTargetTime({ validity, targetDate, days }));
 
   useEffect(() => {
@@ -89,16 +84,20 @@ export function CountdownTimer({
     <div className="flex gap-2 md:gap-4 justify-center">
       {items.map((i) => (
         <div key={i.label} className="text-center">
-          <div className={`w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center font-display text-xl sm:text-2xl md:text-3xl font-light ${
-            dark
-              ? "bg-[#0d0a07] text-[#c9a96e]"
-              : "border border-[#c9a96e]/20 bg-[#161009] text-[#c9a96e]"
-          }`}>
+          <div
+            className={`w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center font-display text-xl sm:text-2xl md:text-3xl font-light ${
+              dark
+                ? "bg-[#0d0a07] text-[#c9a96e]"
+                : "border border-[#c9a96e]/20 bg-[#161009] text-[#c9a96e]"
+            }`}
+          >
             {String(i.value).padStart(2, "0")}
           </div>
-          <div className={`text-[9px] tracking-widest uppercase mt-2 ${
-            dark ? "text-[#0d0a07]/80" : "text-[#f9f5ef]/70"
-          }`}>
+          <div
+            className={`text-[9px] tracking-widest uppercase mt-2 ${
+              dark ? "text-[#0d0a07]/80" : "text-[#f9f5ef]/70"
+            }`}
+          >
             {i.label}
           </div>
         </div>

@@ -38,7 +38,7 @@ function useScrollReveal() {
           }
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
     );
 
     const elements = document.querySelectorAll(".reveal");
@@ -56,57 +56,57 @@ const seedTestimonials: Testimonial[] = [
     service: "Bridal Makeup",
     rating: 5,
     text: "Rasmirekha di made me look like a royal bride on my wedding day! The makeup was flawless, sat beautifully all night, and looked amazing in photos. Everyone praised the elegant styling. Highly recommend Elegance Makeover!",
-    date: "December 2025"
+    date: "December 2025",
   },
   {
     name: "Sunita Sahoo",
     service: "Academy Enrollment",
     rating: 5,
     text: "Enrolling in the basic beauty course at Elegance Academy was the best decision. The hands-on training on real models gave me so much confidence. Rasmirekha di and Anushka di are excellent mentors!",
-    date: "January 2026"
+    date: "January 2026",
   },
   {
     name: "Arpita Das",
     service: "Premium Facial",
     rating: 5,
     text: "Had a premium facial done for my engagement function. The glow was absolutely stunning and lasted for days. Very professional service and a neat, luxurious salon environment.",
-    date: "November 2025"
+    date: "November 2025",
   },
   {
     name: "Mamata Panda",
     service: "Party Makeup",
     rating: 5,
     text: "Got my party makeup done for a cousin's reception. Rasmirekha di kept it minimal and elegant, exactly how I wanted. It felt so light and stayed fresh throughout the night without getting cakey.",
-    date: "February 2026"
+    date: "February 2026",
   },
   {
     name: "Reena Biswal",
     service: "Academy Enrollment",
     rating: 5,
     text: "Completed my advanced bridal masterclass here. The training was so detailed, covering advanced base techniques, draping, and eye makeup. I'm now taking independent bridal bookings in Jajpur!",
-    date: "March 2026"
+    date: "March 2026",
   },
   {
     name: "Kavya Nayak",
     service: "Threading & Brows",
     rating: 5,
     text: "The staff is so professional and gentle. They did my eyebrows with absolute precision and almost zero pain. Easily the best beauty parlour on Jajpur Road for regular grooming.",
-    date: "October 2025"
+    date: "October 2025",
   },
   {
     name: "Smriti Rath",
     service: "Hair Styling & Cut",
     rating: 5,
     text: "Superb experience! I was nervous about getting a short haircut, but the stylist suggested a look that completely suits my face shape. The final hair styling was absolutely gorgeously done.",
-    date: "September 2025"
+    date: "September 2025",
   },
   {
     name: "Deepika Mishra",
     service: "Bridal Makeup",
     rating: 5,
     text: "Excellent service! Rasmirekha di and her team are extremely professional, punctual, and use top-quality international brands. They made my wedding day preparation completely stress-free.",
-    date: "May 2026"
-  }
+    date: "May 2026",
+  },
 ];
 
 function TestimonialsPage() {
@@ -137,7 +137,9 @@ function TestimonialsPage() {
             <span className="text-lg font-bold text-gold">4.9 ★</span>
             <span className="text-sm font-semibold text-foreground/80">Average Rating</span>
             <span className="h-1.5 w-1.5 rounded-full bg-border"></span>
-            <span className="text-sm font-bold text-gold uppercase tracking-wider">500+ Happy Brides</span>
+            <span className="text-sm font-bold text-gold uppercase tracking-wider">
+              500+ Happy Brides
+            </span>
           </div>
         </div>
       </section>

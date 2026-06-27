@@ -112,7 +112,7 @@ function useScrollReveal() {
           }
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
     );
 
     const elements = document.querySelectorAll(".reveal, .img-reveal");
@@ -220,19 +220,19 @@ function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
         decoding="async"
         className="absolute inset-0 w-full h-full object-cover object-center opacity-30"
       />
-      
+
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-[#0d0a07]/75" />
-      
+
       {/* Gold Grid Overlay (3% opacity) */}
-      <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.03]" 
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{
           backgroundImage: `
             linear-gradient(to right, #c9a96e 1px, transparent 1px),
             linear-gradient(to bottom, #c9a96e 1px, transparent 1px)
           `,
-          backgroundSize: "40px 40px"
+          backgroundSize: "40px 40px",
         }}
       />
 
@@ -245,21 +245,19 @@ function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
         <div className="inline-flex justify-center mb-5 animate-fade-up">
           <div className="border border-[#c9a96e]/30 bg-[#161009]/80 px-4 py-1.5 text-[#f5e6d0] text-[10px] tracking-[0.2em] uppercase flex items-center gap-2 max-w-[92vw]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#c9a96e] animate-pulse" />
-            {advertisement
-              ? "Featured Offer"
-              : "Now booking 2026 wedding season"}
+            {advertisement ? "Featured Offer" : "Now booking 2026 wedding season"}
           </div>
         </div>
 
         <div className="text-[10px] tracking-[0.4em] uppercase text-[#c9a96e] mb-4 animate-fade-up">
           Bridal · Beauty · Academy
         </div>
-        
+
         <h1 className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-light leading-[1.1] tracking-tight animate-fade-up delay-100">
           Where every bride <br />
           becomes <span className="italic font-display text-[#c9a96e]">unforgettable</span>
         </h1>
-        
+
         <p className="mt-6 text-xs sm:text-sm md:text-base text-[#f5e6d0]/80 max-w-xl mx-auto font-light leading-relaxed animate-fade-up delay-200">
           Expert bridal makeup, premium parlour services and certified academy courses by Rasmirekha
           Swain — in the heart of Jajpur Road, Odisha.
@@ -291,7 +289,9 @@ function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
           ].map(([n, l]) => (
             <div key={l} className="text-center px-2">
               <div className="font-display text-2xl sm:text-3xl text-[#c9a96e] font-light">{n}</div>
-              <div className="text-[9px] uppercase tracking-[0.2em] text-[#f5e6d0]/60 mt-1 font-body">{l}</div>
+              <div className="text-[9px] uppercase tracking-[0.2em] text-[#f5e6d0]/60 mt-1 font-body">
+                {l}
+              </div>
             </div>
           ))}
         </div>
@@ -335,7 +335,7 @@ function AdvertisementShowcase({
           />
           {/* Flat overlay */}
           <div className="absolute inset-0 bg-[#0d0a07]/80" />
-          
+
           <div className="relative z-10 max-w-3xl p-6 sm:p-10 md:p-12 text-[#f5e6d0]">
             <div className="inline-flex items-center gap-2 border border-[#c9a96e]/30 bg-[#0d0a07]/80 px-3.5 py-1 text-[9px] uppercase tracking-[0.25em] text-[#c9a96e]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#c9a96e] animate-pulse" />
@@ -423,7 +423,9 @@ function AdLightbox({
               <div className="text-[9px] uppercase tracking-[0.25em] text-[#c9a96e]">
                 Ad Preview
               </div>
-              <div className="mt-1 font-display text-lg sm:text-xl font-light">{advertisement.title}</div>
+              <div className="mt-1 font-display text-lg sm:text-xl font-light">
+                {advertisement.title}
+              </div>
               {showNavigation ? (
                 <div className="mt-1 text-[9px] uppercase tracking-[0.2em] text-[#f5e6d0]/50">
                   {currentIndex + 1} of {advertisements.length}
@@ -457,7 +459,7 @@ function AboutPreview() {
             <div className="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-[#c9a96e]" />
             {/* Bottom Right Bracket */}
             <div className="absolute bottom-0 right-0 w-6 h-6 border-b border-r border-[#c9a96e]" />
-            
+
             <div className="overflow-hidden">
               <img
                 src={owner}
@@ -469,7 +471,7 @@ function AboutPreview() {
               />
             </div>
           </div>
-          
+
           <div className="absolute bottom-8 left-8 right-8 bg-[#0d0a07] border border-[#c9a96e]/30 p-4 text-[#f5e6d0]">
             <div className="font-display text-lg font-light tracking-wide text-[#c9a96e]">
               Rasmirekha Swain
@@ -481,14 +483,13 @@ function AboutPreview() {
         </div>
 
         <div>
-          <div className="text-[10px] tracking-[0.3em] uppercase text-[#c9a96e] mb-3">
-            About Us
-          </div>
+          <div className="text-[10px] tracking-[0.3em] uppercase text-[#c9a96e] mb-3">About Us</div>
           <h2 className="font-display text-3xl md:text-5xl text-[#0d0a07] font-light leading-tight">
-            A decade of crafting <span className="italic font-display text-[#c9a96e]">timeless beauty</span>.
+            A decade of crafting{" "}
+            <span className="italic font-display text-[#c9a96e]">timeless beauty</span>.
           </h2>
           <div className="w-16 h-[1px] bg-[#c9a96e] my-6" />
-          
+
           <p className="text-[#0d0a07]/80 text-sm md:text-base leading-relaxed font-light">
             Elegance Makeover & Academy was founded by Rasmirekha Swain with a simple promise —
             every woman deserves to feel like royalty. With 10+ years of expertise and an
@@ -549,7 +550,9 @@ function Services({ services }: { services: Service[] }) {
         <div className="text-center max-w-2xl mx-auto mb-16">
           <div className="flex items-center justify-center gap-4 mb-3">
             <div className="h-[1px] w-8 bg-[#c9a96e]/40" />
-            <span className="text-[10px] tracking-[0.3em] uppercase text-[#c9a96e]">Our Services</span>
+            <span className="text-[10px] tracking-[0.3em] uppercase text-[#c9a96e]">
+              Our Services
+            </span>
             <div className="h-[1px] w-8 bg-[#c9a96e]/40" />
           </div>
           <h2 className="font-display text-3xl md:text-5xl font-light text-[#f5e6d0]">
@@ -580,10 +583,14 @@ function Services({ services }: { services: Service[] }) {
                         Most Popular
                       </span>
                     )}
-                    <h3 className="font-display text-xl sm:text-2xl font-light text-[#f5e6d0]">{s.title}</h3>
-                    <p className="text-[#f5e6d0]/70 text-xs mt-2.5 font-light leading-relaxed">{s.desc}</p>
+                    <h3 className="font-display text-xl sm:text-2xl font-light text-[#f5e6d0]">
+                      {s.title}
+                    </h3>
+                    <p className="text-[#f5e6d0]/70 text-xs mt-2.5 font-light leading-relaxed">
+                      {s.desc}
+                    </p>
                   </div>
-                  
+
                   <div>
                     <div className="flex items-center justify-between mt-6 pt-4 border-t border-[#c9a96e]/10">
                       <div>
@@ -599,7 +606,11 @@ function Services({ services }: { services: Service[] }) {
                       </div>
                     </div>
                     <Link
-                      to={getServiceQueryParam(s.title) ? `/booking?service=${getServiceQueryParam(s.title)}` : "/booking"}
+                      to={
+                        getServiceQueryParam(s.title)
+                          ? `/booking?service=${getServiceQueryParam(s.title)}`
+                          : "/booking"
+                      }
                       onClick={() =>
                         trackEvent("booking_cta_click", {
                           location: "home_service_card",
@@ -668,9 +679,7 @@ function BridalShowcase({ gallery }: { gallery: GalleryImage[] }) {
                 <span className="inline-block border border-[#c9a96e]/40 bg-[#0d0a07] px-2.5 py-0.5 text-[8px] uppercase tracking-[0.2em] text-[#c9a96e]">
                   Featured Transformation
                 </span>
-                <h3 className="mt-2 font-display text-2xl font-light">
-                  {featuredImage.alt}
-                </h3>
+                <h3 className="mt-2 font-display text-2xl font-light">{featuredImage.alt}</h3>
               </div>
             </div>
           ) : (
@@ -706,15 +715,18 @@ function BridalShowcase({ gallery }: { gallery: GalleryImage[] }) {
               Bridal transformations coming soon.
             </div>
           )}
-          
+
           {/* Fill up if there are fewer than 4 secondary images */}
-          {secondaryImages.length > 0 && secondaryImages.length < 4 && 
+          {secondaryImages.length > 0 &&
+            secondaryImages.length < 4 &&
             Array.from({ length: 4 - secondaryImages.length }).map((_, i) => (
-              <div key={i} className="hidden md:flex items-center justify-center border border-[#c9a96e]/20 bg-[#0d0a07]/5 p-6 text-center text-xs text-[#0d0a07]/60 aspect-square">
+              <div
+                key={i}
+                className="hidden md:flex items-center justify-center border border-[#c9a96e]/20 bg-[#0d0a07]/5 p-6 text-center text-xs text-[#0d0a07]/60 aspect-square"
+              >
                 Coming soon
               </div>
-            ))
-          }
+            ))}
         </div>
 
         <div className="text-center mt-12">
@@ -767,7 +779,7 @@ function WhyChoose() {
           </h2>
           <div className="w-16 h-[1px] bg-[#c9a96e] mx-auto mt-4" />
         </div>
-        
+
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {items.map(({ Icon, title, desc }) => (
             <div
@@ -826,29 +838,35 @@ function OfferBanner({
                 ? primaryOffer.desc
                 : "Schedule a personalized consultation with Rasmirekha Swain and design a custom package fits your bridal or academy needs."}
             </p>
-            
+
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
                 to="/offers"
                 onClick={() => trackEvent("offer_cta_click", { location: "home_offer_banner" })}
                 className="inline-flex h-11 items-center justify-center gap-2 px-8 bg-[#0d0a07] text-[#c9a96e] font-semibold text-xs tracking-[0.2em] uppercase hover:bg-[#161009] transition-colors animate-pulse"
               >
-                {primaryOffer ? "Grab Offer" : "Explore Offers"} <ArrowRight className="w-3.5 h-3.5" />
+                {primaryOffer ? "Grab Offer" : "Explore Offers"}{" "}
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
           </div>
-          
+
           <div className="flex flex-col items-center md:items-end justify-center">
             {primaryOffer ? (
               <>
                 <div className="text-center text-[10px] uppercase tracking-widest text-[#0d0a07]/80 mb-4 font-semibold">
                   Valid Until Expiration
                 </div>
-                <CountdownTimer validity={primaryOffer?.validity} days={countdownDays} dark={true} />
+                <CountdownTimer
+                  validity={primaryOffer?.validity}
+                  days={countdownDays}
+                  dark={true}
+                />
               </>
             ) : (
               <div className="border border-[#0d0a07]/20 p-6 text-center text-xs text-[#0d0a07]/80 max-w-xs">
-                Contact our customer support directly via WhatsApp for any custom bridal seasonal offers.
+                Contact our customer support directly via WhatsApp for any custom bridal seasonal
+                offers.
               </div>
             )}
           </div>
@@ -896,7 +914,9 @@ function Testimonials({ testimonials }: { testimonials: Testimonial[] }) {
                 </div>
                 <div>
                   <div className="font-medium text-[#f5e6d0] text-xs tracking-wide">{t.name}</div>
-                  <div className="text-[9px] uppercase tracking-widest text-[#f5e6d0]/50 mt-0.5">{t.service}</div>
+                  <div className="text-[9px] uppercase tracking-widest text-[#f5e6d0]/50 mt-0.5">
+                    {t.service}
+                  </div>
                 </div>
               </div>
             </div>
@@ -948,7 +968,7 @@ function InstaFeed({ gallery }: { gallery: GalleryImage[] }) {
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <a 
+                <a
                   href="https://www.instagram.com/rasmirekha2011"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -1006,10 +1026,14 @@ function KnowledgeHub({
                   <div className="text-[8px] uppercase tracking-[0.25em] text-[#c9a96e]">
                     {post.category}
                   </div>
-                  <h3 className="mt-2.5 font-display text-xl sm:text-2xl font-light text-[#f5e6d0]">{post.title}</h3>
-                  <p className="mt-2.5 text-xs text-[#f5e6d0]/70 font-light leading-relaxed">{post.excerpt}</p>
+                  <h3 className="mt-2.5 font-display text-xl sm:text-2xl font-light text-[#f5e6d0]">
+                    {post.title}
+                  </h3>
+                  <p className="mt-2.5 text-xs text-[#f5e6d0]/70 font-light leading-relaxed">
+                    {post.excerpt}
+                  </p>
                 </div>
-                
+
                 <Link
                   to="/blog/$slug"
                   params={{ slug: post.slug }}
@@ -1028,7 +1052,9 @@ function KnowledgeHub({
           </div>
 
           <div className="border border-[#c9a96e]/30 bg-[#161009] p-7 text-[#f5e6d0]">
-            <div className="text-[10px] tracking-[0.3em] uppercase text-[#c9a96e] mb-5">Quick Resources</div>
+            <div className="text-[10px] tracking-[0.3em] uppercase text-[#c9a96e] mb-5">
+              Quick Resources
+            </div>
             <div className="grid gap-4 sm:grid-cols-2">
               {[
                 { title: "FAQ", to: "/faq", desc: "Booking, services and local answers." },
@@ -1052,7 +1078,9 @@ function KnowledgeHub({
                   className="border border-[#c9a96e]/15 bg-[#0d0a07] p-5 hover:border-[#c9a96e] transition-colors"
                 >
                   <div className="font-display text-lg font-light text-[#c9a96e]">{item.title}</div>
-                  <p className="mt-1.5 text-xs text-[#f5e6d0]/75 font-light leading-relaxed">{item.desc}</p>
+                  <p className="mt-1.5 text-xs text-[#f5e6d0]/75 font-light leading-relaxed">
+                    {item.desc}
+                  </p>
                 </Link>
               ))}
             </div>
@@ -1093,14 +1121,13 @@ function LocalCoverage({
 
         <div className="grid gap-6 md:grid-cols-3">
           {serviceAreas.slice(0, 3).map((area) => (
-            <div
-              key={area.name}
-              className="border border-[#c9a96e]/20 bg-white/70 p-6"
-            >
+            <div key={area.name} className="border border-[#c9a96e]/20 bg-white/70 p-6">
               <div className="text-[10px] uppercase tracking-[0.2em] text-[#c9a96e] font-semibold">
                 {area.name}
               </div>
-              <p className="mt-2.5 text-xs text-[#0d0a07]/80 leading-relaxed font-light">{area.summary}</p>
+              <p className="mt-2.5 text-xs text-[#0d0a07]/80 leading-relaxed font-light">
+                {area.summary}
+              </p>
             </div>
           ))}
         </div>
@@ -1115,13 +1142,15 @@ function ContactCTA() {
     <section className="bg-[#c9a96e] text-[#0d0a07] py-24 md:py-[120px] reveal relative">
       <div className="absolute inset-4 border border-[#0d0a07]/10 pointer-events-none" />
       <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-        <div className="text-[10px] tracking-[0.3em] uppercase text-[#0d0a07]/80 mb-3 font-semibold">Let's Talk</div>
+        <div className="text-[10px] tracking-[0.3em] uppercase text-[#0d0a07]/80 mb-3 font-semibold">
+          Let's Talk
+        </div>
         <h2 className="font-display text-4xl md:text-6xl font-light">
           Ready to look <span className="italic font-normal">stunning?</span>
         </h2>
         <p className="text-[#0d0a07]/80 text-sm md:text-base mt-4 max-w-lg mx-auto font-light leading-relaxed">
-          Book a free consultation or call us directly — we'll design a customized beauty experience just for
-          you.
+          Book a free consultation or call us directly — we'll design a customized beauty experience
+          just for you.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link

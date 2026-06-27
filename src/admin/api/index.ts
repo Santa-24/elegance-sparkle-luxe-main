@@ -1,8 +1,4 @@
-export {
-  getAdminSessionStatus,
-  loginAdmin,
-  logoutAdmin,
-} from "./admin-auth.functions";
+export { getAdminSessionStatus, loginAdmin, logoutAdmin } from "./admin-auth.functions";
 export { uploadAdminAsset } from "./admin-media.functions";
 export {
   deleteAdminAdvertisement,

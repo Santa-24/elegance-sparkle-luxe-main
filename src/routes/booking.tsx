@@ -45,10 +45,10 @@ export const Route = createFileRoute("/booking")({
 const serviceMap: Record<string, string> = {
   "bridal-makeup": "Bridal Makeup",
   "party-makeup": "Party Makeup",
-  "facial": "Premium Facial",
+  facial: "Premium Facial",
   "hair-styling": "Hair Styling & Cut",
-  "threading": "Threading & Brows",
-  "academy": "Academy Enrollment"
+  threading: "Threading & Brows",
+  academy: "Academy Enrollment",
 };
 
 const SERVICES = [
@@ -57,18 +57,10 @@ const SERVICES = [
   "Premium Facial",
   "Hair Styling & Cut",
   "Threading & Brows",
-  "Academy Enrollment"
+  "Academy Enrollment",
 ];
 
-const TIME_SLOTS = [
-  "10:00 AM",
-  "11:30 AM",
-  "1:00 PM",
-  "2:30 PM",
-  "4:00 PM",
-  "5:30 PM",
-  "7:00 PM"
-];
+const TIME_SLOTS = ["10:00 AM", "11:30 AM", "1:00 PM", "2:30 PM", "4:00 PM", "5:30 PM", "7:00 PM"];
 
 function getTodayForInput() {
   return new Date().toISOString().slice(0, 10);
@@ -88,7 +80,8 @@ function isTimeSlotPast(slot: string, selectedDate: string) {
   const currentMinutes = new Date().getMinutes();
 
   const [time, modifier] = slot.split(" ");
-  let [hours, minutes] = time.split(":").map(Number);
+  let hours = Number(time.split(":")[0]);
+  const minutes = Number(time.split(":")[1] || 0);
 
   if (modifier === "PM" && hours < 12) {
     hours += 12;
@@ -97,10 +90,12 @@ function isTimeSlotPast(slot: string, selectedDate: string) {
     hours = 0;
   }
 
-  if (hours < currentHours) return true;
-  if (hours === currentHours && minutes <= currentMinutes) return true;
+  const slotHour = hours;
+  const slotMinute = minutes;
+  const slotTotalMinutes = slotHour * 60 + slotMinute;
+  const currentTotalMinutes = currentHours * 60 + currentMinutes;
 
-  return false;
+  return slotTotalMinutes > currentTotalMinutes;
 }
 
 function BookingPage() {
@@ -146,8 +141,8 @@ function BookingPage() {
 
     if (step === 1) {
       if (!data.name.trim()) errors.name = "Please enter your full name.";
-      
-      const cleanPhone = data.phone.replace(/[\s\-\+\(\)]/g, "");
+
+      const cleanPhone = data.phone.replace(/[\s\-+()]/g, "");
       if (!data.phone.trim()) {
         errors.phone = "Please enter your phone number.";
       } else if (!/^[6-9]\d{9}$/.test(cleanPhone) && !/^\d{10}$/.test(cleanPhone)) {
@@ -205,11 +200,11 @@ function BookingPage() {
     try {
       const result = await createBookingRequest({ data });
       setBookingId(result.bookingCode);
-      
+
       // Redirect to WhatsApp
       redirectToWhatsApp(result.bookingCode);
       setStep(5);
-      
+
       trackEvent("booking_submit", {
         service: data.service,
         booking_code_length: result.bookingCode.length,
@@ -225,18 +220,21 @@ function BookingPage() {
     }
   }
 
-  const faqSchema = bookingFaqs.length > 0 ? {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": bookingFaqs.map((item) => ({
-      "@type": "Question",
-      "name": item.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": item.answer
-      }
-    }))
-  } : null;
+  const faqSchema =
+    bookingFaqs.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: bookingFaqs.map((item) => ({
+            "@type": "Question",
+            name: item.question,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: item.answer,
+            },
+          })),
+        }
+      : null;
 
   return (
     <SiteLayout>
@@ -281,7 +279,10 @@ function BookingPage() {
                 <p className="text-sm text-muted-foreground">So we know who to pamper.</p>
                 <div className="mt-6 space-y-4">
                   <div className="space-y-1.5">
-                    <label htmlFor="name-input" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                    <label
+                      htmlFor="name-input"
+                      className="text-xs uppercase tracking-widest text-muted-foreground font-semibold"
+                    >
                       Full Name
                     </label>
                     <Input
@@ -301,14 +302,22 @@ function BookingPage() {
                       aria-describedby={fieldErrors.name ? "name-error" : undefined}
                     />
                     {fieldErrors.name && (
-                      <p id="name-error" role="alert" aria-live="polite" className="mt-1.5 text-sm text-rose-600 font-medium">
+                      <p
+                        id="name-error"
+                        role="alert"
+                        aria-live="polite"
+                        className="mt-1.5 text-sm text-rose-600 font-medium"
+                      >
                         {fieldErrors.name}
                       </p>
                     )}
                   </div>
 
                   <div className="space-y-1.5">
-                    <label htmlFor="phone-input" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                    <label
+                      htmlFor="phone-input"
+                      className="text-xs uppercase tracking-widest text-muted-foreground font-semibold"
+                    >
                       Phone Number
                     </label>
                     <Input
@@ -330,14 +339,22 @@ function BookingPage() {
                       aria-describedby={fieldErrors.phone ? "phone-error" : undefined}
                     />
                     {fieldErrors.phone && (
-                      <p id="phone-error" role="alert" aria-live="polite" className="mt-1.5 text-sm text-rose-600 font-medium">
+                      <p
+                        id="phone-error"
+                        role="alert"
+                        aria-live="polite"
+                        className="mt-1.5 text-sm text-rose-600 font-medium"
+                      >
                         {fieldErrors.phone}
                       </p>
                     )}
                   </div>
 
                   <div className="space-y-1.5">
-                    <label htmlFor="email-input" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                    <label
+                      htmlFor="email-input"
+                      className="text-xs uppercase tracking-widest text-muted-foreground font-semibold"
+                    >
                       Email (optional)
                     </label>
                     <Input
@@ -394,7 +411,10 @@ function BookingPage() {
                 </p>
                 <div className="mt-6 space-y-4">
                   <div className="space-y-1.5">
-                    <label htmlFor="date-input" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                    <label
+                      htmlFor="date-input"
+                      className="text-xs uppercase tracking-widest text-muted-foreground font-semibold"
+                    >
                       Preferred Date
                     </label>
                     <Input
@@ -417,7 +437,12 @@ function BookingPage() {
                       aria-describedby={fieldErrors.date ? "date-error" : undefined}
                     />
                     {fieldErrors.date && (
-                      <p id="date-error" role="alert" aria-live="polite" className="mt-1.5 text-sm text-rose-600 font-medium">
+                      <p
+                        id="date-error"
+                        role="alert"
+                        aria-live="polite"
+                        className="mt-1.5 text-sm text-rose-600 font-medium"
+                      >
                         {fieldErrors.date}
                       </p>
                     )}
@@ -471,33 +496,47 @@ function BookingPage() {
               <div className="animate-fade-up">
                 <h2 className="font-display text-2xl text-[var(--royal)]">Confirm & Submit</h2>
                 <p className="text-sm text-muted-foreground">Please review your booking details.</p>
-                
+
                 <div className="mt-6 space-y-4 rounded-2xl border border-border bg-muted/40 p-6">
                   <div className="grid grid-cols-2 gap-y-4 gap-x-2 text-sm">
                     <div>
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground block">Full Name</span>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground block">
+                        Full Name
+                      </span>
                       <strong className="text-foreground text-[15px]">{data.name}</strong>
                     </div>
                     <div>
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground block">Phone Number</span>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground block">
+                        Phone Number
+                      </span>
                       <strong className="text-foreground text-[15px]">{data.phone}</strong>
                     </div>
                     {data.email && (
                       <div className="col-span-2">
-                        <span className="text-xs uppercase tracking-widest text-muted-foreground block">Email Address</span>
+                        <span className="text-xs uppercase tracking-widest text-muted-foreground block">
+                          Email Address
+                        </span>
                         <strong className="text-foreground text-[15px]">{data.email}</strong>
                       </div>
                     )}
                     <div className="col-span-2 border-t border-border/60 pt-3">
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground block">Selected Service</span>
-                      <strong className="text-gold-safe text-base font-semibold">{data.service}</strong>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground block">
+                        Selected Service
+                      </span>
+                      <strong className="text-gold-safe text-base font-semibold">
+                        {data.service}
+                      </strong>
                     </div>
                     <div className="border-t border-border/60 pt-3">
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground block">Preferred Date</span>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground block">
+                        Preferred Date
+                      </span>
                       <strong className="text-foreground text-[15px]">{data.date}</strong>
                     </div>
                     <div className="border-t border-border/60 pt-3">
-                      <span className="text-xs uppercase tracking-widest text-muted-foreground block">Preferred Time</span>
+                      <span className="text-xs uppercase tracking-widest text-muted-foreground block">
+                        Preferred Time
+                      </span>
                       <strong className="text-foreground text-[15px]">{data.time}</strong>
                     </div>
                   </div>
@@ -515,7 +554,10 @@ function BookingPage() {
                 />
 
                 <div className="mt-6 space-y-1.5">
-                  <label htmlFor="notes-textarea" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                  <label
+                    htmlFor="notes-textarea"
+                    className="text-xs uppercase tracking-widest text-muted-foreground font-semibold"
+                  >
                     Special Notes / Request (optional)
                   </label>
                   <textarea
@@ -543,9 +585,7 @@ function BookingPage() {
                   <div className="text-xs uppercase tracking-widest text-muted-foreground">
                     Booking ID
                   </div>
-                  <div className="font-display text-xl text-gold-safe font-bold">
-                    {bookingId}
-                  </div>
+                  <div className="font-display text-xl text-gold-safe font-bold">{bookingId}</div>
                 </div>
                 <div className="mt-6 text-sm text-muted-foreground">
                   <p>
@@ -595,8 +635,7 @@ function BookingPage() {
               Booking FAQs
             </div>
             <h2 className="font-display text-4xl md:text-5xl text-[var(--royal)] mt-2">
-              A few things to know before you{" "}
-              <span className="text-gold-safe italic">confirm</span>
+              A few things to know before you <span className="text-gold-safe italic">confirm</span>
             </h2>
           </div>
           <div className="grid gap-4 md:grid-cols-2">

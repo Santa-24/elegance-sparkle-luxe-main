@@ -16,7 +16,12 @@ import { reportAppError } from "../lib/error-reporting";
 import { getSiteConfig } from "@/lib/site-config";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { SchemaOrg } from "@/components/SchemaOrg";
-import { buildCanonicalUrl, buildOrganizationSchema, buildWebSiteSchema, buildLocalBusinessSchema } from "@/lib/seo";
+import {
+  buildCanonicalUrl,
+  buildOrganizationSchema,
+  buildWebSiteSchema,
+  buildLocalBusinessSchema,
+} from "@/lib/seo";
 import { trackPageView } from "@/lib/analytics";
 import { getLiveSiteContentFn } from "@/lib/content/live.functions";
 import { SiteContentProvider } from "@/lib/content/site-content";

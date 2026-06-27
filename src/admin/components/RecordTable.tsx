@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Search, ChevronDown, Trash2, Check, X, Pencil } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
 import { BulkActionBar } from "./BulkActionBar";
@@ -118,7 +118,10 @@ interface RecordTableProps {
   items: Array<Record<string, any>>;
   onEdit: (id: string | number) => void;
   onDelete: (id: string | number) => void;
-  onBulkAction: (action: "approve" | "reject" | "delete", ids: Array<string | number>) => Promise<void>;
+  onBulkAction: (
+    action: "approve" | "reject" | "delete",
+    ids: Array<string | number>,
+  ) => Promise<void>;
   config: { title: string; canCreate: boolean };
 }
 
@@ -138,12 +141,12 @@ export function RecordTable({
   const columns = sectionColumns[section] || [];
   const primaryCol = columns.find((c) => c.isPrimary) || columns[0] || { key: "id", header: "ID" };
 
-  const getRowStatus = (item: any) => {
+  const getRowStatus = useCallback((item: any) => {
     if (section === "Customers") return item.preferred_contact_method || "N/A";
     if (item.status !== undefined) return item.status;
     if (item.is_active !== undefined) return item.is_active ? "Active" : "Paused";
     return "Active";
-  };
+  }, [section]);
 
   const getRowValue = (item: any, key: string) => {
     if (key === "status") {
@@ -170,14 +173,24 @@ export function RecordTable({
       if (statusFilter === "Pending") {
         matchesFilter = status === "pending" || status === "scheduled" || status === "rescheduled";
       } else if (statusFilter === "Active") {
-        matchesFilter = status === "active" || status === "approved" || status === "visible" || status === "completed";
+        matchesFilter =
+          status === "active" ||
+          status === "approved" ||
+          status === "visible" ||
+          status === "completed";
       } else if (statusFilter === "Rejected") {
-        matchesFilter = status === "rejected" || status === "draft" || status === "expired" || status === "paused" || status === "cancelled" || status === "archived";
+        matchesFilter =
+          status === "rejected" ||
+          status === "draft" ||
+          status === "expired" ||
+          status === "paused" ||
+          status === "cancelled" ||
+          status === "archived";
       }
 
       return matchesSearch && matchesFilter;
     });
-  }, [items, searchQuery, statusFilter, section]);
+  }, [items, searchQuery, statusFilter, section, getRowStatus]);
 
   // Client-side sorting
   const sortedItems = useMemo(() => {
@@ -224,7 +237,11 @@ export function RecordTable({
     }
   };
 
-  const canApproveReject = section === "Bookings" || section === "Testimonials" || section === "Offers" || section === "Ads";
+  const canApproveReject =
+    section === "Bookings" ||
+    section === "Testimonials" ||
+    section === "Offers" ||
+    section === "Ads";
 
   const handleApprove = async () => {
     await onBulkAction("approve", selectedIds);
@@ -237,7 +254,9 @@ export function RecordTable({
   };
 
   const handleDelete = async () => {
-    const confirm = window.confirm(`Are you sure you want to delete ${selectedIds.length} selected items? This cannot be undone.`);
+    const confirm = window.confirm(
+      `Are you sure you want to delete ${selectedIds.length} selected items? This cannot be undone.`,
+    );
     if (confirm) {
       await onBulkAction("delete", selectedIds);
       setSelectedIds([]);
@@ -330,7 +349,11 @@ export function RecordTable({
                   <tr
                     key={String(item.id)}
                     className={`border-b border-[#2a2015] hover:bg-[#1e1408] transition ${
-                      isChecked ? "bg-[#221a0a] border-l-2 border-[#c9a96e]" : idx % 2 === 0 ? "bg-[#0d0a07]" : "bg-[#101008]"
+                      isChecked
+                        ? "bg-[#221a0a] border-l-2 border-[#c9a96e]"
+                        : idx % 2 === 0
+                          ? "bg-[#0d0a07]"
+                          : "bg-[#101008]"
                     }`}
                   >
                     <td className="p-4">
@@ -354,7 +377,9 @@ export function RecordTable({
                         <td
                           key={col.key}
                           className={`p-4 text-sm ${
-                            col.isPrimary ? "text-[#f5e6d0] font-medium" : "text-[#c5b399] font-normal"
+                            col.isPrimary
+                              ? "text-[#f5e6d0] font-medium"
+                              : "text-[#c5b399] font-normal"
                           }`}
                         >
                           {val}
@@ -373,7 +398,9 @@ export function RecordTable({
                       <button
                         type="button"
                         onClick={() => {
-                          const confirm = window.confirm("Are you sure you want to delete this record?");
+                          const confirm = window.confirm(
+                            "Are you sure you want to delete this record?",
+                          );
                           if (confirm) onDelete(item.id);
                         }}
                         className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#f43f5e]/10 text-[#f43f5e] text-xs font-semibold hover:bg-[#f43f5e]/20 cursor-pointer transition"

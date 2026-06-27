@@ -58,19 +58,19 @@ The app also includes an admin dashboard for managing bookings, services, galler
 
 ## 🛠️ Tech Stack
 
-| Category | Technology |
-|----------|------------|
-| Language | TypeScript 5.x |
-| Framework | TanStack Start + React 19 |
-| Build Tool | Vite 7 |
-| Styling | Tailwind CSS 4 |
-| UI Primitives | Radix UI |
-| Forms / Validation | React Hook Form, Zod |
-| Data / CMS | Supabase |
-| Analytics | Google Analytics 4, Microsoft Clarity |
-| Spam Protection | Honeypot + rate limiting |
-| Icons | Lucide React |
-| Testing | No test runner is configured in the repository |
+| Category           | Technology                                     |
+| ------------------ | ---------------------------------------------- |
+| Language           | TypeScript 5.x                                 |
+| Framework          | TanStack Start + React 19                      |
+| Build Tool         | Vite 7                                         |
+| Styling            | Tailwind CSS 4                                 |
+| UI Primitives      | Radix UI                                       |
+| Forms / Validation | React Hook Form, Zod                           |
+| Data / CMS         | Supabase                                       |
+| Analytics          | Google Analytics 4, Microsoft Clarity          |
+| Spam Protection    | Honeypot + rate limiting                       |
+| Icons              | Lucide React                                   |
+| Testing            | No test runner is configured in the repository |
 
 ---
 
@@ -170,29 +170,29 @@ copy .env.example .env
 
 Create a `.env` file in the project root.
 
-| Variable | Description | Required | Default |
-|----------|-------------|----------|---------|
-| `ADMIN_SESSION_SECRET` | Secret used to sign the admin session cookie | ✅ Yes | None |
-| `ADMIN_EMAIL` | Email used for admin panel login | ✅ Yes | None |
-| `ADMIN_PASSWORD` | Password used for admin panel login | ✅ Yes | None |
-| `SESSION_SECRET` | Session encryption/signing secret | ✅ Yes | None |
-| `JWT_SECRET` | Additional server security secret used by the app | ✅ Yes | None |
-| `SUPABASE_URL` | Supabase project URL | ✅ Yes | None |
-| `SUPABASE_ANON_KEY` | Supabase anonymous/public key | ✅ Yes | None |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key for server-side access | ✅ Yes | None |
-| `SUPABASE_MEDIA_BUCKET` | Storage bucket used for admin media uploads | ⚪ No | `cms-media` |
-| `VITE_CONTACT_PHONE` | Public contact phone shown on the site | ⚪ No | `+91 92652 00523` |
-| `VITE_CONTACT_EMAIL` | Public contact email shown on the site | ⚪ No | `hello@example.com` |
-| `VITE_CONTACT_ADDRESS` | Public business address | ⚪ No | `Jajpur Road, Odisha, India` |
-| `VITE_CONTACT_HOURS` | Public opening hours | ⚪ No | `Mon - Sun | 10:00 AM - 8:00 PM` |
-| `VITE_WHATSAPP_NUMBER` | WhatsApp number used in the public UI | ⚪ No | Derived from contact phone |
-| `VITE_SITE_URL` | Canonical site URL used for SEO links | ⚪ No | Empty |
-| `VITE_SITE_NAME` | Public site / brand name | ⚪ No | `Elegance Makeover & Academy` |
-| `VITE_ADMIN_EMAIL` | Prefilled admin email in the login form | ⚪ No | `elegancemakeover.2021@gmail.com` |
-| `VITE_GA4_ID` | Google Analytics 4 measurement ID | ⚪ No | Empty |
-| `VITE_CLARITY_ID` | Microsoft Clarity project ID | ⚪ No | Empty |
-| `VITE_INSTAGRAM_URL` | Instagram profile URL | ⚪ No | `#` |
-| `VITE_FACEBOOK_URL` | Facebook page URL | ⚪ No | `#` |
+| Variable                    | Description                                       | Required | Default                           |
+| --------------------------- | ------------------------------------------------- | -------- | --------------------------------- | ------------------- |
+| `ADMIN_SESSION_SECRET`      | Secret used to sign the admin session cookie      | ✅ Yes   | None                              |
+| `ADMIN_EMAIL`               | Email used for admin panel login                  | ✅ Yes   | None                              |
+| `ADMIN_PASSWORD`            | Password used for admin panel login               | ✅ Yes   | None                              |
+| `SESSION_SECRET`            | Session encryption/signing secret                 | ✅ Yes   | None                              |
+| `JWT_SECRET`                | Additional server security secret used by the app | ✅ Yes   | None                              |
+| `SUPABASE_URL`              | Supabase project URL                              | ✅ Yes   | None                              |
+| `SUPABASE_ANON_KEY`         | Supabase anonymous/public key                     | ✅ Yes   | None                              |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key for server-side access  | ✅ Yes   | None                              |
+| `SUPABASE_MEDIA_BUCKET`     | Storage bucket used for admin media uploads       | ⚪ No    | `cms-media`                       |
+| `VITE_CONTACT_PHONE`        | Public contact phone shown on the site            | ⚪ No    | `+91 92652 00523`                 |
+| `VITE_CONTACT_EMAIL`        | Public contact email shown on the site            | ⚪ No    | `hello@example.com`               |
+| `VITE_CONTACT_ADDRESS`      | Public business address                           | ⚪ No    | `Jajpur Road, Odisha, India`      |
+| `VITE_CONTACT_HOURS`        | Public opening hours                              | ⚪ No    | `Mon - Sun                        | 10:00 AM - 8:00 PM` |
+| `VITE_WHATSAPP_NUMBER`      | WhatsApp number used in the public UI             | ⚪ No    | Derived from contact phone        |
+| `VITE_SITE_URL`             | Canonical site URL used for SEO links             | ⚪ No    | Empty                             |
+| `VITE_SITE_NAME`            | Public site / brand name                          | ⚪ No    | `Elegance Makeover & Academy`     |
+| `VITE_ADMIN_EMAIL`          | Prefilled admin email in the login form           | ⚪ No    | `elegancemakeover.2021@gmail.com` |
+| `VITE_GA4_ID`               | Google Analytics 4 measurement ID                 | ⚪ No    | Empty                             |
+| `VITE_CLARITY_ID`           | Microsoft Clarity project ID                      | ⚪ No    | Empty                             |
+| `VITE_INSTAGRAM_URL`        | Instagram profile URL                             | ⚪ No    | `#`                               |
+| `VITE_FACEBOOK_URL`         | Facebook page URL                                 | ⚪ No    | `#`                               |
 
 ---
 
@@ -213,6 +213,7 @@ npm run build
 ```
 
 Output directories:
+
 - `dist/client`
 - `dist/server`
 
@@ -285,6 +286,7 @@ npm run format
 ## 🔧 Troubleshooting
 
 **Issue: Admin login fails**
+
 ```bash
 # Check these values in .env
 ADMIN_EMAIL
@@ -295,9 +297,11 @@ JWT_SECRET
 ```
 
 **Issue: Booking or contact forms fail to submit**
+
 > Confirm that your Supabase credentials are valid and that the schema from `docs/schema.sql` has been applied. Booking and contact submissions now rely on honeypot checks and rate limiting rather than CAPTCHA keys.
 
 **Issue: Media upload errors from the admin panel**
+
 > Verify that `SUPABASE_MEDIA_BUCKET` exists in Supabase Storage and that your `SUPABASE_SERVICE_ROLE_KEY` is valid.
 
 ---

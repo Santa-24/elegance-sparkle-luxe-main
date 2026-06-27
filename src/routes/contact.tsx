@@ -42,7 +42,7 @@ function useScrollReveal() {
           }
         });
       },
-      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" },
     );
 
     const elements = document.querySelectorAll(".reveal");
@@ -125,7 +125,7 @@ function ContactPage() {
           service: form.service,
           message: form.message,
           honeypot: form.website,
-        }
+        },
       });
       setSent(true);
       trackEvent("contact_submit", {
@@ -189,14 +189,14 @@ function ContactPage() {
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": contactFaqItems.map((item) => ({
+    mainEntity: contactFaqItems.map((item) => ({
       "@type": "Question",
-      "name": item.q,
-      "acceptedAnswer": {
+      name: item.q,
+      acceptedAnswer: {
         "@type": "Answer",
-        "text": item.a
-      }
-    }))
+        text: item.a,
+      },
+    })),
   };
 
   return (
@@ -242,7 +242,9 @@ function ContactPage() {
                   <Phone className="h-5 w-5 text-gold" />
                 </div>
                 <div>
-                  <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Phone</div>
+                  <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
+                    Phone
+                  </div>
                   <div className="font-semibold text-foreground">{contactPhone}</div>
                 </div>
               </a>
@@ -255,7 +257,9 @@ function ContactPage() {
                   <Mail className="h-5 w-5 text-gold" />
                 </div>
                 <div>
-                  <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Email</div>
+                  <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
+                    Email
+                  </div>
                   <div className="break-all font-semibold text-foreground">{contactEmail}</div>
                 </div>
               </a>
@@ -264,7 +268,9 @@ function ContactPage() {
                   <MapPin className="h-5 w-5 text-gold" />
                 </div>
                 <div>
-                  <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">Location</div>
+                  <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
+                    Location
+                  </div>
                   <div className="font-semibold text-foreground">{contactAddress}</div>
                 </div>
               </div>
@@ -324,7 +330,10 @@ function ContactPage() {
 
             <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <label htmlFor="contact-name" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                <label
+                  htmlFor="contact-name"
+                  className="text-xs uppercase tracking-widest text-muted-foreground font-semibold"
+                >
                   Your Name *
                 </label>
                 <Input
@@ -336,7 +345,10 @@ function ContactPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label htmlFor="contact-phone" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                <label
+                  htmlFor="contact-phone"
+                  className="text-xs uppercase tracking-widest text-muted-foreground font-semibold"
+                >
                   Phone *
                 </label>
                 <Input
@@ -349,7 +361,10 @@ function ContactPage() {
               </div>
 
               <div className="sm:col-span-2 space-y-1.5">
-                <label htmlFor="contact-email" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                <label
+                  htmlFor="contact-email"
+                  className="text-xs uppercase tracking-widest text-muted-foreground font-semibold"
+                >
                   Email
                 </label>
                 <Input
@@ -361,7 +376,10 @@ function ContactPage() {
               </div>
 
               <div className="sm:col-span-2 space-y-1.5">
-                <label htmlFor="service-select" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                <label
+                  htmlFor="service-select"
+                  className="text-xs uppercase tracking-widest text-muted-foreground font-semibold"
+                >
                   Service
                 </label>
                 <select
@@ -381,7 +399,10 @@ function ContactPage() {
               </div>
 
               <div className="sm:col-span-2 space-y-1.5">
-                <label htmlFor="message-textarea" className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                <label
+                  htmlFor="message-textarea"
+                  className="text-xs uppercase tracking-widest text-muted-foreground font-semibold"
+                >
                   Message
                 </label>
                 <textarea
@@ -395,7 +416,7 @@ function ContactPage() {
               </div>
             </div>
 
-             <button
+            <button
               type="submit"
               disabled={sent || isSubmitting || rateLimitSeconds > 0}
               onClickCapture={() =>
@@ -425,7 +446,9 @@ function ContactPage() {
       <section className="marble-bg py-24 md:py-[120px] reveal">
         <div className="mx-auto max-w-5xl px-5 lg:px-10">
           <div className="text-center">
-            <div className="text-xs uppercase tracking-[0.4em] text-[var(--purple-deep)] font-semibold">FAQs</div>
+            <div className="text-xs uppercase tracking-[0.4em] text-[var(--purple-deep)] font-semibold">
+              FAQs
+            </div>
             <h2 className="mt-2 font-display text-4xl md:text-5xl text-[var(--royal)]">
               Questions we hear most often
             </h2>

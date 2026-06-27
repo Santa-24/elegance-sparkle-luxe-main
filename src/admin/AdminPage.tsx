@@ -1,11 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type FormEvent,
-} from "react";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
 import {
   CalendarClock,
   Sparkles,
@@ -35,11 +29,7 @@ import { RecordTable } from "./components/RecordTable";
 import { ModalDrawer } from "./components/ModalDrawer";
 
 import { appointmentSlots } from "@/admin/data";
-import {
-  getAdminSessionStatus,
-  loginAdmin,
-  logoutAdmin,
-} from "@/admin/api";
+import { getAdminSessionStatus, loginAdmin, logoutAdmin } from "@/admin/api";
 import {
   deleteAdminAdvertisement,
   deleteAdminAboutContent,
@@ -1071,31 +1061,48 @@ function AdminPage() {
     };
   }, [editorMode, activeSection, selectedRecord, closeEditor]);
 
-  const liveStats = useMemo(() => [
-    { label: "Total Bookings", value: String(dashboardData.bookings.length) },
-    { label: "Customers", value: String(dashboardData.customers.length) },
-    { label: "Active Offers", value: String(dashboardData.offers.filter((offer) => offer.status === "active").length) },
-    { label: "Gallery Images", value: String(dashboardData.gallery.filter((item) => item.is_active).length) },
-    { label: "Upcoming Appointments", value: String(dashboardData.bookings.filter((booking) => booking.status !== "Rejected").length) },
-  ], [dashboardData]);
+  const liveStats = useMemo(
+    () => [
+      { label: "Total Bookings", value: String(dashboardData.bookings.length) },
+      { label: "Customers", value: String(dashboardData.customers.length) },
+      {
+        label: "Active Offers",
+        value: String(dashboardData.offers.filter((offer) => offer.status === "active").length),
+      },
+      {
+        label: "Gallery Images",
+        value: String(dashboardData.gallery.filter((item) => item.is_active).length),
+      },
+      {
+        label: "Upcoming Appointments",
+        value: String(
+          dashboardData.bookings.filter((booking) => booking.status !== "Rejected").length,
+        ),
+      },
+    ],
+    [dashboardData],
+  );
 
-  const sectionCounts = useMemo(() => ({
-    Bookings: dashboardData.bookings.length,
-    Services: dashboardData.services.length,
-    Gallery: dashboardData.gallery.length,
-    Testimonials: dashboardData.testimonials.length,
-    Offers: dashboardData.offers.length,
-    Customers: dashboardData.customers.length,
-    "Pricing Packages": dashboardData.pricingPackages.length,
-    Ads: dashboardData.advertisements.length,
-    Hero: dashboardData.heroContent.length,
-    About: dashboardData.aboutContent.length,
-    Contact: dashboardData.contactSettings.length,
-    Social: dashboardData.socialLinks.length,
-    FAQ: dashboardData.faqSections.length,
-    "Service Areas": dashboardData.serviceAreas.length,
-    SEO: dashboardData.seoSettings.length,
-  }), [dashboardData]);
+  const sectionCounts = useMemo(
+    () => ({
+      Bookings: dashboardData.bookings.length,
+      Services: dashboardData.services.length,
+      Gallery: dashboardData.gallery.length,
+      Testimonials: dashboardData.testimonials.length,
+      Offers: dashboardData.offers.length,
+      Customers: dashboardData.customers.length,
+      "Pricing Packages": dashboardData.pricingPackages.length,
+      Ads: dashboardData.advertisements.length,
+      Hero: dashboardData.heroContent.length,
+      About: dashboardData.aboutContent.length,
+      Contact: dashboardData.contactSettings.length,
+      Social: dashboardData.socialLinks.length,
+      FAQ: dashboardData.faqSections.length,
+      "Service Areas": dashboardData.serviceAreas.length,
+      SEO: dashboardData.seoSettings.length,
+    }),
+    [dashboardData],
+  );
 
   async function handleUnlock(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -1114,9 +1121,7 @@ function AdminPage() {
     } catch (error) {
       const message = error instanceof Error ? error.message : "";
       if (message.toLowerCase().includes("invalid login credentials")) {
-        setAuthError(
-          "Invalid email or password. Please try again.",
-        );
+        setAuthError("Invalid email or password. Please try again.");
         return;
       }
       setAuthError("Auth request failed.");
@@ -1187,7 +1192,10 @@ function AdminPage() {
     }
   }
 
-  async function handleBulkAction(action: "approve" | "reject" | "delete", ids: Array<string | number>) {
+  async function handleBulkAction(
+    action: "approve" | "reject" | "delete",
+    ids: Array<string | number>,
+  ) {
     setActionError("");
     try {
       if (action === "delete") {
@@ -1259,7 +1267,9 @@ function AdminPage() {
                 rating: Number(record.rating),
                 review_text: String(record.review_text),
                 status: action === "approve" ? "visible" : "draft",
-                wedding_month_year: record.wedding_month_year ? String(record.wedding_month_year) : undefined,
+                wedding_month_year: record.wedding_month_year
+                  ? String(record.wedding_month_year)
+                  : undefined,
               },
             });
           } else if (activeSection === "Offers") {
@@ -1388,7 +1398,9 @@ function AdminPage() {
               rating: Number(draft.rating ?? 5),
               review_text: String(draft.review_text ?? ""),
               status: String(draft.status ?? "visible") as "visible" | "draft",
-              wedding_month_year: draft.wedding_month_year ? String(draft.wedding_month_year) : undefined,
+              wedding_month_year: draft.wedding_month_year
+                ? String(draft.wedding_month_year)
+                : undefined,
             },
           });
           savedId = saved.id;
@@ -1659,9 +1671,7 @@ function AdminPage() {
               <Shield className="h-5 w-5" />
               <span className="text-xs uppercase tracking-[0.3em] font-semibold">Admin Login</span>
             </div>
-            <h2 className="mt-4 font-display text-3xl text-[#f5e6d0]">
-              Unlock the dashboard
-            </h2>
+            <h2 className="mt-4 font-display text-3xl text-[#f5e6d0]">Unlock the dashboard</h2>
             <p className="mt-2 text-sm text-[#c5b399]/85">
               Sign in with the email and password from your `.env` file.
             </p>
@@ -1849,9 +1859,7 @@ function AdminPage() {
                   key={field.key}
                   field={field}
                   value={draft[field.key]}
-                  onChange={(value) =>
-                    setDraft((current) => ({ ...current, [field.key]: value }))
-                  }
+                  onChange={(value) => setDraft((current) => ({ ...current, [field.key]: value }))}
                 />
               ))}
             </div>
@@ -1861,12 +1869,16 @@ function AdminPage() {
 
       {/* TOAST FEEDBACK */}
       {toast && (
-        <div className={`fixed top-4 right-4 z-[100] flex items-center gap-2.5 px-4 py-3 rounded-xl border shadow-luxury animate-toast ${
-          toast.type === "error" 
-            ? "bg-rose-500/10 border-rose-500/30 text-rose-500" 
-            : "bg-[#1e1408] border-[#c9a96e]/30 text-[#f5e6d0]"
-        }`}>
-          <div className={`h-2 w-2 rounded-full ${toast.type === "error" ? "bg-rose-500" : "bg-[#c9a96e]"}`} />
+        <div
+          className={`fixed top-4 right-4 z-[100] flex items-center gap-2.5 px-4 py-3 rounded-xl border shadow-luxury animate-toast ${
+            toast.type === "error"
+              ? "bg-rose-500/10 border-rose-500/30 text-rose-500"
+              : "bg-[#1e1408] border-[#c9a96e]/30 text-[#f5e6d0]"
+          }`}
+        >
+          <div
+            className={`h-2 w-2 rounded-full ${toast.type === "error" ? "bg-rose-500" : "bg-[#c9a96e]"}`}
+          />
           <span className="text-xs font-semibold">{toast.message}</span>
         </div>
       )}
@@ -1925,7 +1937,9 @@ function FieldControl({
   if (field.kind === "textarea") {
     return (
       <div>
-        <label className="text-xs uppercase tracking-widest text-[#c9a96e] font-semibold">{field.label}</label>
+        <label className="text-xs uppercase tracking-widest text-[#c9a96e] font-semibold">
+          {field.label}
+        </label>
         <textarea
           rows={4}
           value={String(value ?? "")}
@@ -1940,7 +1954,9 @@ function FieldControl({
   if (field.kind === "file") {
     return (
       <div>
-        <label className="text-xs uppercase tracking-widest text-[#c9a96e] font-semibold">{field.label}</label>
+        <label className="text-xs uppercase tracking-widest text-[#c9a96e] font-semibold">
+          {field.label}
+        </label>
         <input
           type="file"
           accept="image/*"
@@ -1963,7 +1979,9 @@ function FieldControl({
   if (field.kind === "select") {
     return (
       <div>
-        <label className="text-xs uppercase tracking-widest text-[#c9a96e] font-semibold">{field.label}</label>
+        <label className="text-xs uppercase tracking-widest text-[#c9a96e] font-semibold">
+          {field.label}
+        </label>
         <select
           value={String(value ?? "")}
           onChange={(event) => onChange(event.target.value)}
@@ -1995,7 +2013,9 @@ function FieldControl({
 
   return (
     <div>
-      <label className="text-xs uppercase tracking-widest text-[#c9a96e] font-semibold">{field.label}</label>
+      <label className="text-xs uppercase tracking-widest text-[#c9a96e] font-semibold">
+        {field.label}
+      </label>
       <input
         type={field.kind === "number" ? "number" : field.kind}
         value={value === undefined ? "" : String(value)}

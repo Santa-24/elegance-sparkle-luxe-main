@@ -324,10 +324,14 @@ function splitBlogContent(value: string) {
 }
 
 const BLOG_THUMBNAILS: Record<string, string> = {
-  "bridal-makeup-checklist-jajpur-road": "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80",
-  "how-to-choose-makeup-academy-odisha": "https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=600&q=80",
-  "pre-bridal-skincare-routine-before-wedding": "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80",
-  "party-makeup-vs-bridal-makeup": "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80"
+  "bridal-makeup-checklist-jajpur-road":
+    "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80",
+  "how-to-choose-makeup-academy-odisha":
+    "https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=600&q=80",
+  "pre-bridal-skincare-routine-before-wedding":
+    "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80",
+  "party-makeup-vs-bridal-makeup":
+    "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80",
 };
 
 function mapBlogPost(row: LiveBlogPostRow, categoryTitle?: string, authorName?: string) {
@@ -343,7 +347,10 @@ function mapBlogPost(row: LiveBlogPostRow, categoryTitle?: string, authorName?: 
     keywords: normalizeBlogTags(row.tags_text),
     excerpt: row.excerpt,
     body: splitBlogContent(row.content_text),
-    featuredImageUrl: row.featured_image_url || BLOG_THUMBNAILS[row.slug] || "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80",
+    featuredImageUrl:
+      row.featured_image_url ||
+      BLOG_THUMBNAILS[row.slug] ||
+      "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80",
     tags: normalizeBlogTags(row.tags_text),
     authorName: authorName || row.author_slug,
     categorySlug: row.category_slug,
