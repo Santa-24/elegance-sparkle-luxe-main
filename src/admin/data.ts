@@ -1,24 +1,7 @@
-import bridal1 from "../assets/bridal-1.webp";
-import bridal2 from "../assets/bridal-2.webp";
-import bridal3 from "../assets/bridal-3.webp";
-import bridal4 from "../assets/bridal-4.webp";
-import bridal5 from "../assets/bridal-5.webp";
-import bridal6 from "../assets/bridal-6.webp";
-import bridal7 from "../assets/bridal-7.webp";
-import bridal8 from "../assets/bridal-8.webp";
-import bridal9 from "../assets/bridal-9.webp";
-import bridal10 from "../assets/bridal-10.webp";
-import bridal11 from "../assets/bridal-11.webp";
-import interior1 from "../assets/interior1.webp";
-import interior2 from "../assets/interior2.webp";
-import interior3 from "../assets/interior3.webp";
-import interior4 from "../assets/interior4.webp";
-
 import type {
   AdminAdvertisement,
   AdminBooking,
   AdminGalleryItem,
-  AdminOffer,
   AdminService,
   AdminTestimonial,
 } from "./types";
@@ -133,21 +116,21 @@ export const adminAdvertisements: AdminAdvertisement[] = [
 ];
 
 export const adminGallery: AdminGalleryItem[] = [
-  { name: "Regal bride portrait", category: "Bridal", source: bridal1 },
-  { name: "Soft glam bridal look", category: "Bridal", source: bridal2 },
-  { name: "Bride in red veil", category: "Bridal", source: bridal5 },
-  { name: "Pink bridal look", category: "Bridal", source: bridal3 },
-  { name: "Elegant bridal side profile", category: "Bridal", source: bridal6 },
-  { name: "Classic bridal look with jewelry", category: "Bridal", source: bridal7 },
-  { name: "Soft glam bridal portrait", category: "Bridal", source: bridal8 },
-  { name: "Bridal look with warm tones", category: "Bridal", source: bridal9 },
-  { name: "Premium bridal makeup finish", category: "Bridal", source: bridal10 },
-  { name: "Luxury bridal close-up portrait", category: "Bridal", source: bridal11 },
-  { name: "Bridal eye makeup close up", category: "Before & After", source: bridal4 },
-  { name: "Studio interior", category: "Parlour", source: interior1 },
-  { name: "Elegant salon lounge", category: "Parlour", source: interior2 },
-  { name: "Premium salon setup", category: "Parlour", source: interior3 },
-  { name: "Academy class", category: "Academy", source: interior4 },
+  { name: "Regal bride portrait", category: "Bridal", source: "/assets/bridal-1.webp" },
+  { name: "Soft glam bridal look", category: "Bridal", source: "/assets/bridal-2.webp" },
+  { name: "Bride in red veil", category: "Bridal", source: "/assets/bridal-5.webp" },
+  { name: "Pink bridal look", category: "Bridal", source: "/assets/bridal-3.webp" },
+  { name: "Elegant bridal side profile", category: "Bridal", source: "/assets/bridal-6.webp" },
+  { name: "Classic bridal look with jewelry", category: "Bridal", source: "/assets/bridal-7.webp" },
+  { name: "Soft glam bridal portrait", category: "Bridal", source: "/assets/bridal-8.webp" },
+  { name: "Bridal look with warm tones", category: "Bridal", source: "/assets/bridal-9.webp" },
+  { name: "Premium bridal makeup finish", category: "Bridal", source: "/assets/bridal-10.webp" },
+  { name: "Luxury bridal close-up portrait", category: "Bridal", source: "/assets/bridal-11.webp" },
+  { name: "Bridal eye makeup close up", category: "Before & After", source: "/assets/bridal-4.webp" },
+  { name: "Studio interior", category: "Parlour", source: "/assets/interior1.webp" },
+  { name: "Elegant salon lounge", category: "Parlour", source: "/assets/interior2.webp" },
+  { name: "Premium salon setup", category: "Parlour", source: "/assets/interior3.webp" },
+  { name: "Academy class", category: "Academy", source: "/assets/interior4.webp" },
 ];
 
 export const adminServices: AdminService[] = [

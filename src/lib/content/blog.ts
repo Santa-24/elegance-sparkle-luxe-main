@@ -10,6 +10,7 @@ export type BlogPost = {
   keywords: string[];
   excerpt: string;
   body: string[];
+  featuredImageUrl: string;
 };
 
 export const blogCategories: BlogCategory[] = [
@@ -38,6 +39,7 @@ export const blogPosts: BlogPost[] = [
       "On the day itself, keep your accessories, outfit references and any allergy notes ready so the artist can work faster and more precisely.",
       "For a polished finish, combine makeup with hair styling and draping instead of treating them as separate last-minute tasks.",
     ],
+    featuredImageUrl: "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80",
   },
   {
     slug: "how-to-choose-makeup-academy-odisha",
@@ -56,6 +58,7 @@ export const blogPosts: BlogPost[] = [
       "Placement support and portfolio guidance are important signals that the academy is serious about student outcomes.",
       "If you’re local to Odisha, choosing a nearby academy can make attendance and follow-up practice much easier.",
     ],
+    featuredImageUrl: "https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=600&q=80",
   },
   {
     slug: "pre-bridal-skincare-routine-before-wedding",
@@ -74,6 +77,7 @@ export const blogPosts: BlogPost[] = [
       "Book facial or cleanup services with enough time before the final bridal appointment so skin has time to settle naturally.",
       "If your skin has any sensitivity, tell the artist early so the makeup plan can be adjusted.",
     ],
+    featuredImageUrl: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80",
   },
   {
     slug: "party-makeup-vs-bridal-makeup",
@@ -92,6 +96,7 @@ export const blogPosts: BlogPost[] = [
       "For receptions or day events, a softer party look can be the better choice if the event does not require all-day wear.",
       "A good artist will suggest the right option based on your event, not simply push the most expensive package.",
     ],
+    featuredImageUrl: "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80",
   },
 ];
 

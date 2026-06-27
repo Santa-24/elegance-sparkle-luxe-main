@@ -52,6 +52,7 @@ export const testimonialSchema = z.object({
   rating: z.coerce.number().int().min(1).max(5),
   review_text: z.string().min(1),
   status: z.enum(["visible", "draft"]),
+  wedding_month_year: z.string().optional().nullable(),
 });
 
 export type TestimonialFormData = z.infer<typeof testimonialSchema>;

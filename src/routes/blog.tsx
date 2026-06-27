@@ -83,6 +83,7 @@ function BlogIndexPage() {
   useScrollReveal();
 
   const featured = posts[0] ?? null;
+  const remainingPosts = posts.slice(1);
   const categories = useMemo(
     () => ["All", ...Array.from(new Set(posts.map((post) => post.category))).filter(Boolean)],
     [posts],
@@ -92,7 +93,7 @@ function BlogIndexPage() {
     [posts],
   );
 
-  const filteredPosts = posts.filter((post) => {
+  const filteredPosts = remainingPosts.filter((post) => {
     const matchesCategory = activeCategory === "All" || post.category === activeCategory;
     const matchesTag = activeTag === "All" || post.tags.includes(activeTag);
     return matchesCategory && matchesTag;

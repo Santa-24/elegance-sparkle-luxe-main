@@ -34,8 +34,20 @@ import {
   getLiveServiceAreasFn,
 } from "@/lib/content/live.functions";
 import { getSiteConfig } from "@/lib/site-config";
-import heroBride from "../assets/hero-bride.webp";
-import owner from "../assets/owner.webp";
+
+const heroBride = "/assets/hero-bride.webp";
+const owner = "/assets/owner.webp";
+
+function getServiceQueryParam(title: string): string {
+  const t = title.toLowerCase();
+  if (t.includes("bridal")) return "bridal-makeup";
+  if (t.includes("party")) return "party-makeup";
+  if (t.includes("facial")) return "facial";
+  if (t.includes("hair")) return "hair-styling";
+  if (t.includes("threading") || t.includes("brow")) return "threading";
+  if (t.includes("academy") || t.includes("course") || t.includes("enroll")) return "academy";
+  return "";
+}
 
 const siteConfig = getSiteConfig();
 type LiveAdvertisement = {
@@ -234,7 +246,7 @@ function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
           <div className="border border-[#c9a96e]/30 bg-[#161009]/80 px-4 py-1.5 text-[#f5e6d0] text-[10px] tracking-[0.2em] uppercase flex items-center gap-2 max-w-[92vw]">
             <span className="w-1.5 h-1.5 rounded-full bg-[#c9a96e] animate-pulse" />
             {advertisement
-              ? `${advertisement.asset_type === "poster" ? "Poster" : "Promotion"} live now`
+              ? "Featured Offer"
               : "Now booking 2026 wedding season"}
           </div>
         </div>
@@ -327,7 +339,7 @@ function AdvertisementShowcase({
           <div className="relative z-10 max-w-3xl p-6 sm:p-10 md:p-12 text-[#f5e6d0]">
             <div className="inline-flex items-center gap-2 border border-[#c9a96e]/30 bg-[#0d0a07]/80 px-3.5 py-1 text-[9px] uppercase tracking-[0.25em] text-[#c9a96e]">
               <span className="h-1.5 w-1.5 rounded-full bg-[#c9a96e] animate-pulse" />
-              Live Advertisement
+              This Week's Offer
             </div>
 
             <h2 className="mt-4 font-display text-3xl sm:text-4xl lg:text-5xl font-light leading-tight">
@@ -340,15 +352,9 @@ function AdvertisementShowcase({
                 : "Limited-time event creative. Tap to view full size details."}
             </p>
 
-            <div className="mt-5 flex flex-wrap gap-2 text-[9px] uppercase tracking-[0.2em]">
-              <span className="border border-[#c9a96e]/25 bg-[#0d0a07] px-2.5 py-1 text-[#c9a96e]">
-                {advertisement.asset_type}
-              </span>
-              <span className="border border-[#c9a96e]/25 bg-[#0d0a07] px-2.5 py-1 text-[#c9a96e]">
-                {advertisement.platform}
-              </span>
-              <span className="border border-[#c9a96e]/25 bg-[#c9a96e] text-[#0d0a07] px-2.5 py-1 font-semibold">
-                Click to Expand
+            <div className="mt-6">
+              <span className="inline-flex h-10 items-center justify-center gap-1.5 px-6 border border-[#c9a96e] bg-[#c9a96e] text-[#0d0a07] font-semibold text-xs tracking-[0.15em] uppercase hover:bg-[#d9c49e] transition-colors">
+                View Offer →
               </span>
             </div>
           </div>
@@ -593,7 +599,7 @@ function Services({ services }: { services: Service[] }) {
                       </div>
                     </div>
                     <Link
-                      to="/booking"
+                      to={getServiceQueryParam(s.title) ? `/booking?service=${getServiceQueryParam(s.title)}` : "/booking"}
                       onClick={() =>
                         trackEvent("booking_cta_click", {
                           location: "home_service_card",
@@ -602,7 +608,7 @@ function Services({ services }: { services: Service[] }) {
                       }
                       className="mt-4 w-full justify-center inline-flex h-9 items-center gap-2 border border-[#c9a96e]/30 text-[10px] tracking-[0.2em] uppercase text-[#c9a96e] hover:bg-[#c9a96e] hover:text-[#0d0a07] transition-all font-semibold"
                     >
-                      Book Session <ArrowRight className="w-3 h-3" />
+                      Book Session <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>
                 </div>
@@ -830,12 +836,6 @@ function OfferBanner({
                 {primaryOffer ? "Grab Offer" : "Explore Offers"} <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
-            
-            {advertisement ? (
-              <div className="mt-4 inline-block text-[8px] uppercase tracking-[0.2em] border border-[#0d0a07]/20 px-2 py-0.5 text-[#0d0a07]/70">
-                {advertisement.asset_type} active
-              </div>
-            ) : null}
           </div>
           
           <div className="flex flex-col items-center md:items-end justify-center">
@@ -844,7 +844,7 @@ function OfferBanner({
                 <div className="text-center text-[10px] uppercase tracking-widest text-[#0d0a07]/80 mb-4 font-semibold">
                   Valid Until Expiration
                 </div>
-                <CountdownTimer days={countdownDays} dark={true} />
+                <CountdownTimer validity={primaryOffer?.validity} days={countdownDays} dark={true} />
               </>
             ) : (
               <div className="border border-[#0d0a07]/20 p-6 text-center text-xs text-[#0d0a07]/80 max-w-xs">

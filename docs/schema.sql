@@ -154,6 +154,7 @@ create table if not exists public.testimonials (
   review_text text not null,
   status text not null default 'visible' check (status in ('visible', 'draft', 'archived')),
   booking_id bigint,
+  wedding_month_year varchar(60),
   created_by bigint,
   created_at timestamptz not null default now(),
   updated_by bigint,
@@ -167,6 +168,9 @@ create index if not exists idx_testimonials_status
 create index if not exists idx_testimonials_rating
   on public.testimonials (rating)
   where deleted_at is null;
+
+alter table public.testimonials
+  add column if not exists wedding_month_year varchar(60);
 
 drop trigger if exists trigger_testimonials_touch_updated_at on public.testimonials;
 create trigger trigger_testimonials_touch_updated_at
@@ -405,6 +409,26 @@ begin
       set metadata = coalesce(metadata, jsonb_build_object('old_values', old_values, 'new_values', new_values))
       where metadata is null
     $sql$;
+  end if;
+
+  if exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'audit_logs'
+      and column_name = 'table_name'
+  ) then
+    execute 'alter table public.audit_logs alter column table_name drop not null';
+  end if;
+
+  if exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'audit_logs'
+      and column_name = 'record_id'
+  ) then
+    execute 'alter table public.audit_logs alter column record_id drop not null';
   end if;
 end;
 $$;

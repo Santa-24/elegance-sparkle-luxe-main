@@ -4,8 +4,8 @@ import { Award, Sparkles, GraduationCap } from "lucide-react";
 
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { useSiteContent } from "@/lib/content/site-content";
-import owner from "../assets/owner.webp";
-import salon from "../assets/interior1.webp";
+const owner = "/assets/owner.webp";
+const salon = "/assets/interior1.webp";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -218,17 +218,24 @@ function AboutPage() {
             {[
               { name: founderName, role: "Lead Bridal Artist" },
               { name: "Sushree P.", role: "Senior Hair Stylist" },
-              { name: "Anita M.", role: "Skincare Therapist" },
-              { name: "Anita S.", role: "Academy Instructor" },
-            ].map((m) => (
-              <div key={m.name} className="text-center">
-                <div className="gradient-royal mx-auto mb-4 flex h-32 w-32 items-center justify-center rounded-full shadow-soft">
-                  <span className="font-display text-4xl text-gold">{m.name[0]}</span>
+              { name: "Anita Mohanty", role: "Skincare Therapist" },
+              { name: "Anushka Swain", role: "Academy Instructor" },
+            ].map((m) => {
+              const parts = m.name.split(" ");
+              const initials = parts.map(p => p[0]).join("").toUpperCase().slice(0, 2);
+              return (
+                <div key={m.name} className="text-center">
+                  <div
+                    aria-label={`${m.name} - ${m.role}`}
+                    className="mx-auto mb-4 flex h-32 w-32 items-center justify-center rounded-full bg-gold/10 border border-gold/30 shadow-luxury transition-transform hover:scale-105 cursor-default"
+                  >
+                    <span className="font-display text-4xl font-light text-gold tracking-wide">{initials}</span>
+                  </div>
+                  <h3 className="font-display text-lg text-[var(--royal)]">{m.name}</h3>
+                  <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mt-1">{m.role}</p>
                 </div>
-                <h3 className="font-display text-lg text-[var(--royal)]">{m.name}</h3>
-                <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mt-1">{m.role}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>

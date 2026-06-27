@@ -60,6 +60,17 @@ function useScrollReveal() {
   }, []);
 }
 
+function getServiceQueryParam(title: string): string {
+  const t = title.toLowerCase();
+  if (t.includes("bridal")) return "bridal-makeup";
+  if (t.includes("party")) return "party-makeup";
+  if (t.includes("facial")) return "facial";
+  if (t.includes("hair")) return "hair-styling";
+  if (t.includes("threading") || t.includes("brow")) return "threading";
+  if (t.includes("academy") || t.includes("course") || t.includes("enroll")) return "academy";
+  return "";
+}
+
 function ServicesPage() {
   const { services } = Route.useLoaderData();
   const [filter, setFilter] = useState<(typeof categories)[number]>("All");
@@ -89,9 +100,23 @@ function ServicesPage() {
     })),
   };
 
+  const faqSchema = faqItems.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqItems.map((item) => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer
+      }
+    }))
+  } : null;
+
   return (
     <SiteLayout>
       <StructuredData data={serviceSchema} />
+      {faqSchema && <StructuredData data={faqSchema} />}
       {canonicalUrl ? (
         <StructuredData
           data={buildBreadcrumbSchema(
@@ -108,23 +133,23 @@ function ServicesPage() {
         eyebrow="Services"
         title={
           <>
-            Premium <span className="gradient-gold-text italic">beauty</span> services
+            Our premium beauty <span className="gradient-gold-text italic">offerings</span>
           </>
         }
-        subtitle="From everyday glamour to once-in-a-lifetime bridal looks - every service crafted to perfection."
+        subtitle="Meticulously crafted styles, soothing therapies, and professional training."
       />
 
       <section className="bg-background py-24 md:py-[120px] reveal">
-        <div className="max-w-7xl mx-auto px-5 lg:px-10">
+        <div className="mx-auto max-w-7xl px-5 lg:px-10">
           <div className="flex flex-wrap gap-2 justify-center mb-12">
             {categories.map((c) => (
               <button
                 key={c}
                 onClick={() => setFilter(c)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
+                className={`rounded-full px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.25em] border transition-all cursor-pointer ${
                   filter === c
-                    ? "gradient-gold text-[var(--royal-deep)] shadow-gold"
-                    : "bg-card border border-border text-foreground/70 hover:border-gold"
+                    ? "border-transparent gradient-gold text-[var(--royal-deep)] shadow-gold"
+                    : "border-border bg-card text-[var(--purple-deep)] hover:border-[var(--gold)]/50"
                 }`}
               >
                 {c}
@@ -132,51 +157,81 @@ function ServicesPage() {
             ))}
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.length > 0 ? (
               filtered.map((s) => {
-                const Icon = iconMap[s.icon as keyof typeof iconMap] ?? Sparkles;
+                const Icon = iconMap[s.icon as keyof typeof iconMap] || Wand2;
                 return (
                   <div
                     key={s.title}
-                    className={`tilt-card bg-card rounded-3xl p-7 border border-border ${s.featured ? "gold-border animate-pulse-gold-border" : ""}`}
+                    className={`tilt-card bg-card rounded-3xl p-7 border border-border flex flex-col justify-between ${s.featured ? "gold-border animate-pulse-gold-border" : ""}`}
                   >
-                    {s.featured && (
-                      <div className="inline-block text-xs tracking-widest uppercase gradient-gold text-[var(--royal-deep)] px-3 py-1 rounded-full font-semibold mb-4">
-                        Bridal Special
-                      </div>
-                    )}
-                    <div className="w-14 h-14 rounded-2xl gradient-royal flex items-center justify-center mb-5">
-                      <Icon className="w-6 h-6 text-gold" />
-                    </div>
-                    <div className="text-xs uppercase tracking-widest text-[var(--purple-deep)] mb-1">
-                      {s.category}
-                    </div>
-                    <h3 className="font-display text-2xl text-[var(--royal)]">{s.title}</h3>
-                    <p className="text-muted-foreground text-sm mt-2 leading-relaxed">{s.desc}</p>
-                    <div className="flex items-center justify-between mt-6 pt-5 border-t border-border">
-                      <div>
-                        <div className="text-xs uppercase tracking-widest text-muted-foreground">
-                          Price
+                    <div>
+                      {s.featured && (
+                        <div className="inline-block text-xs tracking-widest uppercase gradient-gold text-[var(--royal-deep)] px-3 py-1 rounded-full font-semibold mb-4">
+                          Bridal Special
                         </div>
-                        <div className="font-display text-lg font-bold text-gold-safe">
-                          {s.price}
-                        </div>
+                      )}
+                      <div className="w-14 h-14 rounded-2xl gradient-royal flex items-center justify-center mb-5">
+                        <Icon className="w-6 h-6 text-gold" />
                       </div>
-                      <div className="text-xs px-3 py-1 rounded-full bg-muted">{s.duration}</div>
+                      <div className="text-xs uppercase tracking-widest text-[var(--purple-deep)] mb-1">
+                        {s.category}
+                      </div>
+                      <h3 className="font-display text-2xl text-[var(--royal)]">{s.title}</h3>
+                      <p className="text-muted-foreground text-sm mt-2 leading-relaxed">{s.desc}</p>
                     </div>
-                    <Link
-                      to="/booking"
-                      onClick={() =>
-                        trackEvent("booking_cta_click", {
-                          location: "services_page",
-                          service: s.title,
-                        })
-                      }
-                      className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[var(--royal)] hover:text-[var(--purple-deep)] animate-hover-arrow"
-                    >
-                      Book Now <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
+                    <div>
+                      {s.category === "Academy" ? (
+                        <div className="mt-6 pt-5 border-t border-border space-y-3">
+                          <div className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                            Pricing & Courses
+                          </div>
+                          <div className="text-sm font-medium space-y-1.5 text-foreground/90 font-body">
+                            <div>Basic Course: <span className="text-gold-safe font-bold">₹15,000</span> · 3 months</div>
+                            <div>Advanced Course: <span className="text-gold-safe font-bold">₹35,000</span> · 6 months</div>
+                            <div>Pro Bridal Master: <span className="text-gold-safe font-bold">₹50,000</span> · 4 months</div>
+                            <div className="text-xs text-muted-foreground mt-2 flex items-center gap-1 font-body">📞 Call or WhatsApp for enrollment</div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between mt-6 pt-5 border-t border-border">
+                          <div>
+                            <div className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
+                              Price
+                            </div>
+                            <div className="font-display text-lg font-bold text-gold-safe">
+                              {s.price}
+                            </div>
+                          </div>
+                          <div className="text-xs px-3 py-1 rounded-full bg-muted font-body font-semibold">{s.duration}</div>
+                        </div>
+                      )}
+                      <div className="mt-5 flex flex-col gap-2">
+                        <Link
+                          to={getServiceQueryParam(s.title) ? `/booking?service=${getServiceQueryParam(s.title)}` : "/booking"}
+                          onClick={() =>
+                            trackEvent("booking_cta_click", {
+                              location: "services_page",
+                              service: s.title,
+                            })
+                          }
+                          className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--royal)] hover:text-[var(--purple-deep)] animate-hover-arrow"
+                        >
+                          Book Now <ArrowRight className="w-3.5 h-3.5" />
+                        </Link>
+                        {s.category === "Academy" && (
+                          <a
+                            href="https://wa.me/919265200523?text=I'm%20interested%20in%20the%20makeup%20academy%20courses.%20Please%20share%20details."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 text-sm font-semibold text-gold-safe hover:text-gold animate-hover-arrow mt-1"
+                          >
+                            WhatsApp for Details <ArrowRight className="w-3.5 h-3.5" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 );
               })

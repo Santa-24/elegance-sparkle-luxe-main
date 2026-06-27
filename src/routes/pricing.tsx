@@ -53,6 +53,17 @@ function useScrollReveal() {
   }, []);
 }
 
+function getServiceQueryParam(title: string): string {
+  const t = title.toLowerCase();
+  if (t.includes("bridal")) return "bridal-makeup";
+  if (t.includes("party")) return "party-makeup";
+  if (t.includes("facial")) return "facial";
+  if (t.includes("hair")) return "hair-styling";
+  if (t.includes("threading") || t.includes("brow")) return "threading";
+  if (t.includes("academy") || t.includes("course") || t.includes("enroll")) return "academy";
+  return "";
+}
+
 function PricingPage() {
   const { pricingPackages: allPricingPackages } = Route.useLoaderData() as {
     pricingPackages: Array<{
@@ -79,17 +90,16 @@ function PricingPage() {
 
   const pricingSchema = {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: "Bridal Packages & Pricing",
-    mainEntity: pricingPackages.map((p) => ({
-      "@type": "Product",
-      name: p.name,
-      description: p.features.join(", "),
-      offers: {
+    "@type": "ItemList",
+    name: "Pricing Packages",
+    itemListElement: pricingPackages.map((pkg, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
         "@type": "Offer",
+        name: pkg.name,
+        price: pkg.price,
         priceCurrency: "INR",
-        price: p.price,
-        availability: "https://schema.org/InStock",
         url: canonicalUrl || siteConfig.siteUrl,
       },
     })),
@@ -115,58 +125,39 @@ function PricingPage() {
         eyebrow="Pricing"
         title={
           <>
-            Bridal packages <span className="gradient-gold-text italic">curated</span> for you
+            Transparent, simple <span className="gradient-gold-text italic">pricing</span>
           </>
         }
-        subtitle="Every package includes premium products, expert artistry and a stress-free experience."
+        subtitle="Experience premium luxury beauty options suitable for any budget."
       />
 
-      <section className="relative overflow-hidden bg-background py-24 md:py-[120px] reveal">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-gold-soft/10 to-transparent" />
+      <section className="bg-background py-24 md:py-[120px] reveal">
         <div className="mx-auto max-w-7xl px-5 lg:px-10">
-          <div className="grid items-stretch gap-8 md:gap-12 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {pricingPackages.map((pkg) => (
               <div
                 key={pkg.name}
-                className={`relative flex h-full flex-col overflow-visible rounded-[2rem] p-7 transition-all duration-300 ${
+                className={`tilt-card relative rounded-3xl p-8 border ${
                   pkg.popular
-                    ? "gradient-royal pt-9 text-marble shadow-luxury ring-1 ring-[var(--gold)]/35 scale-[1.03]"
-                    : "border border-border bg-card shadow-soft hover:-translate-y-1 hover:shadow-luxury"
+                    ? "gradient-royal text-marble border-transparent shadow-luxury"
+                    : "bg-card border-border text-foreground shadow-soft"
                 }`}
               >
-                {pkg.popular ? (
-                  <div className="absolute left-1/2 top-0 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1 rounded-full bg-[var(--gold)] px-3 py-1 text-xs font-bold uppercase tracking-widest text-[var(--royal-deep)] shadow-gold">
-                    <Star className="h-3 w-3" /> Most Popular
+                {pkg.popular && (
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full gradient-gold px-4 py-1 text-xs font-semibold uppercase tracking-widest text-[var(--royal-deep)] shadow-gold">
+                    Best Value
                   </div>
-                ) : null}
-
-                <h3
-                  className={`font-display text-2xl leading-tight ${
-                    pkg.popular ? "text-[var(--gold)]" : "text-[var(--royal)]"
-                  }`}
-                >
-                  {pkg.name}
-                </h3>
-
-                <div className="mt-5">
-                  <div
-                    className={`text-xs line-through ${
-                      pkg.popular ? "text-marble/50" : "text-muted-foreground"
-                    }`}
-                  >
-                    Rs {(pkg.price + 1500).toLocaleString("en-IN")}
-                  </div>
-                  <div
-                    className={`font-display text-4xl font-bold ${
-                      pkg.popular ? "text-[var(--gold)]" : "text-gold-safe"
-                    }`}
-                  >
-                    Rs {pkg.price.toLocaleString("en-IN")}
-                  </div>
+                )}
+                <h3 className="font-display text-2xl tracking-wide">{pkg.name}</h3>
+                <div className="mt-5 flex items-baseline gap-1">
+                  <span className="text-sm font-semibold">₹</span>
+                  <span className="font-display text-4xl font-bold tracking-tight">
+                    {pkg.price.toLocaleString("en-IN")}
+                  </span>
                 </div>
-
+                <div className="gold-divider my-6 opacity-40" />
                 <ul
-                  className={`mt-6 flex-1 space-y-2.5 ${
+                  className={`space-y-4 font-body ${
                     pkg.popular ? "text-marble/85" : "text-foreground/80"
                   }`}
                 >
@@ -183,7 +174,7 @@ function PricingPage() {
                 </ul>
 
                 <Link
-                  to="/booking"
+                  to={getServiceQueryParam(pkg.name) ? `/booking?service=${getServiceQueryParam(pkg.name)}` : "/booking"}
                   className={`mt-6 block rounded-[var(--radius-sm)] px-5 py-3 text-center font-semibold transition-all cursor-pointer ${
                     pkg.popular
                       ? "gradient-gold text-[var(--royal-deep)] shadow-gold hover:shadow-luxury"

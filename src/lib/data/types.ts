@@ -30,6 +30,7 @@ export type Testimonial = {
   rating: number;
   text: string;
   service: string;
+  date?: string;
 };
 
 export type Offer = {

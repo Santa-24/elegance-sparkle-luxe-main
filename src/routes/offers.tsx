@@ -54,6 +54,25 @@ function useScrollReveal() {
   }, []);
 }
 
+function formatHeadline(discount: string, title: string) {
+  let cleanDiscount = discount.trim();
+  let cleanTitle = title.trim();
+  
+  if (cleanTitle.toLowerCase().includes("raja festival beauty package")) {
+    cleanTitle = "Raja Festival Beauty Package";
+  }
+  
+  let formattedDiscount = cleanDiscount;
+  if (!formattedDiscount.toLowerCase().startsWith("flat")) {
+    formattedDiscount = `Flat ${formattedDiscount}`;
+  }
+  if (!formattedDiscount.toLowerCase().endsWith("off")) {
+    formattedDiscount = `${formattedDiscount} Off`;
+  }
+  
+  return `${formattedDiscount} — ${cleanTitle}`;
+}
+
 function OffersPage() {
   const { offers } = Route.useLoaderData();
   const primaryOffer =
@@ -105,16 +124,15 @@ function OffersPage() {
         <div className="max-w-7xl mx-auto px-5 lg:px-10">
           <div className="relative overflow-hidden rounded-[2rem] gradient-luxe p-8 md:p-14 text-marble mb-12 shadow-luxury">
             <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full opacity-30 blur-3xl gradient-gold" />
-            <div className="relative grid md:grid-cols-2 gap-8 items-center">
+            <div className="relative grid md:grid-cols-2 gap-8 items-center z-10">
               <div>
                 <div className="inline-block text-xs tracking-[0.4em] uppercase text-gold mb-3">
                   Headline Offer
                 </div>
-                <h2 className="font-display text-4xl md:text-6xl leading-tight">
+                <h2 className="font-display text-3xl md:text-5xl leading-tight">
                   {primaryOffer ? (
                     <>
-                      <span className="gradient-gold-text">{primaryOffer.discount}</span> on{" "}
-                      {primaryOffer.title.toLowerCase()}
+                      {formatHeadline(primaryOffer.discount, primaryOffer.title)}
                     </>
                   ) : (
                     <>
@@ -122,7 +140,7 @@ function OffersPage() {
                     </>
                   )}
                 </h2>
-                <p className="mt-4 text-marble/80">
+                <p className="mt-4 text-marble/80 font-light leading-relaxed">
                   {primaryOffer
                     ? primaryOffer.desc
                     : "Publish an active offer in the admin panel to feature it here."}
@@ -149,7 +167,7 @@ function OffersPage() {
                     <div className="text-center text-xs uppercase tracking-widest text-marble/70 mb-4">
                       Hurry, ends in
                     </div>
-                    <CountdownTimer days={countdownDays} />
+                    <CountdownTimer validity={primaryOffer?.validity} days={countdownDays} />
                   </>
                 ) : (
                   <div className="rounded-[1.75rem] border border-white/15 bg-white/10 p-8 text-center text-marble/80">

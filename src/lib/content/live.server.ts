@@ -63,6 +63,7 @@ type LiveTestimonialRow = {
   rating: number;
   review_text: string;
   status: "visible" | "draft" | "archived";
+  wedding_month_year?: string | null;
 };
 
 type LiveAdvertisementRow = {
@@ -210,9 +211,14 @@ function mapService(row: LiveServiceRow): Service {
   };
 }
 
+function normalizeImagePath(path: string | null | undefined): string {
+  if (!path) return "";
+  return path.replace(/^\/src\/assets/, "/assets").replace(/^src\/assets/, "/assets");
+}
+
 function mapGallery(row: LiveGalleryRow): GalleryImage {
   return {
-    src: row.image_url,
+    src: normalizeImagePath(row.image_url),
     alt: row.alt_text || row.title,
     cat:
       row.category === "before_after"
@@ -249,6 +255,7 @@ function mapTestimonial(row: LiveTestimonialRow): Testimonial {
     rating: row.rating,
     text: row.review_text,
     service: row.service_name,
+    date: row.wedding_month_year || undefined,
   };
 }
 
@@ -316,6 +323,13 @@ function splitBlogContent(value: string) {
     .filter(Boolean);
 }
 
+const BLOG_THUMBNAILS: Record<string, string> = {
+  "bridal-makeup-checklist-jajpur-road": "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80",
+  "how-to-choose-makeup-academy-odisha": "https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?w=600&q=80",
+  "pre-bridal-skincare-routine-before-wedding": "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=600&q=80",
+  "party-makeup-vs-bridal-makeup": "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80"
+};
+
 function mapBlogPost(row: LiveBlogPostRow, categoryTitle?: string, authorName?: string) {
   return {
     slug: row.slug,
@@ -329,7 +343,7 @@ function mapBlogPost(row: LiveBlogPostRow, categoryTitle?: string, authorName?: 
     keywords: normalizeBlogTags(row.tags_text),
     excerpt: row.excerpt,
     body: splitBlogContent(row.content_text),
-    featuredImageUrl: row.featured_image_url || "",
+    featuredImageUrl: row.featured_image_url || BLOG_THUMBNAILS[row.slug] || "https://images.unsplash.com/photo-1519741497674-611481863552?w=600&q=80",
     tags: normalizeBlogTags(row.tags_text),
     authorName: authorName || row.author_slug,
     categorySlug: row.category_slug,
@@ -478,7 +492,7 @@ export async function getLiveBlogPostBySlug(slug: string) {
 export async function getLiveTestimonials() {
   try {
     const rows = await supabaseSelect<LiveTestimonialRow>(
-      "testimonials?select=id,customer_name,service_name,rating,review_text,status&status=eq.visible&deleted_at=is.null&order=created_at.desc&limit=3",
+      "testimonials?select=id,customer_name,service_name,rating,review_text,status,wedding_month_year&status=eq.visible&deleted_at=is.null&order=created_at.desc&limit=50",
     );
     return rows.map(mapTestimonial);
   } catch {
@@ -500,7 +514,12 @@ export async function getLiveAdvertisements() {
     const rows = await supabaseSelect<LiveAdvertisementRow>(
       "advertisements?select=id,title,asset_url,asset_type,platform,start_date,end_date,status&status=in.(active,scheduled)&deleted_at=is.null&order=created_at.desc",
     );
-    return rows.filter((row) => Boolean(row?.title && row?.asset_url));
+    return rows
+      .filter((row) => Boolean(row?.title && row?.asset_url))
+      .map((row) => ({
+        ...row,
+        asset_url: normalizeImagePath(row.asset_url),
+      }));
   } catch {
     return [];
   }
@@ -511,7 +530,14 @@ export async function getLiveHeroContent() {
     const rows = await supabaseSelect<LiveHeroContentRow>(
       "hero_content?select=id,heading,subtitle,primary_cta_label,primary_cta_url,secondary_cta_label,secondary_cta_url,hero_image_url,hero_image_alt,is_active&is_active=eq.true&order=created_at.desc",
     );
-    return rows[0] ?? null;
+    const row = rows[0] ?? null;
+    if (row) {
+      return {
+        ...row,
+        hero_image_url: normalizeImagePath(row.hero_image_url),
+      };
+    }
+    return null;
   } catch {
     return null;
   }
@@ -522,7 +548,15 @@ export async function getLiveAboutContent() {
     const rows = await supabaseSelect<LiveAboutContentRow>(
       "about_content?select=id,headline,body,bullet_points,founder_name,founder_title,founder_image_url,gallery_image_url,is_active&is_active=eq.true&order=created_at.desc",
     );
-    return rows[0] ?? null;
+    const row = rows[0] ?? null;
+    if (row) {
+      return {
+        ...row,
+        founder_image_url: normalizeImagePath(row.founder_image_url),
+        gallery_image_url: normalizeImagePath(row.gallery_image_url),
+      };
+    }
+    return null;
   } catch {
     return null;
   }

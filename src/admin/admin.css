@@ -1,0 +1,92 @@
+/* Elegance Makeover & Academy — Admin Console Custom CSS styles */
+
+/* Animations */
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideUpFromBottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInNotification {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.modal-drawer {
+  animation: slideInFromRight 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.bulk-action-bar {
+  animation: slideUpFromBottom 200ms ease forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 200ms ease forwards;
+}
+
+.animate-toast {
+  animation: slideInNotification 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Stat card hover glow, no scale */
+.stat-card:hover {
+  box-shadow: 0 0 15px rgba(201, 169, 110, 0.2) !important;
+}
+
+/* Snappy transitions for sidebar */
+.sidebar-nav-item {
+  transition: none !important;
+}
+
+/* Sticky styles for table */
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #1a1208;
+}
+
+/* Scrollbar styles for dark console */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #0d0a07;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #2a2015;
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #c9a96e;
+}

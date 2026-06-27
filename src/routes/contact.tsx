@@ -65,7 +65,7 @@ function ContactPage() {
   const contactAddress = contact?.address || siteConfig.contactAddress;
   const mapUrl =
     contact?.map_url ||
-    `https://www.google.com/maps?q=${encodeURIComponent(contactAddress)}&output=embed`;
+    "https://maps.google.com/maps?q=Elegance%20Makeover%20%26%20Academy%20Jajpur%20Road%20Odisha&t=&z=15&ie=UTF8&iwloc=&output=embed";
   const workingHours = contact?.working_hours || siteConfig.contactHours;
   const instagramUrl = social?.instagram || siteConfig.instagramUrl;
   const facebookUrl = social?.facebook || siteConfig.facebookUrl;
@@ -73,23 +73,60 @@ function ContactPage() {
   const [sent, setSent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [rateLimitSeconds, setRateLimitSeconds] = useState(0);
   const [form, setForm] = useState({
     name: "",
     phone: "",
     email: "",
     service: "",
     message: "",
-    honeypot: "",
+    website: "",
   });
+
+  useEffect(() => {
+    if (rateLimitSeconds <= 0) return;
+    const interval = setInterval(() => {
+      setRateLimitSeconds((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [rateLimitSeconds]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!form.name || !form.phone) return;
+    if (rateLimitSeconds > 0) return;
     setIsSubmitting(true);
     setSubmitError("");
 
+    setRateLimitSeconds(30);
+
+    if (form.website) {
+      // Silently reject spam
+      setSent(true);
+      setTimeout(() => setSent(false), 4000);
+      setForm({
+        name: "",
+        phone: "",
+        email: "",
+        service: "",
+        message: "",
+        website: "",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
-      await submitContactMessage({ data: form });
+      await submitContactMessage({
+        data: {
+          name: form.name,
+          phone: form.phone,
+          email: form.email,
+          service: form.service,
+          message: form.message,
+          honeypot: form.website,
+        }
+      });
       setSent(true);
       trackEvent("contact_submit", {
         service: form.service || "unspecified",
@@ -102,11 +139,12 @@ function ContactPage() {
         email: "",
         service: "",
         message: "",
-        honeypot: "",
+        website: "",
       });
     } catch (error) {
       console.error(error);
       setSubmitError("We could not send your message yet. Please try again.");
+      setRateLimitSeconds(0); // clear limit on error to retry
     } finally {
       setIsSubmitting(false);
     }
@@ -129,9 +167,42 @@ function ContactPage() {
     areaServed: "Odisha",
   };
 
+  const contactFaqItems = [
+    {
+      q: "Do you handle bridal makeup and draping together?",
+      a: "Yes. Bridal bookings can include makeup, hair styling, draping and finishing so the full look is coordinated in one appointment.",
+    },
+    {
+      q: "How far in advance should I book for a wedding?",
+      a: "For peak wedding dates, booking 2 to 8 weeks in advance is ideal. We still recommend checking availability even if your date is sooner.",
+    },
+    {
+      q: "Do you offer academy courses for beginners?",
+      a: "Yes. We offer beginner-friendly and advanced academy options with practical training, portfolio support and guidance on client work.",
+    },
+    {
+      q: "Can I contact you on WhatsApp for quick questions?",
+      a: "Absolutely. Use the WhatsApp button or call us directly for fast booking support, package details and location guidance.",
+    },
+  ];
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": contactFaqItems.map((item) => ({
+      "@type": "Question",
+      "name": item.q,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.a
+      }
+    }))
+  };
+
   return (
     <SiteLayout>
       <StructuredData data={contactSchema} />
+      <StructuredData data={faqSchema} />
       {canonicalUrl ? (
         <StructuredData
           data={buildBreadcrumbSchema(
@@ -228,6 +299,9 @@ function ContactPage() {
             <div className="mt-6 h-64 overflow-hidden rounded-2xl border border-border">
               <iframe title="Map" src={mapUrl} className="h-full w-full" loading="lazy" />
             </div>
+            <p className="mt-2 text-xs text-muted-foreground italic font-body">
+              📍 Exact location shared on WhatsApp after booking confirmation.
+            </p>
           </div>
 
           <form
@@ -239,8 +313,9 @@ function ContactPage() {
 
             <input
               type="text"
-              value={form.honeypot}
-              onChange={(event) => setForm({ ...form, honeypot: event.target.value })}
+              name="website"
+              value={form.website}
+              onChange={(event) => setForm({ ...form, website: event.target.value })}
               tabIndex={-1}
               aria-hidden="true"
               autoComplete="off"
@@ -320,9 +395,9 @@ function ContactPage() {
               </div>
             </div>
 
-            <button
+             <button
               type="submit"
-              disabled={sent || isSubmitting}
+              disabled={sent || isSubmitting || rateLimitSeconds > 0}
               onClickCapture={() =>
                 trackEvent("contact_submit_click", { location: "contact_form" })
               }
@@ -330,6 +405,8 @@ function ContactPage() {
             >
               {isSubmitting ? (
                 <>Sending...</>
+              ) : rateLimitSeconds > 0 ? (
+                <>Please wait ({rateLimitSeconds}s)</>
               ) : sent ? (
                 <>
                   <Check className="h-4 w-4" /> Message Sent!

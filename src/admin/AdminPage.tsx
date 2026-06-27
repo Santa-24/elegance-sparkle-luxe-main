@@ -4,28 +4,37 @@ import {
   useEffect,
   useMemo,
   useState,
-  type ChangeEvent,
-  type ComponentType,
   type FormEvent,
 } from "react";
 import {
-  ArrowRight,
   CalendarClock,
-  CircleCheckBig,
-  GalleryHorizontalEnd,
-  LayoutDashboard,
-  Plus,
-  Phone,
-  Pencil,
-  Shield,
   Sparkles,
   Star,
-  Trash2,
+  GalleryHorizontalEnd,
+  Tag,
   Users,
-  X,
+  Coins,
+  Megaphone,
+  LayoutDashboard,
+  User,
+  Phone,
+  Globe,
+  HelpCircle,
+  MapPin,
+  Sliders,
+  Shield,
+  Bell,
+  LogOut,
+  Plus,
 } from "lucide-react";
 
-import { adminStats, appointmentSlots } from "@/admin/data";
+import "./admin.css";
+import { StatCard } from "./components/StatCard";
+import { SidebarNav } from "./components/SidebarNav";
+import { RecordTable } from "./components/RecordTable";
+import { ModalDrawer } from "./components/ModalDrawer";
+
+import { appointmentSlots } from "@/admin/data";
 import {
   getAdminSessionStatus,
   loginAdmin,
@@ -60,6 +69,7 @@ import {
   listAdminServiceAreas,
   listAdminServices,
   listAdminTestimonials,
+  listAdminCustomerPreferences,
   type AdminAdvertisementRecord,
   type AdminAboutContentRecord,
   type AdminBookingRecord,
@@ -74,6 +84,7 @@ import {
   type AdminServiceAreaRecord,
   type AdminServiceRecord,
   type AdminTestimonialRecord,
+  type AdminCustomerPreferenceRecord,
   updateAdminBooking,
   upsertAdminAdvertisement,
   upsertAdminAboutContent,
@@ -108,7 +119,8 @@ type AdminSection =
   | "Social"
   | "FAQ"
   | "Service Areas"
-  | "SEO";
+  | "SEO"
+  | "Customers";
 
 type AdminBookingView = {
   id: string;
@@ -141,6 +153,7 @@ type DashboardData = {
   faqSections: AdminFaqSectionRecord[];
   serviceAreas: AdminServiceAreaRecord[];
   seoSettings: AdminSeoSettingsRecord[];
+  customers: AdminCustomerPreferenceRecord[];
 };
 
 const sectionDataKeys: Record<AdminSection, keyof DashboardData> = {
@@ -158,43 +171,37 @@ const sectionDataKeys: Record<AdminSection, keyof DashboardData> = {
   FAQ: "faqSections",
   "Service Areas": "serviceAreas",
   SEO: "seoSettings",
+  Customers: "customers",
 };
 
-type FieldKind = "text" | "number" | "date" | "textarea" | "select" | "checkbox" | "file";
-
-type FieldOption = {
-  label: string;
-  value: string;
-};
-
-type FieldDef = {
+interface FieldDef {
   key: string;
   label: string;
-  kind: FieldKind;
-  options?: FieldOption[];
+  kind: "text" | "number" | "textarea" | "select" | "file" | "checkbox" | "date";
   placeholder?: string;
-};
+  options?: Array<{ label: string; value: string }>;
+}
 
-type SectionConfig = {
+interface SectionConfig {
   key: AdminSection;
   title: string;
   summary: string;
-  fields: FieldDef[];
   canCreate: boolean;
-};
+  fields: FieldDef[];
+}
 
 const sectionConfigs: Record<AdminSection, SectionConfig> = {
   Bookings: {
     key: "Bookings",
     title: "Bookings",
-    summary: "Edit booking details, change status, or remove a request.",
+    summary: "Approve, reschedule, or review client wedding makeup appointments.",
     canCreate: false,
     fields: [
-      { key: "customer_name", label: "Customer", kind: "text" },
-      { key: "phone", label: "Phone", kind: "text" },
+      { key: "customer_name", label: "Customer Name", kind: "text" },
+      { key: "phone", label: "Phone number", kind: "text" },
       { key: "email", label: "Email", kind: "text" },
-      { key: "service_name", label: "Service", kind: "text" },
-      { key: "booking_date", label: "Date", kind: "date" },
+      { key: "service_name", label: "Service Name", kind: "text" },
+      { key: "booking_date", label: "Booking Date", kind: "date" },
       {
         key: "booking_time",
         label: "Time",
@@ -274,6 +281,7 @@ const sectionConfigs: Record<AdminSection, SectionConfig> = {
       { key: "customer_name", label: "Customer", kind: "text" },
       { key: "service_name", label: "Service", kind: "text" },
       { key: "rating", label: "Rating", kind: "number" },
+      { key: "wedding_month_year", label: "Wedding Date (e.g. December 2025)", kind: "text" },
       { key: "review_text", label: "Review", kind: "textarea" },
       {
         key: "status",
@@ -482,6 +490,13 @@ const sectionConfigs: Record<AdminSection, SectionConfig> = {
       { key: "is_active", label: "Active", kind: "checkbox" },
     ],
   },
+  Customers: {
+    key: "Customers",
+    title: "Customers",
+    summary: "View customer profiles, preferences, and aggregate booking stats.",
+    canCreate: false,
+    fields: [],
+  },
 };
 
 function emptyDraftFor(section: AdminSection): DraftState {
@@ -524,6 +539,7 @@ function emptyDraftFor(section: AdminSection): DraftState {
         rating: 5,
         review_text: "",
         status: "visible",
+        wedding_month_year: "",
       };
     case "Offers":
       return {
@@ -620,6 +636,8 @@ function emptyDraftFor(section: AdminSection): DraftState {
         og_image_url: "",
         is_active: true,
       };
+    case "Customers":
+      return {};
   }
 }
 
@@ -663,6 +681,7 @@ function draftFromRecord(section: AdminSection, record: Record<string, unknown>)
         rating: Number(record.rating ?? 5),
         review_text: String(record.review_text ?? ""),
         status: String(record.status ?? "visible"),
+        wedding_month_year: String(record.wedding_month_year ?? ""),
       };
     case "Offers":
       return {
@@ -764,6 +783,8 @@ function draftFromRecord(section: AdminSection, record: Record<string, unknown>)
         og_image_url: String(record.og_image_url ?? ""),
         is_active: Boolean(record.is_active ?? true),
       };
+    case "Customers":
+      return {};
   }
 }
 
@@ -823,6 +844,7 @@ async function loadDashboardData(): Promise<DashboardData> {
     faqSections,
     serviceAreas,
     seoSettings,
+    customers,
   ] = await Promise.all([
     safeLoadList(listAdminBookings),
     safeLoadList(listAdminServices),
@@ -838,6 +860,7 @@ async function loadDashboardData(): Promise<DashboardData> {
     safeLoadList(listAdminFaqSections),
     safeLoadList(listAdminServiceAreas),
     safeLoadList(listAdminSeoSettings),
+    safeLoadList(listAdminCustomerPreferences),
   ]);
 
   return {
@@ -855,6 +878,7 @@ async function loadDashboardData(): Promise<DashboardData> {
     faqSections,
     serviceAreas,
     seoSettings,
+    customers,
   };
 }
 
@@ -896,12 +920,25 @@ function AdminPage() {
     faqSections: [],
     serviceAreas: [],
     seoSettings: [],
+    customers: [],
   });
   const [selectedId, setSelectedId] = useState<string | number | null>(null);
   const [editorMode, setEditorMode] = useState<EditorMode>("view");
   const [draft, setDraft] = useState<DraftState>(emptyDraftFor("Bookings"));
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
 
-  const siteTel = `tel:${siteConfig.contactPhone.replace(/\s+/g, "")}`;
+  // Top Nav global search shared with local record search query
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const showToast = (message: string, type: "success" | "error" = "success") => {
+    setToast({ message, type });
+  };
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 3000);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   useEffect(() => {
     let cancelled = false;
@@ -992,6 +1029,7 @@ function AdminPage() {
   useEffect(() => {
     setSelectedId(null);
     setEditorMode("view");
+    setSearchQuery(""); // Clear search query on section transition
   }, [activeSection]);
 
   const closeEditor = useCallback(
@@ -1033,47 +1071,31 @@ function AdminPage() {
     };
   }, [editorMode, activeSection, selectedRecord, closeEditor]);
 
-  const liveStats = useMemo(
-    () =>
-      adminStats.map((item) => {
-        if (item.label === "Total bookings") {
-          return { ...item, value: String(dashboardData.bookings.length) };
-        }
+  const liveStats = useMemo(() => [
+    { label: "Total Bookings", value: String(dashboardData.bookings.length) },
+    { label: "Customers", value: String(dashboardData.customers.length) },
+    { label: "Active Offers", value: String(dashboardData.offers.filter((offer) => offer.status === "active").length) },
+    { label: "Gallery Images", value: String(dashboardData.gallery.filter((item) => item.is_active).length) },
+    { label: "Upcoming Appointments", value: String(dashboardData.bookings.filter((booking) => booking.status !== "Rejected").length) },
+  ], [dashboardData]);
 
-        if (item.label === "Customers") {
-          return {
-            ...item,
-            value: String(new Set(dashboardData.bookings.map((item) => item.phone)).size),
-          };
-        }
-
-        if (item.label === "Active offers") {
-          return {
-            ...item,
-            value: String(dashboardData.offers.filter((offer) => offer.status === "active").length),
-          };
-        }
-
-        if (item.label === "Gallery images") {
-          return {
-            ...item,
-            value: String(dashboardData.gallery.filter((item) => item.is_active).length),
-          };
-        }
-
-        if (item.label === "Upcoming appointments") {
-          return {
-            ...item,
-            value: String(
-              dashboardData.bookings.filter((booking) => booking.status !== "Rejected").length,
-            ),
-          };
-        }
-
-        return item;
-      }),
-    [dashboardData],
-  );
+  const sectionCounts = useMemo(() => ({
+    Bookings: dashboardData.bookings.length,
+    Services: dashboardData.services.length,
+    Gallery: dashboardData.gallery.length,
+    Testimonials: dashboardData.testimonials.length,
+    Offers: dashboardData.offers.length,
+    Customers: dashboardData.customers.length,
+    "Pricing Packages": dashboardData.pricingPackages.length,
+    Ads: dashboardData.advertisements.length,
+    Hero: dashboardData.heroContent.length,
+    About: dashboardData.aboutContent.length,
+    Contact: dashboardData.contactSettings.length,
+    Social: dashboardData.socialLinks.length,
+    FAQ: dashboardData.faqSections.length,
+    "Service Areas": dashboardData.serviceAreas.length,
+    SEO: dashboardData.seoSettings.length,
+  }), [dashboardData]);
 
   async function handleUnlock(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -1097,31 +1119,10 @@ function AdminPage() {
         );
         return;
       }
-
-      setAuthError(
-        message
-          ? `Unable to sign in: ${message}`
-          : "Unable to sign in. Please check your email and password.",
-      );
+      setAuthError("Auth request failed.");
     } finally {
       setLoading(false);
     }
-  }
-
-  function selectRecord(id: string | number) {
-    setSelectedId(id);
-    setEditorMode("edit");
-  }
-
-  function startCreate() {
-    setSelectedId(null);
-    setDraft(emptyDraftFor(activeSection));
-    setEditorMode("create");
-  }
-
-  async function refreshData() {
-    const data = await loadDashboardData();
-    setDashboardData(data);
   }
 
   async function handleDelete(id: string | number) {
@@ -1177,15 +1178,128 @@ function AdminPage() {
         setEditorMode("view");
       }
 
+      showToast("Successfully deleted record.");
       await refreshData();
     } catch (error) {
       console.error(error);
       setActionError("Delete failed. Please check the Supabase connection and try again.");
+      showToast("Delete failed.", "error");
     }
   }
 
-  async function handleSave(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function handleBulkAction(action: "approve" | "reject" | "delete", ids: Array<string | number>) {
+    setActionError("");
+    try {
+      if (action === "delete") {
+        for (const id of ids) {
+          switch (activeSection) {
+            case "Bookings":
+              await deleteAdminBooking({ data: { bookingCode: String(id) } });
+              break;
+            case "Services":
+              await deleteAdminService({ data: { id: Number(id) } });
+              break;
+            case "Gallery":
+              await deleteAdminGalleryItem({ data: { id: Number(id) } });
+              break;
+            case "Testimonials":
+              await deleteAdminTestimonial({ data: { id: Number(id) } });
+              break;
+            case "Offers":
+              await deleteAdminOffer({ data: { id: Number(id) } });
+              break;
+            case "Pricing Packages":
+              await deleteAdminPricingPackage({ data: { id: Number(id) } });
+              break;
+            case "Ads":
+              await deleteAdminAdvertisement({ data: { id: Number(id) } });
+              break;
+            case "Hero":
+              await deleteAdminHeroContent({ data: { id: Number(id) } });
+              break;
+            case "About":
+              await deleteAdminAboutContent({ data: { id: Number(id) } });
+              break;
+            case "Contact":
+              await deleteAdminContactSettings({ data: { id: Number(id) } });
+              break;
+            case "Social":
+              await deleteAdminSocialLinks({ data: { id: Number(id) } });
+              break;
+            case "FAQ":
+              await deleteAdminFaqSection({ data: { id: Number(id) } });
+              break;
+            case "Service Areas":
+              await deleteAdminServiceArea({ data: { id: Number(id) } });
+              break;
+            case "SEO":
+              await deleteAdminSeoSettings({ data: { id: Number(id) } });
+              break;
+          }
+        }
+        showToast(`Successfully deleted ${ids.length} records.`);
+      } else {
+        for (const id of ids) {
+          const record = activeItems.find((item) => String(item.id) === String(id));
+          if (!record) continue;
+
+          if (activeSection === "Bookings") {
+            await updateAdminBooking({
+              data: {
+                bookingCode: String(id),
+                status: action === "approve" ? "approved" : "rejected",
+              },
+            });
+          } else if (activeSection === "Testimonials") {
+            await upsertAdminTestimonial({
+              data: {
+                id: Number(id),
+                customer_name: String(record.customer_name),
+                service_name: String(record.service_name),
+                rating: Number(record.rating),
+                review_text: String(record.review_text),
+                status: action === "approve" ? "visible" : "draft",
+                wedding_month_year: record.wedding_month_year ? String(record.wedding_month_year) : undefined,
+              },
+            });
+          } else if (activeSection === "Offers") {
+            await upsertAdminOffer({
+              data: {
+                id: Number(id),
+                title: String(record.title),
+                discount_label: String(record.discount_label),
+                description: String(record.description),
+                valid_from: String(record.valid_from),
+                valid_until: String(record.valid_until),
+                status: action === "approve" ? "active" : "expired",
+              },
+            });
+          } else if (activeSection === "Ads") {
+            await upsertAdminAdvertisement({
+              data: {
+                id: Number(id),
+                title: String(record.title),
+                asset_url: String(record.asset_url),
+                asset_type: String(record.asset_type) as "poster" | "banner",
+                start_date: String(record.start_date),
+                end_date: String(record.end_date),
+                status: action === "approve" ? "active" : "paused",
+              },
+            });
+          }
+        }
+        showToast(`Successfully updated ${ids.length} records.`);
+      }
+      await refreshData();
+    } catch (e) {
+      console.error(e);
+      setActionError("Bulk action failed. Please check the Supabase connection and try again.");
+      showToast("Bulk action failed.", "error");
+    }
+  }
+
+  async function handleSave(event?: FormEvent<HTMLFormElement>) {
+    if (event) event.preventDefault();
     setActionError("");
 
     try {
@@ -1274,6 +1388,7 @@ function AdminPage() {
               rating: Number(draft.rating ?? 5),
               review_text: String(draft.review_text ?? ""),
               status: String(draft.status ?? "visible") as "visible" | "draft",
+              wedding_month_year: draft.wedding_month_year ? String(draft.wedding_month_year) : undefined,
             },
           });
           savedId = saved.id;
@@ -1459,12 +1574,18 @@ function AdminPage() {
           savedId = saved.id;
           break;
         }
+        case "Customers": {
+          break;
+        }
       }
 
+      showToast("Successfully saved changes.");
       await refreshData();
       setSelectedId(savedId);
       if (savedId !== null) {
         setEditorMode("edit");
+      } else {
+        setEditorMode("view");
       }
     } catch (error) {
       console.error(error);
@@ -1474,713 +1595,307 @@ function AdminPage() {
         setActionError(
           "Upload failed because the configured Supabase storage bucket does not exist. Set SUPABASE_MEDIA_BUCKET in .env and create that public bucket in Supabase.",
         );
+        showToast("Asset upload failed.", "error");
         return;
       }
 
       setActionError("Save failed. Please check the Supabase connection and try again.");
+      showToast("Save operation failed.", "error");
     }
   }
 
+  async function refreshData() {
+    const data = await loadDashboardData();
+    setDashboardData(data);
+  }
+
+  const startCreate = () => {
+    setSelectedId(null);
+    setEditorMode("create");
+    setDraft(emptyDraftFor(activeSection));
+  };
+
+  const selectRecord = (id: string | number) => {
+    setSelectedId(id);
+    setEditorMode("edit");
+  };
+
   const config = sectionConfigs[activeSection];
 
+  const sidebarConfig = [
+    {
+      group: "Collections",
+      items: [
+        { key: "Bookings", label: "Bookings", icon: CalendarClock },
+        { key: "Services", label: "Services", icon: Sparkles },
+        { key: "Testimonials", label: "Testimonials", icon: Star },
+        { key: "Gallery", label: "Gallery", icon: GalleryHorizontalEnd },
+        { key: "Offers", label: "Offers", icon: Tag },
+        { key: "Customers", label: "Customers", icon: Users },
+        { key: "Pricing Packages", label: "Pricing Packages", icon: Coins },
+        { key: "Ads", label: "Ads", icon: Megaphone },
+      ],
+    },
+    {
+      group: "Site Config",
+      items: [
+        { key: "Hero", label: "Hero Banner", icon: LayoutDashboard },
+        { key: "About", label: "About Content", icon: User },
+        { key: "Contact", label: "Contact Details", icon: Phone },
+        { key: "Social", label: "Social Links", icon: Globe },
+        { key: "FAQ", label: "FAQ Sections", icon: HelpCircle },
+        { key: "Service Areas", label: "Service Areas", icon: MapPin },
+        { key: "SEO", label: "SEO Settings", icon: Sliders },
+      ],
+    },
+  ];
+
   return (
-    <main className="min-h-screen overflow-x-hidden bg-background">
-      <section className="relative overflow-hidden gradient-luxe text-marble">
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_20%,var(--gold)_0,transparent_35%),radial-gradient(circle_at_80%_80%,var(--purple-deep)_0,transparent_40%)] opacity-20" />
-        <div className="relative mx-auto max-w-7xl px-5 py-20 md:py-24 lg:px-10">
-          <div className="inline-flex items-center gap-2 rounded-full glass px-4 py-2 text-xs uppercase tracking-[0.3em] text-[var(--gold)]">
-            <Shield className="h-3.5 w-3.5" />
-            Secure Admin Console
-          </div>
-          <div className="mt-6 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
-            <div>
-              <h1 className="font-display text-4xl leading-tight md:text-6xl">
-                Manage the salon with <span className="gradient-gold-text italic">control</span>
-              </h1>
-              <p className="mt-4 max-w-2xl text-sm text-marble/80 md:text-base">
-                Edit every major content collection, approve bookings, and delete anything that does
-                not belong. Everything is stored in Supabase.
-              </p>
+    <main className="relative min-h-screen bg-[#0d0a07] text-[#c5b399] flex flex-col font-body pb-16 select-none">
+      {!isAuthenticated ? (
+        <section className="px-5 py-24 flex items-center justify-center flex-1">
+          <div className="mx-auto w-full max-w-xl rounded-3xl border border-border bg-[#161009] p-6 shadow-luxury md:p-10">
+            <div className="flex items-center gap-3 text-[#c9a96e]">
+              <Shield className="h-5 w-5" />
+              <span className="text-xs uppercase tracking-[0.3em] font-semibold">Admin Login</span>
             </div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Link
-                to="/booking"
-                className="btn-luxe inline-flex items-center justify-center gap-2 rounded-full gradient-gold px-5 py-3 font-semibold text-[var(--royal-deep)] shadow-gold"
-              >
-                Open Booking <ArrowRight className="h-4 w-4" />
-              </Link>
-              <a
-                href={siteTel}
-                className="btn-luxe inline-flex items-center justify-center gap-2 rounded-full border border-[var(--gold)] px-5 py-3 font-semibold text-marble hover:bg-[var(--gold)] hover:text-[var(--royal-deep)]"
-              >
-                <Phone className="h-4 w-4" />
-                Call Owner
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+            <h2 className="mt-4 font-display text-3xl text-[#f5e6d0]">
+              Unlock the dashboard
+            </h2>
+            <p className="mt-2 text-sm text-[#c5b399]/85">
+              Sign in with the email and password from your `.env` file.
+            </p>
 
-      <section className="px-5 py-14 lg:px-10">
-        <div className="mx-auto max-w-7xl">
-          {!isAuthenticated ? (
-            <div className="mx-auto max-w-2xl rounded-[2rem] glass-light p-6 shadow-luxury md:p-10">
-              <div className="flex items-center gap-3 text-[var(--purple-deep)]">
-                <Shield className="h-5 w-5" />
-                <span className="text-xs uppercase tracking-[0.3em]">Admin Login</span>
-              </div>
-              <h2 className="mt-4 font-display text-3xl text-[var(--royal)]">
-                Unlock the dashboard
-              </h2>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Sign in with the email and password from your `.env` file.
-              </p>
-
-              <form onSubmit={handleUnlock} className="mt-8 space-y-4">
-                <div>
-                  <label className="text-xs uppercase tracking-widest text-muted-foreground">
-                    Email address
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    autoComplete="username"
-                    className="mt-1.5 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--gold)]"
-                    placeholder="Enter admin email"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs uppercase tracking-widest text-muted-foreground">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    autoComplete="current-password"
-                    className="mt-1.5 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm outline-none transition-colors focus:border-[var(--gold)]"
-                    placeholder="Enter password"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="btn-luxe inline-flex w-full items-center justify-center gap-2 rounded-full gradient-gold px-6 py-3.5 font-semibold text-[var(--royal-deep)] shadow-gold"
-                >
-                  <LayoutDashboard className="h-4 w-4" />
-                  {loading ? "Signing in..." : "Enter Dashboard"}
-                </button>
-              </form>
-
-              <div className="mt-6 rounded-2xl border border-dashed border-[var(--gold)]/50 bg-[var(--gold)]/10 p-4 text-sm text-foreground/80">
-                Sign in with your admin email and password only. If access is blocked, make sure
-                `ADMIN_EMAIL` and `ADMIN_PASSWORD` are set correctly in `.env`.
-              </div>
-              {authError ? (
-                <p className="mt-3 text-sm font-medium text-rose-700">{authError}</p>
-              ) : null}
-            </div>
-          ) : (
-            <div className="space-y-8">
-              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-                {liveStats.map((item) => (
-                  <StatCard key={item.label} label={item.label} value={item.value} />
-                ))}
-              </div>
-
-              {loading ? (
-                <div className="rounded-[2rem] bg-card border border-border p-6 text-sm text-muted-foreground shadow-soft">
-                  Loading Supabase data...
-                </div>
-              ) : null}
-
-              <div className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)] xl:items-start">
-                <aside className="space-y-6 xl:sticky xl:top-6 xl:h-[calc(100vh-3rem)] xl:w-[320px] xl:self-start xl:overflow-y-auto xl:pr-2">
-                  <div className="rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(16,12,28,0.96),rgba(30,20,47,0.92))] p-6 text-marble shadow-soft">
-                    <div className="flex items-center justify-between gap-4">
-                      <div>
-                        <div className="text-xs uppercase tracking-[0.3em] text-[var(--gold)]">
-                          Control Center
-                        </div>
-                        <h2 className="mt-2 font-display text-3xl text-marble">Dashboard</h2>
-                      </div>
-                      <CalendarClock className="h-6 w-6 text-[var(--gold)]" />
-                    </div>
-                    <p className="mt-3 text-sm leading-relaxed text-marble/75">
-                      Switch between collections, review records, and jump into the editor on the
-                      right.
-                    </p>
-
-                    <div className="mt-6 grid grid-cols-2 gap-3">
-                      {liveStats.slice(0, 4).map((item) => (
-                        <div
-                          key={item.label}
-                          className="rounded-2xl border border-white/10 bg-white/5 p-4"
-                        >
-                          <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--gold)]">
-                            {item.label}
-                          </div>
-                          <div className="mt-2 font-display text-2xl text-marble">{item.value}</div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="mt-6 grid gap-2 sm:grid-cols-2 xl:grid-cols-1">
-                      {(Object.keys(sectionConfigs) as AdminSection[]).map((section) => {
-                        const sectionCount = dashboardData[sectionDataKeys[section]].length;
-                        const isActive = activeSection === section;
-                        const sectionConfig = sectionConfigs[section];
-
-                        return (
-                          <button
-                            key={section}
-                            onClick={() => setActiveSection(section)}
-                            className={`group flex w-full flex-col gap-3 rounded-2xl border p-4 text-left transition-all ${
-                              isActive
-                                ? "border-[var(--gold)]/60 bg-[var(--gold)]/12 text-[var(--royal)] shadow-[0_14px_30px_rgba(180,140,60,0.12)]"
-                                : "border-border bg-background/60 text-foreground/80 hover:-translate-y-0.5 hover:border-[var(--gold)]/30 hover:bg-[var(--gold)]/5"
-                            }`}
-                          >
-                            <div className="flex items-start justify-between gap-3">
-                              <div className="min-w-0">
-                                <div className="text-sm font-semibold">{sectionConfig.title}</div>
-                                <div className="mt-1 text-xs leading-relaxed text-foreground/60">
-                                  {sectionConfig.summary}
-                                </div>
-                              </div>
-                              <span className="shrink-0 rounded-full bg-white/80 px-2.5 py-1 text-xs font-semibold text-[var(--royal)] shadow-sm">
-                                {sectionCount}
-                              </span>
-                            </div>
-                            <div className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-[var(--purple-deep)]/80">
-                              <span>{sectionConfig.canCreate ? "Editable" : "Review only"}</span>
-                              <span className="text-foreground/30">•</span>
-                              <span>{isActive ? "Currently open" : "Tap to switch"}</span>
-                            </div>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <div className="rounded-[2rem] bg-card border border-border p-6 shadow-soft">
-                    <div className="flex items-center justify-between gap-4">
-                      <div>
-                        <div className="text-xs uppercase tracking-[0.3em] text-[var(--purple-deep)]">
-                          {config.title}
-                        </div>
-                        <h3 className="mt-2 font-display text-2xl text-[var(--royal)]">
-                          Record Queue
-                        </h3>
-                      </div>
-                      <div className="rounded-full bg-[var(--gold)]/10 px-3 py-1 text-xs font-semibold text-[var(--royal)]">
-                        {activeItems.length}
-                      </div>
-                    </div>
-                    <p className="mt-3 text-sm text-muted-foreground">{config.summary}</p>
-
-                    {config.canCreate ? (
-                      <button
-                        type="button"
-                        onClick={startCreate}
-                        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full gradient-gold px-5 py-3 text-sm font-semibold text-[var(--royal-deep)] shadow-gold"
-                      >
-                        <Plus className="h-4 w-4" />
-                        New {config.title.slice(0, -1)}
-                      </button>
-                    ) : null}
-
-                    <div className="mt-5 max-h-[26rem] space-y-3 overflow-y-auto pr-1 sm:max-h-[34rem]">
-                      {activeItems.length ? (
-                        activeItems.map((item) => {
-                          const itemStatus = renderItemStatus(activeSection, item);
-                          const isSelected = String(item.id) === String(selectedId);
-
-                          if (activeSection === "Bookings") {
-                            return (
-                              <button
-                                key={String(item.id)}
-                                onClick={() => selectRecord(item.id)}
-                                className={`w-full rounded-2xl border px-4 py-3 text-left transition-colors ${
-                                  isSelected
-                                    ? "border-[var(--gold)]/60 bg-[var(--gold)]/10 shadow-[0_8px_24px_rgba(180,140,60,0.12)]"
-                                    : "border-border bg-background/60 hover:border-[var(--gold)]/30 hover:bg-[var(--gold)]/5"
-                                }`}
-                              >
-                                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                                  <div className="min-w-0">
-                                    <div className="truncate text-sm font-semibold text-foreground">
-                                      {renderItemTitle(activeSection, item)}
-                                    </div>
-                                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
-                                      <span>{String(item.service ?? "")}</span>
-                                      <span>{String(item.date ?? "")}</span>
-                                      <span>{String(item.time ?? "")}</span>
-                                    </div>
-                                  </div>
-                                  {itemStatus ? <StatusBadge status={itemStatus} /> : null}
-                                </div>
-                                <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                                  <span className="truncate text-[11px] text-muted-foreground">
-                                    {String(item.phone ?? "")}
-                                  </span>
-                                  <div className="flex flex-wrap gap-2">
-                                    <span className="inline-flex items-center gap-1 rounded-full bg-[var(--gold)]/15 px-3 py-1.5 text-xs font-semibold text-[var(--royal)]">
-                                      <Pencil className="h-3.5 w-3.5" />
-                                      Edit
-                                    </span>
-                                    <span
-                                      role="button"
-                                      tabIndex={0}
-                                      onClick={(event) => {
-                                        event.stopPropagation();
-                                        void handleDelete(item.id);
-                                      }}
-                                      onKeyDown={(event) => {
-                                        if (event.key === "Enter" || event.key === " ") {
-                                          event.preventDefault();
-                                          event.stopPropagation();
-                                          void handleDelete(item.id);
-                                        }
-                                      }}
-                                      className="inline-flex items-center gap-1 rounded-full bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-700"
-                                    >
-                                      <Trash2 className="h-3.5 w-3.5" />
-                                      Delete
-                                    </span>
-                                  </div>
-                                </div>
-                              </button>
-                            );
-                          }
-
-                          return (
-                            <button
-                              key={String(item.id)}
-                              onClick={() => selectRecord(item.id)}
-                              className={`w-full rounded-2xl border p-4 text-left transition-colors ${
-                                isSelected
-                                  ? "border-[var(--gold)]/60 bg-[var(--gold)]/10 shadow-[0_8px_24px_rgba(180,140,60,0.12)]"
-                                  : "border-border bg-background/60 hover:border-[var(--gold)]/30 hover:bg-[var(--gold)]/5"
-                              }`}
-                            >
-                              <div className="flex items-start justify-between gap-4">
-                                <div className="min-w-0">
-                                  <div className="truncate font-medium text-foreground">
-                                    {renderItemTitle(activeSection, item)}
-                                  </div>
-                                  <div className="mt-1 text-xs text-muted-foreground">
-                                    {renderItemMeta(activeSection, item)}
-                                  </div>
-                                </div>
-                                {itemStatus ? <StatusBadge status={itemStatus} /> : null}
-                              </div>
-                              <div className="mt-4 flex flex-wrap gap-2">
-                                <span className="inline-flex items-center gap-1 rounded-full bg-[var(--gold)]/15 px-3 py-1.5 text-xs font-semibold text-[var(--royal)]">
-                                  <Pencil className="h-3.5 w-3.5" />
-                                  Edit
-                                </span>
-                                <span
-                                  role="button"
-                                  tabIndex={0}
-                                  onClick={(event) => {
-                                    event.stopPropagation();
-                                    void handleDelete(item.id);
-                                  }}
-                                  onKeyDown={(event) => {
-                                    if (event.key === "Enter" || event.key === " ") {
-                                      event.preventDefault();
-                                      event.stopPropagation();
-                                      void handleDelete(item.id);
-                                    }
-                                  }}
-                                  className="inline-flex items-center gap-1 rounded-full bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-700"
-                                >
-                                  <Trash2 className="h-3.5 w-3.5" />
-                                  Delete
-                                </span>
-                              </div>
-                            </button>
-                          );
-                        })
-                      ) : (
-                        <div className="rounded-2xl border border-dashed border-border bg-background/50 p-5 text-sm text-muted-foreground">
-                          No records in this section yet.
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </aside>
-
-                <div className="space-y-6 xl:ml-2">
-                  {loading ? (
-                    <div className="rounded-[2rem] border border-border bg-card/90 p-6 text-sm text-muted-foreground shadow-soft">
-                      Loading Supabase data...
-                    </div>
-                  ) : null}
-
-                  <div className="rounded-[2rem] border border-border bg-card p-6 shadow-soft">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="max-w-2xl">
-                        <div className="text-xs uppercase tracking-[0.3em] text-[var(--purple-deep)]">
-                          Editor
-                        </div>
-                        <h3 className="mt-2 font-display text-3xl text-[var(--royal)]">
-                          {selectedRecord
-                            ? `Ready to edit ${renderItemTitle(activeSection, selectedRecord)}`
-                            : config.canCreate
-                              ? `Create a new ${config.title.slice(0, -1).toLowerCase()}`
-                              : "Select a record to review"}
-                        </h3>
-                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                          The actual form now opens as a modal drawer, which keeps the dashboard
-                          clean and prevents the editor from overlapping the cards behind it.
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-3 rounded-2xl border border-border bg-background px-4 py-3">
-                        <Sparkles className="h-5 w-5 text-[var(--gold)]" />
-                        <div>
-                          <div className="text-xs uppercase tracking-[0.3em] text-[var(--purple-deep)]">
-                            Current section
-                          </div>
-                          <div className="text-sm font-semibold text-foreground">
-                            {config.title}
-                          </div>
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          try {
-                            await logoutAdmin();
-                          } finally {
-                            setIsAuthenticated(false);
-                          }
-                        }}
-                        className="rounded-full border border-border bg-background px-4 py-3 text-sm font-semibold text-[var(--royal)] transition hover:border-[var(--gold)] hover:text-[var(--purple-deep)]"
-                      >
-                        Sign out
-                      </button>
-                    </div>
-
-                    {selectedRecord ? (
-                      <div className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl border border-[var(--gold)]/25 bg-[var(--gold)]/10 px-4 py-3">
-                        <div className="text-sm text-foreground">
-                          Editing:{" "}
-                          <span className="font-semibold">
-                            {renderItemTitle(activeSection, selectedRecord)}
-                          </span>
-                        </div>
-                        <StatusBadge
-                          status={renderItemStatus(activeSection, selectedRecord) ?? "Draft"}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setEditorMode("edit")}
-                          className="ml-auto inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold text-[var(--royal)] shadow-sm"
-                        >
-                          <Pencil className="h-3.5 w-3.5" />
-                          Open editor
-                        </button>
-                      </div>
-                    ) : null}
-
-                    {config.canCreate ? (
-                      <button
-                        type="button"
-                        onClick={startCreate}
-                        className="mt-5 inline-flex items-center gap-2 rounded-full gradient-gold px-5 py-3 text-sm font-semibold text-[var(--royal-deep)] shadow-gold"
-                      >
-                        <Plus className="h-4 w-4" />
-                        New {config.title.slice(0, -1)}
-                      </button>
-                    ) : null}
-
-                    {actionError ? (
-                      <p className="mt-4 rounded-2xl bg-rose-500/10 p-3 text-sm text-rose-700">
-                        {actionError}
-                      </p>
-                    ) : null}
-
-                    <div className="mt-5 grid gap-4 md:grid-cols-3">
-                      <DashboardPanel
-                        icon={Users}
-                        title="Collections"
-                        description="Manage bookings, services, gallery, testimonials, offers, and ads from one place."
-                        badge="Live data"
-                      />
-                      <DashboardPanel
-                        icon={Sparkles}
-                        title="CMS content"
-                        description="Edit hero, about, contact, social links, and SEO settings that power the public site."
-                        badge="Site config"
-                      />
-                      <DashboardPanel
-                        icon={GalleryHorizontalEnd}
-                        title="Media workflow"
-                        description="Upload posters and images directly into Supabase Storage with previews and replacement."
-                        badge="Storage"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {editorMode !== "view" ? (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-slate-950/80 p-3 backdrop-blur-md sm:p-4 lg:p-6">
-          <button
-            type="button"
-            aria-label="Close editor backdrop"
-            onClick={() => closeEditor()}
-            className="absolute inset-0 cursor-default"
-          />
-          <div className="relative z-[101] mt-4 flex w-full max-w-[min(96vw,1180px)] flex-col overflow-hidden rounded-[1.5rem] border border-slate-200 bg-slate-50 shadow-[0_30px_80px_rgba(15,23,42,0.35)] sm:mt-8 sm:rounded-[2rem]">
-            <div className="flex items-start justify-between gap-4 border-b border-slate-200 bg-white px-4 py-4 sm:px-6 lg:px-8">
+            <form onSubmit={handleUnlock} className="mt-8 space-y-4">
               <div>
-                <div className="text-xs uppercase tracking-[0.3em] text-[var(--purple-deep)]">
-                  Modal editor
-                </div>
-                <h3 className="mt-2 font-display text-xl text-[var(--royal)] sm:text-2xl">
-                  {selectedRecord
-                    ? `Edit ${renderItemTitle(activeSection, selectedRecord)}`
-                    : `Create a new ${config.title.slice(0, -1).toLowerCase()}`}
-                </h3>
-                <p className="mt-2 max-w-2xl text-sm text-slate-600">
-                  The editor is now isolated in a fixed modal with its own scroll, so it will not
-                  overlap the dashboard cards.
-                </p>
-                {hasUnsavedChanges ? (
-                  <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-800">
-                    Unsaved changes
-                  </div>
-                ) : null}
+                <label className="text-xs uppercase tracking-widest text-[#c5b399] font-semibold">
+                  Email address
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  autoComplete="username"
+                  className="mt-1.5 w-full rounded-2xl border border-[#2a2015] bg-[#0d0a07] px-4 py-3 text-sm text-[#f5e6d0] outline-none transition-colors focus:border-[#c9a96e]"
+                  placeholder="Enter admin email"
+                />
               </div>
+              <div>
+                <label className="text-xs uppercase tracking-widest text-[#c5b399] font-semibold">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  autoComplete="current-password"
+                  className="mt-1.5 w-full rounded-2xl border border-[#2a2015] bg-[#0d0a07] px-4 py-3 text-sm text-[#f5e6d0] outline-none transition-colors focus:border-[#c9a96e]"
+                  placeholder="Enter password"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-luxe inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#c9a96e] px-6 py-3.5 font-semibold text-[#0d0a07] shadow-gold cursor-pointer"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+                {loading ? "Signing in..." : "Enter Dashboard"}
+              </button>
+            </form>
+
+            {authError ? (
+              <p className="mt-4 text-sm font-medium text-rose-500">{authError}</p>
+            ) : null}
+          </div>
+        </section>
+      ) : (
+        <div className="flex flex-col flex-1">
+          {/* TOP NAV BAR */}
+          <header className="sticky top-0 z-40 bg-[#161009] border-b border-[#2a2015] h-[64px] flex items-center justify-between px-6">
+            {/* Logo */}
+            <div className="flex items-center gap-2">
+              <span className="font-display text-sm font-bold uppercase tracking-[0.2em] text-[#c9a96e]">
+                ELEGANCE ADMIN
+              </span>
+            </div>
+
+            {/* Global search */}
+            <div className="relative hidden md:block w-[280px]">
+              <SearchIcon className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[#c5b399]/60" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Global search..."
+                className="w-full pl-9 pr-4 py-1.5 bg-[#0d0a07] border border-[#2a2015] text-xs text-[#f5e6d0] rounded-full outline-none placeholder-[#c5b399]/50 transition-colors focus:border-[#c9a96e]"
+              />
+            </div>
+
+            {/* Notification & Sign Out */}
+            <div className="flex items-center gap-4">
               <button
                 type="button"
-                onClick={() => closeEditor()}
-                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-700 transition hover:bg-slate-100"
+                className="relative p-1.5 text-[#c5b399] hover:text-[#c9a96e] cursor-pointer"
               >
-                <X className="h-4 w-4" />
+                <Bell className="h-4 w-4" />
+                {dashboardData.bookings.filter((b) => b.status === "Pending").length > 0 && (
+                  <span className="absolute top-1 right-1 h-1.5 w-1.5 bg-[#f59e0b] rounded-full" />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    await logoutAdmin();
+                  } finally {
+                    setIsAuthenticated(false);
+                  }
+                }}
+                className="inline-flex items-center gap-1.5 px-4 py-2 border border-[#2a2015] bg-[#0d0a07] hover:border-[#c9a96e] text-xs font-semibold text-[#f5e6d0] rounded-full transition cursor-pointer"
+              >
+                <LogOut className="h-3.5 w-3.5 text-[#c9a96e]" />
+                Sign Out
               </button>
             </div>
+          </header>
 
-            <div className="max-h-[calc(100vh-7rem)] overflow-y-auto px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
-              {actionError ? (
-                <p className="mb-5 rounded-2xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700">
-                  {actionError}
-                </p>
-              ) : null}
-
-              <div className="mb-5 flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={startCreate}
-                  className="inline-flex items-center gap-2 rounded-full gradient-gold px-5 py-3 text-sm font-semibold text-[var(--royal-deep)] shadow-gold"
-                >
-                  <Plus className="h-4 w-4" />
-                  New {config.title.slice(0, -1)}
-                </button>
-                {selectedRecord ? (
-                  <button
-                    type="button"
-                    onClick={() => setDraft(initialDraft)}
-                    className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-100"
-                  >
-                    Revert changes
-                  </button>
-                ) : null}
-                <div className="ml-auto rounded-full border border-[var(--gold)]/30 bg-[var(--gold)]/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--royal)]">
-                  {config.title}
-                </div>
-              </div>
-
-              <form onSubmit={handleSave} className="space-y-5">
-                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                  {config.fields.map((field) => (
-                    <FieldControl
-                      key={field.key}
-                      field={field}
-                      value={draft[field.key]}
-                      onChange={(value) =>
-                        setDraft((current) => ({ ...current, [field.key]: value }))
-                      }
-                    />
-                  ))}
-                </div>
-
-                <div className="flex flex-col gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:items-center">
-                  <button
-                    type="submit"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full gradient-gold px-6 py-3 font-semibold text-[var(--royal-deep)] shadow-gold sm:w-auto"
-                  >
-                    <CircleCheckBig className="h-4 w-4" />
-                    Save Changes
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setDraft(initialDraft)}
-                    className="rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-100 sm:w-auto"
-                  >
-                    Reset
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => closeEditor()}
-                    className="rounded-full border border-transparent px-6 py-3 text-sm font-medium text-slate-500 transition hover:text-slate-800"
-                  >
-                    Close
-                  </button>
-                </div>
-              </form>
+          {/* STATS ROW */}
+          <div className="px-6 pt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              {liveStats.map((stat) => (
+                <StatCard key={stat.label} label={stat.label} value={stat.value} />
+              ))}
             </div>
           </div>
+
+          {/* MAIN SPACE */}
+          <div className="flex-1 flex flex-col lg:flex-row gap-6 p-6 min-h-[500px]">
+            {/* LEFT SIDEBAR */}
+            <aside className="w-full lg:w-[240px] shrink-0 bg-[#161009] border border-[#2a2015] rounded-2xl overflow-y-auto max-h-[calc(100vh-200px)]">
+              <SidebarNav
+                activeSection={activeSection}
+                onSectionChange={setActiveSection}
+                counts={sectionCounts}
+                sectionsConfig={sidebarConfig}
+              />
+            </aside>
+
+            {/* RIGHT WORKSPACE */}
+            <div className="flex-1 bg-[#161009] border border-[#2a2015] rounded-2xl p-6 flex flex-col min-w-0">
+              {/* Eyebrow info */}
+              <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#c9a96e]/70 mb-1">
+                {activeSection} Queue ({activeItems.length} records)
+              </div>
+
+              {/* Workspace Header */}
+              <div className="flex items-center justify-between border-b border-[#2a2015] pb-4">
+                <div className="flex items-baseline gap-3">
+                  <h2 className="font-display text-2xl text-[#f5e6d0] font-semibold">
+                    {config.title}
+                  </h2>
+                  <span className="text-xs text-[#c5b399]/60 font-semibold">
+                    {activeItems.length} entries
+                  </span>
+                </div>
+                {config.canCreate && (
+                  <button
+                    type="button"
+                    onClick={startCreate}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 border border-[#c9a96e] hover:bg-[#c9a96e] hover:text-[#0d0a07] text-xs font-semibold text-[#c9a96e] rounded-full transition cursor-pointer"
+                  >
+                    <Plus className="h-4 w-4" />
+                    New Record
+                  </button>
+                )}
+              </div>
+
+              {/* Error messages if any */}
+              {actionError && (
+                <p className="mt-4 rounded-xl bg-rose-500/10 p-3 text-xs text-rose-500 border border-rose-500/20">
+                  {actionError}
+                </p>
+              )}
+
+              {/* RECORD TABLE */}
+              <RecordTable
+                section={activeSection}
+                items={activeItems}
+                onEdit={selectRecord}
+                onDelete={handleDelete}
+                onBulkAction={handleBulkAction}
+                config={config}
+              />
+            </div>
+          </div>
+
+          {/* EDITOR DRAWER */}
+          <ModalDrawer
+            isOpen={editorMode !== "view"}
+            title={
+              selectedRecord
+                ? `Edit ${config.title.slice(0, -1)}`
+                : `New ${config.title.slice(0, -1)}`
+            }
+            description={config.summary}
+            onClose={() => closeEditor()}
+            onSave={() => handleSave()}
+            onReset={() => setDraft(initialDraft)}
+            hasUnsavedChanges={hasUnsavedChanges}
+          >
+            <div className="space-y-4">
+              {config.fields.map((field) => (
+                <FieldControl
+                  key={field.key}
+                  field={field}
+                  value={draft[field.key]}
+                  onChange={(value) =>
+                    setDraft((current) => ({ ...current, [field.key]: value }))
+                  }
+                />
+              ))}
+            </div>
+          </ModalDrawer>
         </div>
-      ) : null}
+      )}
+
+      {/* TOAST FEEDBACK */}
+      {toast && (
+        <div className={`fixed top-4 right-4 z-[100] flex items-center gap-2.5 px-4 py-3 rounded-xl border shadow-luxury animate-toast ${
+          toast.type === "error" 
+            ? "bg-rose-500/10 border-rose-500/30 text-rose-500" 
+            : "bg-[#1e1408] border-[#c9a96e]/30 text-[#f5e6d0]"
+        }`}>
+          <div className={`h-2 w-2 rounded-full ${toast.type === "error" ? "bg-rose-500" : "bg-[#c9a96e]"}`} />
+          <span className="text-xs font-semibold">{toast.message}</span>
+        </div>
+      )}
     </main>
   );
 }
 
-function renderItemTitle(section: AdminSection, item: Record<string, unknown>) {
-  switch (section) {
-    case "Bookings":
-      return String(item.name ?? "");
-    case "Services":
-      return String(item.title ?? "");
-    case "Gallery":
-      return String(item.title ?? "");
-    case "Testimonials":
-      return String(item.customer_name ?? "");
-    case "Offers":
-      return String(item.title ?? "");
-    case "Pricing Packages":
-      return String(item.name ?? "");
-    case "Ads":
-      return String(item.title ?? "");
-    case "Hero":
-      return String(item.heading ?? "");
-    case "About":
-      return String(item.headline ?? "");
-    case "Contact":
-      return String(item.phone ?? "");
-    case "Social":
-      return String(item.instagram ?? item.facebook ?? item.whatsapp ?? "Social links");
-    case "FAQ":
-      return String(item.title ?? "");
-    case "Service Areas":
-      return String(item.name ?? "");
-    case "SEO":
-      return String(item.meta_title ?? "");
-  }
-}
-
-function renderItemMeta(section: AdminSection, item: Record<string, unknown>) {
-  switch (section) {
-    case "Bookings":
-      return `${item.service ?? ""} / ${item.date ?? ""} / ${item.status ?? ""}`;
-    case "Services":
-      return `${item.category ?? ""} / ${item.duration_label ?? ""}`;
-    case "Gallery":
-      return `${item.category ?? ""} / sort ${item.sort_order ?? 0}`;
-    case "Testimonials":
-      return `${item.service_name ?? ""} / ${item.rating ?? ""} stars / ${item.status ?? ""}`;
-    case "Offers":
-      return `${item.status ?? ""} / ${item.valid_until ?? ""}`;
-    case "Pricing Packages":
-      return `Rs ${Number(item.price ?? 0).toLocaleString("en-IN")} / ${
-        item.popular ? "popular" : "standard"
-      }`;
-    case "Ads":
-      return `${item.asset_type ?? ""} / ${item.status ?? ""}`;
-    case "Hero":
-      return `${item.primary_cta_label ?? ""} / ${item.is_active ? "active" : "paused"}`;
-    case "About":
-      return `${item.founder_name ?? ""} / ${item.is_active ? "active" : "paused"}`;
-    case "Contact":
-      return `${item.email ?? ""} / ${item.is_active ? "active" : "paused"}`;
-    case "Social":
-      return `${item.instagram ?? item.facebook ?? item.whatsapp ?? ""} / ${
-        item.is_active ? "active" : "paused"
-      }`;
-    case "FAQ":
-      return `${item.slug ?? ""} / ${item.is_active ? "active" : "paused"}`;
-    case "Service Areas":
-      return `${item.search_intent ?? ""} / ${item.is_active ? "active" : "paused"}`;
-    case "SEO":
-      return `${item.canonical_url ?? ""} / ${item.is_active ? "active" : "paused"}`;
-  }
-}
-
-function renderItemStatus(section: AdminSection, item: Record<string, unknown>) {
-  switch (section) {
-    case "Bookings":
-      return String(item.status ?? "");
-    case "Services":
-      return item.is_active ? "active" : "paused";
-    case "Gallery":
-      return item.is_active ? "active" : "paused";
-    case "Testimonials":
-      return String(item.status ?? "");
-    case "Offers":
-      return String(item.status ?? "");
-    case "Pricing Packages":
-      return item.is_active ? "active" : "paused";
-    case "Ads":
-      return String(item.status ?? "");
-    case "Hero":
-    case "About":
-    case "Contact":
-    case "Social":
-    case "FAQ":
-    case "Service Areas":
-    case "SEO":
-      return item.is_active ? "active" : "paused";
-  }
-}
-
-function StatCard({ label, value }: { label: string; value: string }) {
+// Inline search icon helper since we don't want to import Search again
+function SearchIcon(props: any) {
   return (
-    <div className="rounded-[1.75rem] glass-light p-5 shadow-soft">
-      <div className="text-xs uppercase tracking-[0.3em] text-[var(--purple-deep)]">{label}</div>
-      <div className="mt-3 font-display text-3xl text-[var(--royal)]">{value}</div>
-    </div>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      {...props}
+    >
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
+    </svg>
   );
 }
 
-function DashboardPanel({
-  icon: Icon,
-  title,
-  description,
-  badge,
-}: {
-  icon: ComponentType<{ className?: string }>;
-  title: string;
-  description: string;
-  badge?: string;
-}) {
-  return (
-    <div className="rounded-[2rem] border border-border bg-[linear-gradient(180deg,rgba(255,255,255,0.9),rgba(248,246,242,0.95))] p-6 shadow-soft transition-transform hover:-translate-y-1">
-      <div className="flex items-start justify-between gap-4">
-        <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl gradient-royal shadow-sm">
-          <Icon className="h-5 w-5 text-[var(--gold)]" />
-        </div>
-        {badge ? (
-          <span className="rounded-full bg-[var(--gold)]/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-[var(--royal)]">
-            {badge}
-          </span>
-        ) : null}
-      </div>
-      <h3 className="mt-4 font-display text-2xl text-[var(--royal)]">{title}</h3>
-      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
-    </div>
-  );
-}
+import type { ChangeEvent } from "react";
 
 function FieldControl({
   field,
@@ -2192,7 +1907,7 @@ function FieldControl({
   onChange: (value: DraftValue) => void;
 }) {
   const baseInputClass =
-    "mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 shadow-sm outline-none transition focus:border-[var(--gold)] focus:ring-2 focus:ring-[var(--gold)]/25";
+    "mt-1.5 w-full rounded-2xl border border-[#2a2015] bg-[#0d0a07] text-[#f5e6d0] placeholder-[#c5b399]/50 px-4 py-3 text-sm outline-none transition focus:border-[#c9a96e] focus:ring-1 focus:ring-[#c9a96e]";
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -2210,7 +1925,7 @@ function FieldControl({
   if (field.kind === "textarea") {
     return (
       <div>
-        <label className="text-xs uppercase tracking-widest text-slate-600">{field.label}</label>
+        <label className="text-xs uppercase tracking-widest text-[#c9a96e] font-semibold">{field.label}</label>
         <textarea
           rows={4}
           value={String(value ?? "")}
@@ -2225,7 +1940,7 @@ function FieldControl({
   if (field.kind === "file") {
     return (
       <div>
-        <label className="text-xs uppercase tracking-widest text-slate-600">{field.label}</label>
+        <label className="text-xs uppercase tracking-widest text-[#c9a96e] font-semibold">{field.label}</label>
         <input
           type="file"
           accept="image/*"
@@ -2233,11 +1948,11 @@ function FieldControl({
           className={`${baseInputClass} cursor-pointer px-3 py-2`}
         />
         {showPreview ? (
-          <div className="mt-3 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="mt-3 overflow-hidden rounded-2xl border border-[#2a2015] bg-[#0d0a07] shadow-sm">
             <img src={String(value)} alt={field.label} className="h-40 w-full object-cover" />
           </div>
         ) : (
-          <p className="mt-2 text-xs text-slate-500">
+          <p className="mt-2 text-xs text-[#c5b399]/65">
             Upload an image to replace the current asset.
           </p>
         )}
@@ -2248,14 +1963,14 @@ function FieldControl({
   if (field.kind === "select") {
     return (
       <div>
-        <label className="text-xs uppercase tracking-widest text-slate-600">{field.label}</label>
+        <label className="text-xs uppercase tracking-widest text-[#c9a96e] font-semibold">{field.label}</label>
         <select
           value={String(value ?? "")}
           onChange={(event) => onChange(event.target.value)}
-          className={`${baseInputClass} appearance-none`}
+          className={`${baseInputClass} appearance-none cursor-pointer`}
         >
           {field.options?.map((option) => (
-            <option key={option.value} value={option.value}>
+            <option key={option.value} value={option.value} className="bg-[#161009] text-[#f5e6d0]">
               {option.label}
             </option>
           ))}
@@ -2266,21 +1981,21 @@ function FieldControl({
 
   if (field.kind === "checkbox") {
     return (
-      <label className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+      <label className="flex items-center gap-3 rounded-2xl border border-[#2a2015] bg-[#0d0a07] px-4 py-3 shadow-sm cursor-pointer">
         <input
           type="checkbox"
           checked={Boolean(value)}
           onChange={(event) => onChange(event.target.checked)}
-          className="h-4 w-4 rounded border-border"
+          className="h-4 w-4 rounded border-[#2a2015] accent-[#c9a96e] cursor-pointer"
         />
-        <span className="text-sm font-medium text-slate-900">{field.label}</span>
+        <span className="text-sm font-medium text-[#c5b399]">{field.label}</span>
       </label>
     );
   }
 
   return (
     <div>
-      <label className="text-xs uppercase tracking-widest text-slate-600">{field.label}</label>
+      <label className="text-xs uppercase tracking-widest text-[#c9a96e] font-semibold">{field.label}</label>
       <input
         type={field.kind === "number" ? "number" : field.kind}
         value={value === undefined ? "" : String(value)}
@@ -2292,17 +2007,4 @@ function FieldControl({
       />
     </div>
   );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const tone =
-    status === "Approved" || status === "active" || status === "visible"
-      ? "bg-emerald-500/15 text-emerald-700"
-      : status === "Rejected" || status === "paused" || status === "draft"
-        ? "bg-rose-500/15 text-rose-700"
-        : status === "Rescheduled" || status === "scheduled"
-          ? "bg-[var(--gold)]/20 text-[var(--royal)]"
-          : "bg-sky-500/15 text-sky-700";
-
-  return <span className={`rounded-full px-3 py-1 text-xs font-semibold ${tone}`}>{status}</span>;
 }

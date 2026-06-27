@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 
-import logo from "../../assets/logo.webp";
 
 type BrandLogoProps = {
   size?: "sm" | "md";
