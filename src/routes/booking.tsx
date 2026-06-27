@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { StructuredData } from "@/components/seo/StructuredData";
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { Check, ChevronRight, ChevronLeft, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
