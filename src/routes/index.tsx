@@ -209,7 +209,7 @@ function HomePage() {
 function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
   return (
     <section className="relative h-[100dvh] flex items-center justify-center overflow-hidden bg-[#0d0a07]">
-      {/* Background Image */}
+      {/* Background Image Fallback */}
       <img
         src={heroBride}
         alt="Luxury bridal makeup by Elegance Makeover"
@@ -218,8 +218,19 @@ function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
         loading="eager"
         fetchPriority="high"
         decoding="async"
-        className="absolute inset-0 w-full h-full object-cover object-center opacity-30"
+        className="absolute inset-0 w-full h-full object-cover object-center opacity-30 pointer-events-none"
       />
+
+      {/* Background Video */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover object-center opacity-30 pointer-events-none"
+      >
+        <source src="/assets/video/hero-loop.mp4" type="video/mp4" />
+      </video>
 
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-[#0d0a07]/75" />
