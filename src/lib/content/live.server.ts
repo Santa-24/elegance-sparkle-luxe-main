@@ -394,8 +394,9 @@ export async function getLiveGallery(input?: PaginationInput) {
 
 export async function getLiveOffers() {
   try {
+    const today = new Date().toISOString().split("T")[0];
     const rows = await supabaseSelect<LiveOfferRow>(
-      "offers?select=id,title,discount_label,description,valid_from,valid_until,status&deleted_at=is.null&status=eq.active&order=created_at.desc",
+      `offers?select=id,title,discount_label,description,valid_from,valid_until,status&deleted_at=is.null&status=eq.active&valid_until=gte.${today}&order=created_at.desc`,
     );
     return rows.map(mapOffer);
   } catch {
@@ -518,8 +519,9 @@ export async function getLiveAdvertisement() {
 
 export async function getLiveAdvertisements() {
   try {
+    const today = new Date().toISOString().split("T")[0];
     const rows = await supabaseSelect<LiveAdvertisementRow>(
-      "advertisements?select=id,title,asset_url,asset_type,platform,start_date,end_date,status&status=in.(active,scheduled)&deleted_at=is.null&order=created_at.desc",
+      `advertisements?select=id,title,asset_url,asset_type,platform,start_date,end_date,status&status=in.(active,scheduled)&deleted_at=is.null&end_date=gte.${today}&order=created_at.desc`,
     );
     return rows
       .filter((row) => Boolean(row?.title && row?.asset_url))

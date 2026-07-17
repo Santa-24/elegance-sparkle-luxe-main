@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { Star, Quote, Pen } from "lucide-react";
+import { StructuredData } from "@/components/seo/StructuredData";
 
 import { getLiveTestimonialsFn } from "@/lib/content/live.functions";
 import { getSiteConfig } from "@/lib/site-config";
@@ -118,8 +119,48 @@ function TestimonialsPage() {
   const uniqueSeed = seedTestimonials.filter((s) => !dbNames.has(s.name));
   const allTestimonials = [...testimonials, ...uniqueSeed];
 
+  const siteUrl = siteConfig.siteUrl || "https://elegance-sparkle-luxe-main.onrender.com";
+  const testimonialsSchema = {
+    "@context": "https://schema.org",
+    "@type": "BeautySalon",
+    name: "Elegance Makeover & Academy",
+    image: `${siteUrl}/og-image.webp`,
+    telephone: siteConfig.contactPhone,
+    url: `${siteUrl}/testimonials`,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Jajpur Road, Odisha, India",
+      addressLocality: "Jajpur Road",
+      addressRegion: "Odisha",
+      postalCode: "755019",
+      addressCountry: "IN",
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.9",
+      reviewCount: String(allTestimonials.length || 500),
+    },
+    review: allTestimonials.slice(0, 10).map((t) => ({
+      "@type": "Review",
+      author: {
+        "@type": "Person",
+        name: t.name,
+      },
+      reviewBody: t.text,
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: String(t.rating),
+      },
+      itemReviewed: {
+        "@type": "BeautySalon",
+        name: "Elegance Makeover & Academy",
+      },
+    })),
+  };
+
   return (
     <SiteLayout>
+      <StructuredData data={testimonialsSchema} />
       <PageHero
         breadcrumbs={[{ label: "Home", to: "/" }, { label: "Reviews" }]}
         eyebrow="Reviews"

@@ -134,14 +134,14 @@ function OffersPage() {
                     <>{formatHeadline(primaryOffer.discount, primaryOffer.title)}</>
                   ) : (
                     <>
-                      <span className="gradient-gold-text">No active offers</span> right now
+                      <span className="gradient-gold-text">Custom Packages</span> Available
                     </>
                   )}
                 </h2>
                 <p className="mt-4 text-marble/80 font-light leading-relaxed">
                   {primaryOffer
                     ? primaryOffer.desc
-                    : "Publish an active offer in the admin panel to feature it here."}
+                    : "We currently do not have any active promotional offers. However, we always have special packages for bridal bookings, parlour services, and academy training."}
                 </p>
                 {primaryOffer ? (
                   <>
@@ -157,7 +157,16 @@ function OffersPage() {
                       Claim Offer on WhatsApp <ArrowRight className="w-4 h-4" />
                     </a>
                   </>
-                ) : null}
+                ) : (
+                  <a
+                    href={`https://wa.me/${siteConfig.whatsappNumber}?text=I'd%20like%20to%20enquire%20about%20custom%20bridal/academy%20packages`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-11 items-center justify-center gap-2 px-7 py-2.5 rounded-[var(--radius-sm)] gradient-gold text-[var(--royal-deep)] font-semibold shadow-gold hover:shadow-luxury transition-all cursor-pointer mt-6"
+                  >
+                    Enquire on WhatsApp <ArrowRight className="w-4 h-4" />
+                  </a>
+                )}
               </div>
               <div>
                 {primaryOffer ? (
@@ -169,7 +178,7 @@ function OffersPage() {
                   </>
                 ) : (
                   <div className="rounded-[1.75rem] border border-white/15 bg-white/10 p-8 text-center text-marble/80">
-                    Offer timers will appear once an active offer is published in admin.
+                    Connect with us on WhatsApp to discuss your requirements and get a personalized offer!
                   </div>
                 )}
               </div>

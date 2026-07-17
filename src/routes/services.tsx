@@ -83,21 +83,30 @@ function ServicesPage() {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: "Beauty Services",
-    itemListElement: services.map((service, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      item: {
-        "@type": "Service",
-        name: service.title,
-        description: service.desc,
-        serviceType: service.category,
-        provider: {
-          "@type": "BeautySalon",
-          name: siteConfig.siteName,
-          url: canonicalUrl || siteConfig.siteUrl,
+    itemListElement: services.map((service, index) => {
+      const cleanPrice = service.price.replace(/[^0-9]/g, "");
+      return {
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "Service",
+          name: service.title,
+          description: `${service.desc} (Duration: ${service.duration})`,
+          serviceType: service.category,
+          offers: cleanPrice ? {
+            "@type": "Offer",
+            price: cleanPrice,
+            priceCurrency: "INR",
+            description: service.price,
+          } : undefined,
+          provider: {
+            "@type": "BeautySalon",
+            name: siteConfig.siteName,
+            url: canonicalUrl || siteConfig.siteUrl,
+          },
         },
-      },
-    })),
+      };
+    }),
   };
 
   const faqSchema =

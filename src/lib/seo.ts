@@ -62,6 +62,7 @@ export function buildLocalBusinessSchema(config: SiteConfig, canonicalUrl: strin
       latitude: 20.9507,
       longitude: 86.1378,
     },
+    openingHours: ["Mo-Sa 09:00-19:00", "Su 10:00-17:00"],
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",
