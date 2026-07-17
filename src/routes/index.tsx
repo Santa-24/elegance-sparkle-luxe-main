@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { CountdownTimer } from "@/components/site/CountdownTimer";
 import { trackEvent } from "@/lib/analytics";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getCountdownDays } from "@/lib/utils/formatting";
 import {
   Crown,
@@ -22,6 +22,10 @@ import {
   Eye,
   ChevronLeft,
   ChevronRight,
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
 } from "lucide-react";
 import type { GalleryImage, Offer, Service, Testimonial } from "@/lib/data";
 import {
@@ -207,6 +211,27 @@ function HomePage() {
 
 /* ---------------- HERO ---------------- */
 function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (isPlaying) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      videoRef.current.play().catch((err) => console.log("Video play failed: ", err));
+      setIsPlaying(true);
+    }
+  };
+
+  const toggleMute = () => {
+    if (!videoRef.current) return;
+    videoRef.current.muted = !isMuted;
+    setIsMuted(!isMuted);
+  };
+
   return (
     <section className="relative h-[100dvh] flex items-center justify-center overflow-hidden bg-[#0d0a07]">
       {/* Background Image Fallback */}
@@ -218,98 +243,121 @@ function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
         loading="eager"
         fetchPriority="high"
         decoding="async"
-        className="absolute inset-0 w-full h-full object-cover object-center opacity-30 pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover object-center opacity-30 pointer-events-none z-0"
       />
 
-      {/* Background Video */}
+      {/* Background Video - Fully Visible */}
       <video
+        ref={videoRef}
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover object-center opacity-30 pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover object-center opacity-100 pointer-events-none z-0"
       >
-        <source src="/assets/video/hero-loop.mp4" type="video/mp4" />
+        <source src="/assets/video/Cinematic_luxury_bridal_salon.mp4" type="video/mp4" />
       </video>
 
-      {/* Dark Overlay */}
-      <div className="absolute inset-0 bg-[#0d0a07]/75" />
+      {/* Top Gradient for header text legibility */}
+      <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-[#0d0a07]/80 to-transparent pointer-events-none z-10" />
 
-      {/* Gold Grid Overlay (3% opacity) */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #c9a96e 1px, transparent 1px),
-            linear-gradient(to bottom, #c9a96e 1px, transparent 1px)
-          `,
-          backgroundSize: "40px 40px",
-        }}
-      />
+      {/* Bottom Gradient for scroll indicator/transition legibility */}
+      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#0d0a07]/90 to-transparent pointer-events-none z-10" />
 
       {/* Dual Vertical Gold Rules */}
-      <div className="absolute left-6 md:left-12 top-0 bottom-0 w-[1px] bg-[#c9a96e]/15 hidden sm:block" />
-      <div className="absolute right-6 md:right-12 top-0 bottom-0 w-[1px] bg-[#c9a96e]/15 hidden sm:block" />
+      <div className="absolute left-6 md:left-12 top-0 bottom-0 w-[1px] bg-[#c9a96e]/15 hidden sm:block z-10" />
+      <div className="absolute right-6 md:right-12 top-0 bottom-0 w-[1px] bg-[#c9a96e]/15 hidden sm:block z-10" />
 
-      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center text-[#f5e6d0] pt-12 md:pt-16">
-        {/* Active Promotion Chip inline to prevent overlap */}
-        <div className="inline-flex justify-center mb-5 animate-fade-up">
-          <div className="border border-[#c9a96e]/30 bg-[#161009]/80 px-4 py-1.5 text-[#f5e6d0] text-[10px] tracking-[0.2em] uppercase flex items-center gap-2 max-w-[92vw]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#c9a96e] animate-pulse" />
-            {advertisement ? "Featured Offer" : "Now booking 2026 wedding season"}
-          </div>
-        </div>
+      {/* Centered Luxury Content Card - Unblurred and Transparent */}
+      <div className="relative z-20 max-w-4xl mx-auto px-6 text-center text-[#f5e6d0] pt-12 md:pt-16">
+        <div className="bg-[#0d0a07]/20 border border-[#c9a96e]/20 p-8 md:p-12 shadow-2xl relative">
+          {/* Corner accents */}
+          <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-[#c9a96e]/60" />
+          <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-[#c9a96e]/60" />
+          <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-[#c9a96e]/60" />
+          <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-[#c9a96e]/60" />
 
-        <div className="text-[10px] tracking-[0.4em] uppercase text-[#c9a96e] mb-4 animate-fade-up">
-          Bridal · Beauty · Academy
-        </div>
-
-        <h1 className="font-display text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-light leading-[1.1] tracking-tight animate-fade-up delay-100">
-          Where every bride <br />
-          becomes <span className="italic font-display text-[#c9a96e]">unforgettable</span>
-        </h1>
-
-        <p className="mt-6 text-xs sm:text-sm md:text-base text-[#f5e6d0]/80 max-w-xl mx-auto font-light leading-relaxed animate-fade-up delay-200">
-          Expert bridal makeup, premium parlour services and certified academy courses by Rasmirekha
-          Swain — in the heart of Jajpur Road, Odisha.
-        </p>
-
-        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-up delay-300">
-          <Link
-            to="/booking"
-            onClick={() => trackEvent("booking_cta_click", { location: "home_hero" })}
-            className="w-full sm:w-auto inline-flex h-11 items-center justify-center gap-2 px-8 bg-[#c9a96e] text-[#0d0a07] font-semibold text-xs tracking-[0.2em] uppercase hover:bg-[#d9c49e] transition-colors rounded-none"
-          >
-            Book Appointment <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-          <Link
-            to="/services"
-            onClick={() => trackEvent("service_cta_click", { location: "home_hero" })}
-            className="w-full sm:w-auto inline-flex h-11 items-center justify-center gap-2 px-8 border border-[#c9a96e]/40 text-[#c9a96e] hover:bg-[#c9a96e]/10 transition-colors font-semibold text-xs tracking-[0.2em] uppercase rounded-none"
-          >
-            View Services
-          </Link>
-        </div>
-
-        {/* Stats Band inside Hero with thin gold lines */}
-        <div className="border-t border-[#c9a96e]/20 pt-8 mt-12 grid grid-cols-3 gap-4 sm:gap-6 max-w-2xl mx-auto animate-fade-up delay-500">
-          {[
-            ["10+", "Years Experience"],
-            ["500+", "Happy Brides"],
-            ["50+", "Certified Students"],
-          ].map(([n, l]) => (
-            <div key={l} className="text-center px-2">
-              <div className="font-display text-2xl sm:text-3xl text-[#c9a96e] font-light">{n}</div>
-              <div className="text-[9px] uppercase tracking-[0.2em] text-[#f5e6d0]/60 mt-1 font-body">
-                {l}
-              </div>
+          {/* Active Promotion Chip inline to prevent overlap */}
+          <div className="inline-flex justify-center mb-5 animate-fade-up">
+            <div className="border border-[#c9a96e]/30 bg-[#161009]/80 px-4 py-1.5 text-[#f5e6d0] text-[10px] tracking-[0.2em] uppercase flex items-center gap-2 max-w-[92vw]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#c9a96e] animate-pulse" />
+              {advertisement ? "Featured Offer" : "Now booking 2026 wedding season"}
             </div>
-          ))}
+          </div>
+
+          <div className="text-[10px] tracking-[0.4em] uppercase text-[#c9a96e] mb-4 animate-fade-up">
+            Bridal · Beauty · Academy
+          </div>
+
+          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-light leading-[1.1] tracking-tight animate-fade-up delay-100">
+            Where every bride <br />
+            becomes <span className="italic font-display text-[#c9a96e]">unforgettable</span>
+          </h1>
+
+          <p className="mt-6 text-xs sm:text-sm md:text-base text-[#f5e6d0]/80 max-w-xl mx-auto font-light leading-relaxed animate-fade-up delay-200">
+            Expert bridal makeup, premium parlour services and certified academy courses by
+            Rasmirekha Swain — in the heart of Jajpur Road, Odisha.
+          </p>
+
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-up delay-300">
+            <Link
+              to="/booking"
+              onClick={() => trackEvent("booking_cta_click", { location: "home_hero" })}
+              className="w-full sm:w-auto inline-flex h-11 items-center justify-center gap-2 px-8 bg-[#c9a96e] text-[#0d0a07] font-semibold text-xs tracking-[0.2em] uppercase hover:bg-[#d9c49e] transition-colors rounded-none"
+            >
+              Book Appointment <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+            <Link
+              to="/services"
+              onClick={() => trackEvent("service_cta_click", { location: "home_hero" })}
+              className="w-full sm:w-auto inline-flex h-11 items-center justify-center gap-2 px-8 border border-[#c9a96e]/40 text-[#c9a96e] hover:bg-[#c9a96e]/10 transition-colors font-semibold text-xs tracking-[0.2em] uppercase rounded-none"
+            >
+              View Services
+            </Link>
+          </div>
+
+          {/* Stats Band inside Hero with thin gold lines */}
+          <div className="border-t border-[#c9a96e]/20 pt-8 mt-10 grid grid-cols-3 gap-4 sm:gap-6 max-w-2xl mx-auto animate-fade-up delay-500">
+            {[
+              ["10+", "Years Experience"],
+              ["500+", "Happy Brides"],
+              ["50+", "Certified Students"],
+            ].map(([n, l]) => (
+              <div key={l} className="text-center px-2">
+                <div className="font-display text-2xl sm:text-3xl text-[#c9a96e] font-light">
+                  {n}
+                </div>
+                <div className="text-[9px] uppercase tracking-[0.2em] text-[#f5e6d0]/60 mt-1 font-body">
+                  {l}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
+      {/* Play/Pause & Mute/Unmute Premium Video Controls */}
+      <div className="absolute bottom-8 right-8 md:right-16 z-20 flex items-center gap-3">
+        <button
+          onClick={togglePlay}
+          className="w-10 h-10 rounded-full border border-[#c9a96e]/40 bg-[#0d0a07]/60 text-[#c9a96e] hover:bg-[#c9a96e]/20 hover:border-[#c9a96e] flex items-center justify-center transition-all duration-300 backdrop-blur-sm cursor-pointer shadow-lg"
+          title={isPlaying ? "Pause video" : "Play video"}
+          aria-label={isPlaying ? "Pause video" : "Play video"}
+        >
+          {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
+        </button>
+        <button
+          onClick={toggleMute}
+          className="w-10 h-10 rounded-full border border-[#c9a96e]/40 bg-[#0d0a07]/60 text-[#c9a96e] hover:bg-[#c9a96e]/20 hover:border-[#c9a96e] flex items-center justify-center transition-all duration-300 backdrop-blur-sm cursor-pointer shadow-lg"
+          title={isMuted ? "Unmute sound" : "Mute sound"}
+          aria-label={isMuted ? "Unmute sound" : "Mute sound"}
+        >
+          {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+        </button>
+      </div>
+
       {/* Scroll indicator */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#f5e6d0]/50 text-[9px] uppercase tracking-[0.3em]">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#f5e6d0]/50 text-[9px] uppercase tracking-[0.3em] z-20">
         <span>Scroll</span>
         <div className="w-[1px] h-8 bg-[#c9a96e]/30" />
       </div>
