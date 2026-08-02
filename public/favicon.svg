@@ -1,8 +1,48 @@
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="64" height="64" rx="18" fill="#1B1127"/>
-  <circle cx="32" cy="32" r="20" fill="#C8A55A"/>
-  <rect x="21" y="19" width="7" height="26" rx="3.5" fill="#1B1127"/>
-  <rect x="21" y="19" width="20" height="6" rx="3" fill="#1B1127"/>
-  <rect x="21" y="30" width="16" height="6" rx="3" fill="#1B1127"/>
-  <rect x="21" y="39" width="20" height="6" rx="3" fill="#1B1127"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCE082"/>
+      <stop offset="30%" stop-color="#DFAC38"/>
+      <stop offset="70%" stop-color="#C68B1E"/>
+      <stop offset="100%" stop-color="#8E5E06"/>
+    </linearGradient>
+    <linearGradient id="blush-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF0F3"/>
+      <stop offset="100%" stop-color="#F8D7DA"/>
+    </linearGradient>
+    <radialGradient id="bg-grad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#141E3C"/>
+      <stop offset="100%" stop-color="#0B132B"/>
+    </radialGradient>
+    <filter id="gold-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#D4AF37" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Background Layer -->
+  <rect width="512" height="512" rx="128" fill="url(#bg-grad)"/>
+
+  <!-- Outer Decorative Ring -->
+  <circle cx="256" cy="256" r="220" fill="none" stroke="url(#gold-grad)" stroke-width="6" stroke-dasharray="16 8" opacity="0.6"/>
+  <circle cx="256" cy="256" r="204" fill="none" stroke="url(#gold-grad)" stroke-width="3" opacity="0.8"/>
+
+  <!-- Crown / Tiara Top Emblem -->
+  <path d="M 186 175 L 206 140 L 236 165 L 256 125 L 276 165 L 306 140 L 326 175 Z" fill="url(#gold-grad)" filter="url(#gold-glow)"/>
+  <circle cx="256" cy="115" r="8" fill="#FFF0F3"/>
+  <circle cx="206" cy="130" r="6" fill="url(#gold-grad)"/>
+  <circle cx="306" cy="130" r="6" fill="url(#gold-grad)"/>
+
+  <!-- Monogram 'E' Luxury Serif Styling -->
+  <g filter="url(#gold-glow)">
+    <!-- Central E Structure -->
+    <path d="M 190 200 H 320 C 330 200 330 220 320 220 H 220 V 245 H 295 C 305 245 305 265 295 265 H 220 V 300 H 325 C 335 300 335 320 325 320 H 190 C 178 320 170 310 170 298 V 222 C 170 210 178 200 190 200 Z" fill="url(#gold-grad)"/>
+  </g>
+
+  <!-- Sparkle Accents -->
+  <path d="M 350 210 Q 360 210 360 200 Q 360 210 370 210 Q 360 210 360 220 Q 360 210 350 210 Z" fill="#FFF0F3"/>
+  <path d="M 140 290 Q 148 290 148 282 Q 148 290 156 290 Q 148 290 148 298 Q 148 290 140 290 Z" fill="url(#gold-grad)"/>
+
+  <!-- Subtitle Ribbon / Floral Curve -->
+  <path d="M 170 350 Q 256 380 342 350" fill="none" stroke="url(#gold-grad)" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="256" cy="365" r="5" fill="#FFF0F3"/>
 </svg>

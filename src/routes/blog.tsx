@@ -37,18 +37,24 @@ export const Route = createFileRoute("/blog")({
   },
   head: () => ({
     meta: [
-      { title: "Beauty Blog - Elegance Makeover & Academy" },
+      { title: "Beauty & Bridal Makeup Blog | Elegance Makeover & Academy" },
       {
         name: "description",
         content:
-          "Read bridal makeup tips, academy guidance, skincare advice and beauty insights from Elegance Makeover & Academy.",
+          "Read bridal makeup tips, academy guidance, pre-bridal skincare advice and beauty insights by Rasmirekha Swain in Jajpur Road, Odisha.",
       },
-      { property: "og:title", content: "Beauty Blog - Elegance Makeover & Academy" },
+      { property: "og:title", content: "Beauty & Bridal Makeup Blog | Elegance Makeover" },
       {
         property: "og:description",
         content: "Practical beauty and bridal advice for clients and students in Odisha.",
       },
-      { property: "og:url", content: canonicalUrl },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://elegancemakeover.makeup/blog" },
+      { property: "og:image", content: "https://elegancemakeover.makeup/og-image.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Beauty & Bridal Makeup Blog | Elegance Makeover" },
+      { name: "twitter:description", content: "Bridal skincare routines, makeup guides & academy tips from Odisha." },
+      { name: "twitter:image", content: "https://elegancemakeover.makeup/og-image.webp" },
     ],
     links: canonicalUrl ? [{ rel: "canonical", href: canonicalUrl }] : [],
   }),

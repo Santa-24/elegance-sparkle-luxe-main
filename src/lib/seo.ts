@@ -38,7 +38,7 @@ export function buildOrganizationSchema(config: SiteConfig, canonicalUrl: string
 }
 
 export function buildLocalBusinessSchema(config: SiteConfig, canonicalUrl: string) {
-  const siteUrl = config.siteUrl || "https://elegance-sparkle-luxe-main.onrender.com";
+  const siteUrl = config.siteUrl || "https://elegancemakeover.makeup";
   return {
     "@context": "https://schema.org",
     "@type": "BeautySalon",

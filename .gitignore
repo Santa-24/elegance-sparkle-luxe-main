@@ -41,3 +41,7 @@ coverage/
 *.njsproj
 *.sln
 *.sw?
+
+# Raw Video Asset (duplicated inside public)
+/Cinematic_luxury_bridal_salon.mp4
+

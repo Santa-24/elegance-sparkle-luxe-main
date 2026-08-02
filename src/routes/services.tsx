@@ -19,17 +19,24 @@ export const Route = createFileRoute("/services")({
   },
   head: () => ({
     meta: [
-      { title: "Services & Pricing - Elegance Makeover" },
+      { title: "Services & Beauty Menu | Elegance Makeover & Academy" },
       {
         name: "description",
         content:
-          "Bridal makeup, party makeup, facials, hair styling, threading and certified academy courses. Premium beauty services in Jajpur Road, Odisha.",
+          "Bridal makeup, HD party makeup, hydra facials, hair styling, threading and certified academy courses in Jajpur Road, Odisha.",
       },
-      { property: "og:title", content: "Beauty Services - Elegance Makeover" },
+      { property: "og:title", content: "Beauty Services & Packages | Elegance Makeover" },
       {
         property: "og:description",
-        content: "Explore our full range of bridal & parlour services.",
+        content: "Explore our full range of bridal makeup, luxury parlour services and academy training.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://elegancemakeover.makeup/services" },
+      { property: "og:image", content: "https://elegancemakeover.makeup/og-image.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Beauty Services & Packages | Elegance Makeover" },
+      { name: "twitter:description", content: "Bridal makeup, party makeup, hair styling & beauty academy in Jajpur Road, Odisha." },
+      { name: "twitter:image", content: "https://elegancemakeover.makeup/og-image.webp" },
     ],
   }),
   component: ServicesPage,

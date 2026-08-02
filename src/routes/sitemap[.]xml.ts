@@ -22,7 +22,11 @@ export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const baseUrl = new URL(request.url).origin;
+        const requestOrigin = new URL(request.url).origin;
+        const baseUrl =
+          requestOrigin && !requestOrigin.includes("localhost") && !requestOrigin.includes("127.0.0.1")
+            ? requestOrigin
+            : "https://elegancemakeover.makeup";
         const blogPosts = await getLiveBlogPosts();
         const paths = [...staticPaths, ...blogPosts.map((post) => `/blog/${post.slug}`)];
         const urls = paths

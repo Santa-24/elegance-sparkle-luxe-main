@@ -18,14 +18,21 @@ export const Route = createFileRoute("/pricing")({
   },
   head: () => ({
     meta: [
-      { title: "Bridal Packages & Pricing - Elegance Makeover" },
+      { title: "Bridal Packages & Pricing | Elegance Makeover - Jajpur Road" },
       {
         name: "description",
         content:
-          "Transparent bridal makeup packages from Rs 6,000 to Rs 12,000. Compare and pick the perfect look for your wedding day.",
+          "Transparent bridal makeup packages from ₹6,000 to ₹12,000 in Jajpur Road, Odisha. Compare HD makeup, airbrush, and pre-bridal packages.",
       },
-      { property: "og:title", content: "Bridal Pricing - Elegance Makeover" },
-      { property: "og:description", content: "Premium bridal packages with transparent pricing." },
+      { property: "og:title", content: "Bridal Packages & Pricing | Elegance Makeover" },
+      { property: "og:description", content: "Premium bridal packages with transparent pricing in Jajpur Road, Odisha." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://elegancemakeover.makeup/pricing" },
+      { property: "og:image", content: "https://elegancemakeover.makeup/og-image.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Bridal Packages & Pricing | Elegance Makeover" },
+      { name: "twitter:description", content: "Compare luxury HD bridal makeup rates in Jajpur Road, Odisha." },
+      { name: "twitter:image", content: "https://elegancemakeover.makeup/og-image.webp" },
     ],
   }),
   component: PricingPage,

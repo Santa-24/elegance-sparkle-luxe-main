@@ -19,17 +19,24 @@ export const Route = createFileRoute("/service-areas")({
   },
   head: () => ({
     meta: [
-      { title: "Service Areas - Elegance Makeover & Academy" },
+      { title: "Service Areas & Coverage | Elegance Makeover & Academy" },
       {
         name: "description",
         content:
           "Bridal makeup, beauty parlour and academy service areas in Jajpur Road, Jajpur, Cuttack, Bhubaneswar, Bhadrak and nearby Odisha regions.",
       },
-      { property: "og:title", content: "Service Areas - Elegance Makeover & Academy" },
+      { property: "og:title", content: "Service Areas & Coverage | Elegance Makeover" },
       {
         property: "og:description",
-        content: "Nearby local service coverage for brides, clients and academy students.",
+        content: "Local beauty service coverage for brides, clients and academy students in Odisha.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://elegancemakeover.makeup/service-areas" },
+      { property: "og:image", content: "https://elegancemakeover.makeup/og-image.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Service Areas & Coverage | Elegance Makeover" },
+      { name: "twitter:description", content: "Local beauty service coverage for brides and academy students in Odisha." },
+      { name: "twitter:image", content: "https://elegancemakeover.makeup/og-image.webp" },
     ],
   }),
   component: ServiceAreasPage,

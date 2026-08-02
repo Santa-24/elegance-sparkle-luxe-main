@@ -16,14 +16,21 @@ export const Route = createFileRoute("/testimonials")({
   },
   head: () => ({
     meta: [
-      { title: "Reviews - Elegance Makeover" },
+      { title: "Client Reviews & Testimonials | Elegance Makeover" },
       {
         name: "description",
         content:
-          "Read what our brides and clients say about Elegance Makeover & Academy. Real reviews from real women.",
+          "Read ratings and reviews from happy brides and academy students of Elegance Makeover in Jajpur Road, Odisha. 500+ brides styled by Rasmirekha Swain.",
       },
-      { property: "og:title", content: "Client Reviews - Elegance Makeover" },
-      { property: "og:description", content: "500+ happy brides share their experience." },
+      { property: "og:title", content: "Client Reviews & Ratings | Elegance Makeover" },
+      { property: "og:description", content: "500+ happy brides share their experiences and reviews." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://elegancemakeover.makeup/testimonials" },
+      { property: "og:image", content: "https://elegancemakeover.makeup/og-image.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Client Reviews & Ratings | Elegance Makeover" },
+      { name: "twitter:description", content: "Real bridal makeup and academy student reviews in Jajpur Road, Odisha." },
+      { name: "twitter:image", content: "https://elegancemakeover.makeup/og-image.webp" },
     ],
   }),
   component: TestimonialsPage,
@@ -119,7 +126,7 @@ function TestimonialsPage() {
   const uniqueSeed = seedTestimonials.filter((s) => !dbNames.has(s.name));
   const allTestimonials = [...testimonials, ...uniqueSeed];
 
-  const siteUrl = siteConfig.siteUrl || "https://elegance-sparkle-luxe-main.onrender.com";
+  const siteUrl = siteConfig.siteUrl || "https://elegancemakeover.makeup";
   const testimonialsSchema = {
     "@context": "https://schema.org",
     "@type": "BeautySalon",

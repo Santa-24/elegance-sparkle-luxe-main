@@ -19,14 +19,21 @@ export const Route = createFileRoute("/offers")({
   },
   head: () => ({
     meta: [
-      { title: "Current Offers - Elegance Makeover" },
+      { title: "Special Offers & Deals | Elegance Makeover & Academy" },
       {
         name: "description",
         content:
-          "Festive 20% OFF on all services, Rs 500 off above Rs 2,000, bridal bonanza & academy scholarship. Limited time offers.",
+          "Exclusive wedding season discounts, combo packages, and festive offers at Elegance Makeover in Jajpur Road, Odisha. Save on bridal & parlour services.",
       },
-      { property: "og:title", content: "Special Offers - Elegance Makeover" },
-      { property: "og:description", content: "Limited-time luxury beauty offers." },
+      { property: "og:title", content: "Special Offers & Deals | Elegance Makeover" },
+      { property: "og:description", content: "Limited-time luxury beauty offers and bridal package discounts in Jajpur Road." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://elegancemakeover.makeup/offers" },
+      { property: "og:image", content: "https://elegancemakeover.makeup/og-image.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Special Offers & Deals | Elegance Makeover" },
+      { name: "twitter:description", content: "Limited-time luxury beauty offers in Jajpur Road, Odisha." },
+      { name: "twitter:image", content: "https://elegancemakeover.makeup/og-image.webp" },
     ],
   }),
   component: OffersPage,

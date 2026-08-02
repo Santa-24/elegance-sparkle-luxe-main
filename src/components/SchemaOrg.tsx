@@ -3,11 +3,11 @@ import { StructuredData } from "./seo/StructuredData";
 export function SchemaOrg() {
   const schema = {
     "@context": "https://schema.org",
-    "@type": "BeautySalon",
+    "@type": ["BeautySalon", "HairSalon", "LocalBusiness"],
     name: "Elegance Makeover & Academy",
     description:
       "Premium bridal makeup salon, beauty parlour and certified academy by Rasmirekha Swain in Jajpur Road, Odisha.",
-    url: "https://elegance-sparkle-luxe-main.onrender.com",
+    url: "https://elegancemakeover.makeup",
     telephone: "+919265200523",
     email: "elegancemakeover.2021@gmail.com",
     address: {
@@ -20,7 +20,7 @@ export function SchemaOrg() {
     },
     openingHours: "Mo-Su 10:00-20:00",
     priceRange: "₹₹",
-    image: "https://elegance-sparkle-luxe-main.onrender.com/assets/bridal-1.webp",
+    image: "https://elegancemakeover.makeup/assets/bridal-1.webp",
     founder: {
       "@type": "Person",
       name: "Rasmirekha Swain",

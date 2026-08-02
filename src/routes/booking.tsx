@@ -27,16 +27,23 @@ export const Route = createFileRoute("/booking")({
   },
   head: () => ({
     meta: [
-      { title: "Book Appointment — Elegance Makeover" },
+      { title: "Book Appointment Online | Elegance Makeover & Academy" },
       {
         name: "description",
-        content: "Book your bridal makeup, parlour service or academy enrollment in 4 easy steps.",
+        content: "Book your bridal makeup, parlour service or academy consultation online in 4 easy steps. Premium beauty experience in Jajpur Road, Odisha.",
       },
-      { property: "og:title", content: "Book Your Appointment — Elegance Makeover" },
+      { property: "og:title", content: "Book Your Appointment | Elegance Makeover" },
       {
         property: "og:description",
-        content: "Quick step-by-step booking for premium beauty services.",
+        content: "Quick online appointment booking for luxury bridal makeup and beauty parlour services.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://elegancemakeover.makeup/booking" },
+      { property: "og:image", content: "https://elegancemakeover.makeup/og-image.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Book Your Appointment | Elegance Makeover" },
+      { name: "twitter:description", content: "Book your luxury beauty session or bridal consultation in Jajpur Road, Odisha." },
+      { name: "twitter:image", content: "https://elegancemakeover.makeup/og-image.webp" },
     ],
   }),
   component: BookingPage,

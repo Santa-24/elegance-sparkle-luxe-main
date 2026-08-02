@@ -21,7 +21,7 @@ type SiteConfig = {
 export function getSiteConfig(): SiteConfig {
   const contactPhone = import.meta.env.VITE_CONTACT_PHONE ?? "+91 92652 00523";
   return {
-    siteUrl: import.meta.env.VITE_SITE_URL ?? "",
+    siteUrl: import.meta.env.VITE_SITE_URL || "https://elegancemakeover.makeup",
     name: import.meta.env.VITE_SITE_NAME ?? "Elegance Makeover & Academy",
     siteName: import.meta.env.VITE_SITE_NAME ?? "Elegance Makeover & Academy",
     adminEmail:

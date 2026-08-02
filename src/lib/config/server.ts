@@ -15,7 +15,7 @@ import process from "node:process";
 export function getServerConfig() {
   const config = {
     nodeEnv: process.env.NODE_ENV,
-    siteUrl: process.env.VITE_SITE_URL || process.env.SITE_URL || "",
+    siteUrl: process.env.VITE_SITE_URL || process.env.SITE_URL || "https://elegancemakeover.makeup",
     adminSessionSecret: process.env.ADMIN_SESSION_SECRET || "",
     mediaBucketName: process.env.SUPABASE_MEDIA_BUCKET || "cms-media",
     supabaseUrl: process.env.SUPABASE_URL,

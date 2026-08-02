@@ -10,17 +10,24 @@ const salon = "/assets/interior1.webp";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About - Elegance Makeover & Academy" },
+      { title: "About Us | Elegance Makeover & Academy - Jajpur Road" },
       {
         name: "description",
         content:
           "Meet Rasmirekha Swain, founder of Elegance Makeover & Academy. 10+ years of luxury bridal artistry and certified academy in Jajpur Road, Odisha.",
       },
-      { property: "og:title", content: "About Elegance Makeover & Academy" },
+      { property: "og:title", content: "About Us | Elegance Makeover & Academy" },
       {
         property: "og:description",
-        content: "Founder story, certified team and academy in Jajpur Road, Odisha.",
+        content: "Founder story, certified beauty team and professional makeup academy in Jajpur Road, Odisha.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://elegancemakeover.makeup/about" },
+      { property: "og:image", content: "https://elegancemakeover.makeup/og-image.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "About Us | Elegance Makeover & Academy" },
+      { name: "twitter:description", content: "10+ years of luxury bridal artistry and certified academy in Jajpur Road, Odisha." },
+      { name: "twitter:image", content: "https://elegancemakeover.makeup/og-image.webp" },
     ],
   }),
   component: AboutPage,

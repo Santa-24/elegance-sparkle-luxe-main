@@ -39,7 +39,6 @@ import {
 } from "@/lib/content/live.functions";
 import { getSiteConfig } from "@/lib/site-config";
 
-const heroBride = "/assets/hero-bride.webp";
 const owner = "/assets/owner.webp";
 
 function getServiceQueryParam(title: string): string {
@@ -221,7 +220,7 @@ function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
       videoRef.current.pause();
       setIsPlaying(false);
     } else {
-      videoRef.current.play().catch((err) => console.log("Video play failed: ", err));
+      videoRef.current.play().catch(() => {});
       setIsPlaying(true);
     }
   };
@@ -234,19 +233,7 @@ function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
 
   return (
     <section className="relative h-[100dvh] flex items-center justify-center overflow-hidden bg-[#0d0a07]">
-      {/* Background Image Fallback */}
-      <img
-        src={heroBride}
-        alt="Luxury bridal makeup by Elegance Makeover"
-        width={1672}
-        height={941}
-        loading="eager"
-        fetchPriority="high"
-        decoding="async"
-        className="absolute inset-0 w-full h-full object-cover object-center opacity-30 pointer-events-none z-0"
-      />
-
-      {/* Background Video - Fully Visible */}
+      {/* Background Video - Fully Visible Loop */}
       <video
         ref={videoRef}
         autoPlay

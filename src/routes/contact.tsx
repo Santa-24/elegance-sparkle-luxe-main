@@ -17,16 +17,23 @@ const canonicalUrl = buildCanonicalUrl(siteConfig.siteUrl, "/contact");
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact - Elegance Makeover" },
+      { title: "Contact Us & Location | Elegance Makeover & Academy - Jajpur Road" },
       {
         name: "description",
-        content: `Visit, call or WhatsApp us. Elegance Makeover & Academy, ${siteConfig.contactAddress}. Phone: ${siteConfig.contactPhone}.`,
+        content: `Visit, call or WhatsApp us. Elegance Makeover & Academy, ${siteConfig.contactAddress}. Phone: ${siteConfig.contactPhone}. Luxury bridal bookings & academy admissions.`,
       },
-      { property: "og:title", content: "Contact Elegance Makeover" },
+      { property: "og:title", content: "Contact Us & Location | Elegance Makeover" },
       {
         property: "og:description",
-        content: "Get in touch for bookings, courses and consultations.",
+        content: "Get in touch for bridal bookings, academy courses and beauty consultations in Jajpur Road, Odisha.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://elegancemakeover.makeup/contact" },
+      { property: "og:image", content: "https://elegancemakeover.makeup/og-image.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Contact Us & Location | Elegance Makeover" },
+      { name: "twitter:description", content: `Call or visit Elegance Makeover in Jajpur Road, Odisha. ${siteConfig.contactPhone}.` },
+      { name: "twitter:image", content: "https://elegancemakeover.makeup/og-image.webp" },
     ],
   }),
   component: ContactPage,

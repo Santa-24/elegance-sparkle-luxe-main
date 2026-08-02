@@ -11,17 +11,24 @@ export const Route = createFileRoute("/gallery")({
   },
   head: () => ({
     meta: [
-      { title: "Gallery — Elegance Makeover" },
+      { title: "Bridal Portfolio & Photo Gallery | Elegance Makeover" },
       {
         name: "description",
         content:
-          "Explore our portfolio of bridal makeup, parlour transformations and academy work. Real brides, real magic.",
+          "Explore our portfolio of bridal makeup, parlour transformations and academy work. Real brides, real magic by Rasmirekha Swain in Jajpur Road.",
       },
-      { property: "og:title", content: "Bridal & Beauty Gallery — Elegance Makeover" },
+      { property: "og:title", content: "Bridal & Beauty Gallery | Elegance Makeover" },
       {
         property: "og:description",
-        content: "Premium bridal makeup gallery from Jajpur Road, Odisha.",
+        content: "Premium bridal makeup gallery and beauty transformations from Jajpur Road, Odisha.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://elegancemakeover.makeup/gallery" },
+      { property: "og:image", content: "https://elegancemakeover.makeup/og-image.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Bridal & Beauty Gallery | Elegance Makeover" },
+      { name: "twitter:description", content: "Explore real bride makeovers and parlour styling by Rasmirekha Swain." },
+      { name: "twitter:image", content: "https://elegancemakeover.makeup/og-image.webp" },
     ],
   }),
   component: GalleryPage,

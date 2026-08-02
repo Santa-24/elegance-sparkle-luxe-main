@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin
 
-Sitemap: https://elegance-sparkle-luxe-main.onrender.com/sitemap.xml
+Sitemap: https://elegancemakeover.makeup/sitemap.xml

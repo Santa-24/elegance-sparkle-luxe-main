@@ -54,7 +54,7 @@ export const Route = createFileRoute("/blog/$slug")({
     const canonicalUrl = buildCanonicalUrl(siteConfig.siteUrl, `/blog/${loaderData.post.slug}`);
     return {
       meta: [
-        { title: `${loaderData.post.seoTitle} - Elegance Makeover & Academy` },
+        { title: `${loaderData.post.seoTitle} | Elegance Makeover & Academy` },
         {
           name: "description",
           content: loaderData.post.description,
@@ -64,12 +64,16 @@ export const Route = createFileRoute("/blog/$slug")({
           property: "og:description",
           content: loaderData.post.description,
         },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: canonicalUrl || `https://elegancemakeover.makeup/blog/${loaderData.post.slug}` },
         {
           property: "og:image",
-          content: loaderData.post.featuredImageUrl || "/og-image.svg",
+          content: loaderData.post.featuredImageUrl || "https://elegancemakeover.makeup/og-image.webp",
         },
         { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:image", content: loaderData.post.featuredImageUrl || "/og-image.svg" },
+        { name: "twitter:title", content: loaderData.post.seoTitle },
+        { name: "twitter:description", content: loaderData.post.description },
+        { name: "twitter:image", content: loaderData.post.featuredImageUrl || "https://elegancemakeover.makeup/og-image.webp" },
       ],
       links: canonicalUrl ? [{ rel: "canonical", href: canonicalUrl }] : [],
     };

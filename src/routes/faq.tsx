@@ -18,17 +18,24 @@ export const Route = createFileRoute("/faq")({
   },
   head: () => ({
     meta: [
-      { title: "FAQ - Elegance Makeover & Academy" },
+      { title: "Frequently Asked Questions | Elegance Makeover & Academy" },
       {
         name: "description",
         content:
-          "Frequently asked questions about bridal makeup, salon services, academy courses and bookings in Jajpur Road, Odisha.",
+          "Frequently asked questions about bridal makeup, salon services, academy certification and bookings in Jajpur Road, Odisha.",
       },
-      { property: "og:title", content: "FAQ - Elegance Makeover & Academy" },
+      { property: "og:title", content: "Frequently Asked Questions | Elegance Makeover" },
       {
         property: "og:description",
-        content: "Answers to the most common booking, service and local questions.",
+        content: "Answers to common questions about bridal packages, academy courses, and bookings.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://elegancemakeover.makeup/faq" },
+      { property: "og:image", content: "https://elegancemakeover.makeup/og-image.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Frequently Asked Questions | Elegance Makeover" },
+      { name: "twitter:description", content: "Answers to common questions about bridal packages & academy courses." },
+      { name: "twitter:image", content: "https://elegancemakeover.makeup/og-image.webp" },
     ],
   }),
   component: FaqPage,
