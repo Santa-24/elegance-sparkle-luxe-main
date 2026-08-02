@@ -15,7 +15,6 @@ import appCss from "../styles.css?url";
 import { reportAppError } from "../lib/error-reporting";
 import { getSiteConfig } from "@/lib/site-config";
 import { StructuredData } from "@/components/seo/StructuredData";
-import { SchemaOrg } from "@/components/SchemaOrg";
 import {
   buildCanonicalUrl,
   buildOrganizationSchema,
@@ -198,7 +197,6 @@ function RootShell({ children }: { children: ReactNode }) {
         <StructuredData data={organizationSchema} />
         <StructuredData data={webSiteSchema} />
         <StructuredData data={localBusinessSchema} />
-        <SchemaOrg />
       </head>
       <body>
         <SkipLink />
