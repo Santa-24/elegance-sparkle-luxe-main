@@ -68,12 +68,12 @@ export const Route = createFileRoute("/blog/$slug")({
         { property: "og:url", content: canonicalUrl || `https://elegancemakeover.makeup/blog/${loaderData.post.slug}` },
         {
           property: "og:image",
-          content: loaderData.post.featuredImageUrl || "https://elegancemakeover.makeup/og-image.webp",
+          content: loaderData.post.featuredImageUrl || "https://elegancemakeover.makeup/assets/logo.webp",
         },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: loaderData.post.seoTitle },
         { name: "twitter:description", content: loaderData.post.description },
-        { name: "twitter:image", content: loaderData.post.featuredImageUrl || "https://elegancemakeover.makeup/og-image.webp" },
+        { name: "twitter:image", content: loaderData.post.featuredImageUrl || "https://elegancemakeover.makeup/assets/logo.webp" },
       ],
       links: canonicalUrl ? [{ rel: "canonical", href: canonicalUrl }] : [],
     };

@@ -13,27 +13,10 @@ export function buildCanonicalUrl(siteUrl: string, pathname: string) {
 export function buildOrganizationSchema(config: SiteConfig, canonicalUrl: string) {
   return {
     "@context": "https://schema.org",
-    "@type": ["BeautySalon", "LocalBusiness", "Organization"],
-    "@id": `${canonicalUrl || config.siteUrl || ""}#organization`,
-    name: config.siteName,
-    url: canonicalUrl || config.siteUrl || undefined,
-    telephone: config.contactPhone,
-    email: config.contactEmail,
-    image: `${canonicalUrl || config.siteUrl || ""}/og-image.webp`,
-    priceRange: "₹₹",
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "Jajpur Road",
-      addressRegion: "Odisha",
-      addressCountry: "IN",
-      streetAddress: config.contactAddress,
-    },
-    areaServed: {
-      "@type": "AdministrativeArea",
-      name: "Jajpur Road, Odisha",
-    },
-    openingHours: [config.contactHours],
-    sameAs: [config.instagramUrl, config.facebookUrl].filter((value) => value && value !== "#"),
+    "@type": "Organization",
+    name: "Elegance Makeover & Academy",
+    url: "https://elegancemakeover.makeup",
+    logo: "https://elegancemakeover.makeup/assets/logo.webp",
   };
 }
 
@@ -45,8 +28,8 @@ export function buildLocalBusinessSchema(config: SiteConfig, canonicalUrl: strin
     "@id": `${siteUrl}#localbusiness`,
     name: "Elegance Makeover & Academy",
     url: siteUrl,
-    logo: `${siteUrl}/favicon.svg`,
-    image: `${siteUrl}/og-image.webp`,
+    logo: `${siteUrl}/assets/logo.webp`,
+    image: `${siteUrl}/assets/logo.webp`,
     address: {
       "@type": "PostalAddress",
       streetAddress: "Jajpur Road, Odisha, India",
