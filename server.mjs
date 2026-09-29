@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { readFile, stat } from "node:fs/promises";
 import { extname, resolve, sep } from "node:path";
 import { Readable } from "node:stream";
+import { createGzip, createBrotliCompress } from "node:zlib";
 
 const PORT = Number.parseInt(process.env.PORT || "3000", 10);
 const HOST = "0.0.0.0";
@@ -62,6 +63,8 @@ function getContentType(filePath) {
       return "image/x-icon";
     case ".txt":
       return "text/plain; charset=utf-8";
+    case ".xml":
+      return "application/xml; charset=utf-8";
     case ".woff":
       return "font/woff";
     case ".woff2":
@@ -77,6 +80,22 @@ function isWithinDirectory(parent, candidate) {
   const normalizedParent = resolve(parent) + sep;
   const normalizedCandidate = resolve(candidate);
   return normalizedCandidate.startsWith(normalizedParent);
+}
+
+function getCompressor(acceptEncoding, contentType) {
+  if (!contentType) return null;
+  // Skip compression for images, audio, video, woff2
+  if (/image\/(webp|png|jpeg|jpg|gif)|video\/|audio\/|font\/woff2/.test(contentType)) {
+    return null;
+  }
+  const encodings = (acceptEncoding || "").toLowerCase();
+  if (encodings.includes("br")) {
+    return { encoding: "br", createStream: () => createBrotliCompress() };
+  }
+  if (encodings.includes("gzip")) {
+    return { encoding: "gzip", createStream: () => createGzip() };
+  }
+  return null;
 }
 
 async function serveStaticAsset(urlPath) {
@@ -97,17 +116,28 @@ async function serveStaticAsset(urlPath) {
     return null;
   }
 
+  const contentType = getContentType(candidatePath);
   const body = await readFile(candidatePath);
   const headers = new Headers({
-    "content-type": getContentType(candidatePath),
+    "content-type": contentType,
     "content-length": String(body.byteLength),
   });
 
-  if (decodedPath.startsWith("/assets/")) {
+  // Hashed build assets: immutable 1 year
+  const isHashedAsset =
+    decodedPath.startsWith("/assets/") &&
+    /[.-][a-zA-Z0-9_-]{8,}\.(js|css|webp|png|jpg|svg)$/.test(decodedPath);
+
+  if (isHashedAsset) {
     headers.set("cache-control", "public, max-age=31536000, immutable");
-  } else if (decodedPath.startsWith("/src/assets/")) {
-    headers.set("cache-control", "public, max-age=0, must-revalidate");
+  } else if (
+    decodedPath.startsWith("/assets/") ||
+    /\.(webp|png|jpg|jpeg|svg|ico|mp4)$/.test(decodedPath)
+  ) {
+    // Un-hashed public media
+    headers.set("cache-control", "public, max-age=86400, stale-while-revalidate=604800");
   } else {
+    // Default HTML, text, or revalidatable
     headers.set("cache-control", "public, max-age=0, must-revalidate");
   }
 
@@ -157,19 +187,34 @@ async function toWebRequest(req) {
 async function handleRequest(req, res) {
   try {
     const url = new URL(req.url || "/", `http://${req.headers.host || `localhost:${PORT}`}`);
+    const acceptEncoding = req.headers["accept-encoding"] || "";
     const staticAsset = await serveStaticAsset(url.pathname);
 
     if (staticAsset) {
       res.statusCode = staticAsset.status;
+      const contentType = staticAsset.headers.get("content-type") || "";
+      const compressor = getCompressor(acceptEncoding, contentType);
+
       staticAsset.headers.forEach((value, key) => {
+        if (compressor && key.toLowerCase() === "content-length") {
+          return;
+        }
         res.setHeader(key, value);
       });
+
       if (req.method === "HEAD") {
         res.end();
         return;
       }
+
       const buffer = Buffer.from(await staticAsset.arrayBuffer());
-      res.end(buffer);
+      if (compressor) {
+        res.setHeader("content-encoding", compressor.encoding);
+        const compStream = compressor.createStream();
+        Readable.from(buffer).pipe(compStream).pipe(res);
+      } else {
+        res.end(buffer);
+      }
       return;
     }
 
@@ -178,7 +223,23 @@ async function handleRequest(req, res) {
     const response = await serverModule.fetch(request, undefined, undefined);
 
     res.statusCode = response.status;
+    const contentType = response.headers.get("content-type") || "";
+
+    // Add font preload & preconnect hints and Cache-Control on HTML SSR
+    if (contentType.includes("text/html")) {
+      response.headers.set("cache-control", "public, max-age=0, must-revalidate");
+      response.headers.set(
+        "link",
+        "<https://fonts.googleapis.com>; rel=preconnect, <https://fonts.gstatic.com>; rel=preconnect; crossorigin",
+      );
+    }
+
+    const compressor = getCompressor(acceptEncoding, contentType);
+
     response.headers.forEach((value, key) => {
+      if (compressor && key.toLowerCase() === "content-length") {
+        return;
+      }
       res.setHeader(key, value);
     });
 
@@ -195,7 +256,14 @@ async function handleRequest(req, res) {
       }
       res.end();
     });
-    nodeStream.pipe(res);
+
+    if (compressor) {
+      res.setHeader("content-encoding", compressor.encoding);
+      const compStream = compressor.createStream();
+      nodeStream.pipe(compStream).pipe(res);
+    } else {
+      nodeStream.pipe(res);
+    }
   } catch (error) {
     log("error", "request failed", error);
     if (!res.headersSent) {

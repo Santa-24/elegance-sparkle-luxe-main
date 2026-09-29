@@ -1,5 +1,33 @@
+# ==============================================================================
+# ELEGANCE MAKEOVER & ACADEMY - .gitignore
+# ==============================================================================
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Production & Build Outputs
+dist/
+dist-ssr/
+build/
+.output/
+.vinxi/
+.nitro/
+.tanstack/
+.vite/
+.turbo/
+*.tsbuildinfo
+
+# Local Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+*.local
+.dev.vars
+*.pem
+
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,41 +35,57 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-.output
-.vinxi
-.tanstack/**
-.nitro
-
-# Local environment files
-.env
-.env.*
-!.env.example
-*.local
-
-# Build and cache artifacts
-*.tsbuildinfo
+# Testing, Coverage & Audit Artifacts
 coverage/
-.vite/
-.turbo/
+.nyc_output/
+.lighthouseci/
+lighthouse-report*
+*-report.html
+*-report.json
+playwright-report/
+test-results/
+cypress/videos/
+cypress/screenshots/
 
-# Wrangler / Cloudflare
+# Cloudflare / Hosting Providers
 .wrangler/
-.dev.vars
+.vercel/
+.netlify/
 
-# Editor directories and files
+# Temporary, Cache & Scratch Files
+tmp/
+temp/
+scratch/
+.cache/
+.parcel-cache/
+*.tmp
+
+# AI / IDE / Editor Specific Files
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.sublime-project
+*.sublime-workspace
+.gemini/
+.claude/
+.cursor/
+.history/
 
-# Raw Video Asset (duplicated inside public)
+# OS Generated Files (Windows, macOS, Linux)
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Raw / Duplicate Large Media Assets
 /Cinematic_luxury_bridal_salon.mp4
-

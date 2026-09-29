@@ -15,13 +15,8 @@ import appCss from "../styles.css?url";
 import { reportAppError } from "../lib/error-reporting";
 import { getSiteConfig } from "@/lib/site-config";
 import { StructuredData } from "@/components/seo/StructuredData";
-import {
-  buildCanonicalUrl,
-  buildOrganizationSchema,
-  buildWebSiteSchema,
-  buildLocalBusinessSchema,
-} from "@/lib/seo";
-import { trackPageView } from "@/lib/analytics";
+import { buildCanonicalUrl, buildOrganizationSchema, buildWebSiteSchema } from "@/lib/seo";
+import { trackPageView, initDeferredAnalytics } from "@/lib/analytics";
 import { getLiveSiteContentFn } from "@/lib/content/live.functions";
 import { SiteContentProvider } from "@/lib/content/site-content";
 
@@ -160,44 +155,20 @@ function RootShell({ children }: { children: ReactNode }) {
   const canonicalUrl = buildCanonicalUrl(siteConfig.siteUrl, pathname);
   const organizationSchema = buildOrganizationSchema(siteConfig, canonicalUrl);
   const webSiteSchema = buildWebSiteSchema(siteConfig, canonicalUrl);
-  const localBusinessSchema = buildLocalBusinessSchema(siteConfig, canonicalUrl);
 
   return (
-    <html lang="en">
+    <html lang="en-IN">
       <head>
         <HeadContent />
-        {canonicalUrl ? <link rel="canonical" href={canonicalUrl} /> : null}
-        {siteConfig.ga4Id ? (
+        {canonicalUrl ? (
           <>
-            <script async src={`https://www.googletagmanager.com/gtag/js?id=${siteConfig.ga4Id}`} />
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${siteConfig.ga4Id}', { send_page_view: false });
-                `,
-              }}
-            />
+            <link rel="canonical" href={canonicalUrl} />
+            <link rel="alternate" hrefLang="en-IN" href={canonicalUrl} />
+            <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
           </>
-        ) : null}
-        {siteConfig.clarityId ? (
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                (function(c,l,a,r,i,t,y){
-                  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-                  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-                  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-                })(window, document, "clarity", "script", "${siteConfig.clarityId}");
-              `,
-            }}
-          />
         ) : null}
         <StructuredData data={organizationSchema} />
         <StructuredData data={webSiteSchema} />
-        <StructuredData data={localBusinessSchema} />
       </head>
       <body>
         <SkipLink />
@@ -212,6 +183,11 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const siteContent = Route.useLoaderData();
   const location = useLocation();
+
+  useEffect(() => {
+    const cleanup = initDeferredAnalytics(siteConfig.ga4Id, siteConfig.clarityId);
+    return cleanup;
+  }, []);
 
   useEffect(() => {
     if (siteConfig.ga4Id) {

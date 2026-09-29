@@ -38,6 +38,8 @@ import {
   getLiveServiceAreasFn,
 } from "@/lib/content/live.functions";
 import { getSiteConfig } from "@/lib/site-config";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { buildLocalBusinessSchema } from "@/lib/seo";
 
 const owner = "/assets/owner.webp";
 
@@ -171,11 +173,13 @@ function HomePage() {
 
   return (
     <SiteLayout>
+      <StructuredData data={buildLocalBusinessSchema(siteConfig)} />
       <Hero advertisement={featuredAdvertisement} />
       <AdvertisementShowcase
         advertisement={featuredAdvertisement}
         onOpen={() => setOpenAdIndex(0)}
       />
+      <HomeQuickAnswer />
       <AboutPreview />
       <Services services={services} />
       <BridalShowcase gallery={gallery} />
@@ -213,6 +217,40 @@ function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Check if user prefers reduced motion or is on a 2g / data-saver connection
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const nav = navigator as unknown as {
+      connection?: { effectiveType?: string; saveData?: boolean };
+    };
+    const isSlow =
+      nav.connection?.saveData ||
+      nav.connection?.effectiveType === "2g" ||
+      nav.connection?.effectiveType === "slow-2g";
+
+    if (!prefersReduced && !isSlow) {
+      // Defer video loading until after initial LCP paint
+      if ("requestIdleCallback" in window) {
+        const handle = (
+          window as unknown as {
+            requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number;
+            cancelIdleCallback: (id: number) => void;
+          }
+        ).requestIdleCallback(() => setShouldLoadVideo(true), { timeout: 2500 });
+        return () =>
+          (window as unknown as { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(
+            handle,
+          );
+      } else {
+        const timer = setTimeout(() => setShouldLoadVideo(true), 1500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, []);
 
   const togglePlay = () => {
     if (!videoRef.current) return;
@@ -233,17 +271,34 @@ function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
 
   return (
     <section className="relative h-[100dvh] flex items-center justify-center overflow-hidden bg-[#0d0a07]">
-      {/* Background Video - Fully Visible Loop */}
-      <video
-        ref={videoRef}
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover object-center opacity-100 pointer-events-none z-0"
-      >
-        <source src="/assets/video/Cinematic_luxury_bridal_salon.mp4" type="video/mp4" />
-      </video>
+      {/* Background LCP Image / Fallback to prevent CLS and fire instant LCP */}
+      <img
+        src="/assets/hero-bride.webp"
+        alt="Master Bridal Makeup Artist in Jajpur Road, Odisha - Elegance Makeover & Academy"
+        width={1920}
+        height={1080}
+        fetchPriority="high"
+        decoding="async"
+        className={`absolute inset-0 w-full h-full object-cover object-center z-0 transition-opacity duration-1000 ${
+          shouldLoadVideo ? "opacity-0" : "opacity-100"
+        }`}
+      />
+
+      {/* Background Video - Loaded after LCP to preserve speed */}
+      {shouldLoadVideo ? (
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster="/assets/hero-bride.webp"
+          preload="metadata"
+          className="absolute inset-0 w-full h-full object-cover object-center opacity-100 pointer-events-none z-0"
+        >
+          <source src="/assets/video/Cinematic_luxury_bridal_salon.mp4" type="video/mp4" />
+        </video>
+      ) : null}
 
       {/* Top Gradient for header text legibility */}
       <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-[#0d0a07]/80 to-transparent pointer-events-none z-10" />
@@ -352,6 +407,39 @@ function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
   );
 }
 
+/* ---------------- AEO QUICK ANSWER ---------------- */
+function HomeQuickAnswer() {
+  return (
+    <section className="bg-background pt-10 pb-6 border-b border-border/40">
+      <div className="mx-auto max-w-5xl px-6">
+        <div className="reveal rounded-2xl border border-[var(--gold)]/30 bg-card p-6 md:p-8 shadow-soft">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--gold)]">
+            <Sparkles className="h-4 w-4" /> Quick Overview: Elegance Makeover & Academy
+          </div>
+          <p className="mt-3 text-base md:text-lg leading-relaxed font-sans text-foreground/90">
+            Elegance Makeover & Academy is the premier bridal makeover studio, beauty parlour, and
+            certified makeup academy in Jajpur Road, Odisha (PIN 755019), founded by Master Artist
+            Rasmirekha Swain. With 10+ years of professional artistry and 500+ brides styled, the
+            studio offers luxury HD and Airbrush bridal packages (₹8,000–₹16,000), skin facials,
+            hair styling, and certified beauty academy courses (₹15,000–₹35,000) across Jajpur Road,
+            Vyasanagar, Cuttack, Bhubaneswar, and all surrounding Odisha districts.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-4 pt-3 border-t border-border/50 text-xs md:text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">📍 Location: Jajpur Road, Odisha</span>
+            <span className="font-medium text-foreground">✨ Founder: Rasmirekha Swain</span>
+            <span className="font-medium text-foreground">
+              💄 Services: HD & Airbrush Bridal, Academy
+            </span>
+            <span className="font-medium text-foreground">
+              📞 Contact: {siteConfig.contactPhone}
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ---------------- ADVERTISEMENT ---------------- */
 function AdvertisementShowcase({
   advertisement,
@@ -376,6 +464,9 @@ function AdvertisementShowcase({
           <img
             src={advertisement.asset_url}
             alt={advertisement.title}
+            width={1200}
+            height={630}
+            decoding="async"
             className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
             loading="lazy"
           />
@@ -652,10 +743,11 @@ function Services({ services }: { services: Service[] }) {
                       </div>
                     </div>
                     <Link
-                      to={
+                      to="/booking"
+                      search={
                         getServiceQueryParam(s.title)
-                          ? `/booking?service=${getServiceQueryParam(s.title)}`
-                          : "/booking"
+                          ? { service: getServiceQueryParam(s.title) }
+                          : undefined
                       }
                       onClick={() =>
                         trackEvent("booking_cta_click", {
@@ -717,6 +809,9 @@ function BridalShowcase({ gallery }: { gallery: GalleryImage[] }) {
               <img
                 src={featuredImage.src}
                 alt={featuredImage.alt}
+                width={800}
+                height={600}
+                decoding="async"
                 loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
@@ -744,6 +839,9 @@ function BridalShowcase({ gallery }: { gallery: GalleryImage[] }) {
                 <img
                   src={img.src}
                   alt={img.alt}
+                  width={400}
+                  height={400}
+                  decoding="async"
                   loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
@@ -1011,6 +1109,9 @@ function InstaFeed({ gallery }: { gallery: GalleryImage[] }) {
                 <img
                   src={g.src}
                   alt={g.alt}
+                  width={300}
+                  height={300}
+                  decoding="async"
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />

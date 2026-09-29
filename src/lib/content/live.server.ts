@@ -8,6 +8,7 @@ import {
 } from "@/lib/data/services";
 import { faqSections as staticFaqSections, type FaqSection } from "./faq";
 import { serviceAreas as staticServiceAreas, type ServiceArea } from "./service-areas";
+import { blogPosts as staticBlogPosts } from "./blog";
 
 type PaginationInput = {
   limit?: number;
@@ -144,6 +145,7 @@ type LiveFaqSectionRow = {
 
 type LiveServiceAreaRow = {
   id: number;
+  slug?: string;
   name: string;
   summary: string;
   search_intent: string;
@@ -287,6 +289,12 @@ function mapFaqSection(row: LiveFaqSectionRow): FaqSection {
 
 function mapServiceArea(row: LiveServiceAreaRow): ServiceArea {
   return {
+    slug:
+      row.slug ||
+      row.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, ""),
     name: row.name,
     summary: row.summary,
     searchIntent: row.search_intent,
@@ -462,13 +470,14 @@ export async function getLiveBlogPosts(input?: PaginationInput) {
     const categoryBySlug = new Map(categories.map((category) => [category.slug, category.title]));
     const authorBySlug = new Map(authors.map((author) => [author.slug, author.name]));
 
-    return rows
+    const mapped = rows
       .filter((row) => Boolean(row.slug && row.title && row.content_text && row.published_at))
       .map((row) =>
         mapBlogPost(row, categoryBySlug.get(row.category_slug), authorBySlug.get(row.author_slug)),
       );
+    return mapped.length > 0 ? mapped : staticBlogPosts;
   } catch {
-    return [];
+    return staticBlogPosts;
   }
 }
 
@@ -478,7 +487,8 @@ export async function getLiveBlogPostBySlug(slug: string) {
       `blog_posts?select=id,slug,title,excerpt,content_text,featured_image_url,tags_text,category_slug,author_slug,published_at,updated_at,seo_title,seo_description,is_featured,is_published,sort_order&slug=eq.${encodeURIComponent(slug)}&is_published=eq.true&deleted_at=is.null&limit=1`,
     );
     if (!rows[0]) {
-      return null;
+      const fallback = staticBlogPosts.find((p) => p.slug === slug);
+      return fallback ?? null;
     }
 
     const [categories, authors] = await Promise.all([
@@ -493,7 +503,8 @@ export async function getLiveBlogPostBySlug(slug: string) {
       authorBySlug.get(rows[0].author_slug),
     );
   } catch {
-    return null;
+    const fallback = staticBlogPosts.find((p) => p.slug === slug);
+    return fallback ?? null;
   }
 }
 

@@ -23,6 +23,8 @@ import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
+import { Route as ServiceAreasAreaRouteImport } from './routes/service-areas.$area'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 
 const TestimonialsRoute = TestimonialsRouteImport.update({
@@ -95,6 +97,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesSlugRoute = ServicesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ServicesRoute,
+} as any)
+const ServiceAreasAreaRoute = ServiceAreasAreaRouteImport.update({
+  id: '/$area',
+  path: '/$area',
+  getParentRoute: () => ServiceAreasRoute,
+} as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -112,11 +124,13 @@ export interface FileRoutesByFullPath {
   '/gallery': typeof GalleryRoute
   '/offers': typeof OffersRoute
   '/pricing': typeof PricingRoute
-  '/service-areas': typeof ServiceAreasRoute
-  '/services': typeof ServicesRoute
+  '/service-areas': typeof ServiceAreasRouteWithChildren
+  '/services': typeof ServicesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/testimonials': typeof TestimonialsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/service-areas/$area': typeof ServiceAreasAreaRoute
+  '/services/$slug': typeof ServicesSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -129,11 +143,13 @@ export interface FileRoutesByTo {
   '/gallery': typeof GalleryRoute
   '/offers': typeof OffersRoute
   '/pricing': typeof PricingRoute
-  '/service-areas': typeof ServiceAreasRoute
-  '/services': typeof ServicesRoute
+  '/service-areas': typeof ServiceAreasRouteWithChildren
+  '/services': typeof ServicesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/testimonials': typeof TestimonialsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/service-areas/$area': typeof ServiceAreasAreaRoute
+  '/services/$slug': typeof ServicesSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -147,11 +163,13 @@ export interface FileRoutesById {
   '/gallery': typeof GalleryRoute
   '/offers': typeof OffersRoute
   '/pricing': typeof PricingRoute
-  '/service-areas': typeof ServiceAreasRoute
-  '/services': typeof ServicesRoute
+  '/service-areas': typeof ServiceAreasRouteWithChildren
+  '/services': typeof ServicesRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/testimonials': typeof TestimonialsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/service-areas/$area': typeof ServiceAreasAreaRoute
+  '/services/$slug': typeof ServicesSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -171,6 +189,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/testimonials'
     | '/blog/$slug'
+    | '/service-areas/$area'
+    | '/services/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -188,6 +208,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/testimonials'
     | '/blog/$slug'
+    | '/service-areas/$area'
+    | '/services/$slug'
   id:
     | '__root__'
     | '/'
@@ -205,6 +227,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/testimonials'
     | '/blog/$slug'
+    | '/service-areas/$area'
+    | '/services/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -218,8 +242,8 @@ export interface RootRouteChildren {
   GalleryRoute: typeof GalleryRoute
   OffersRoute: typeof OffersRoute
   PricingRoute: typeof PricingRoute
-  ServiceAreasRoute: typeof ServiceAreasRoute
-  ServicesRoute: typeof ServicesRoute
+  ServiceAreasRoute: typeof ServiceAreasRouteWithChildren
+  ServicesRoute: typeof ServicesRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TestimonialsRoute: typeof TestimonialsRoute
 }
@@ -324,6 +348,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/services/$slug': {
+      id: '/services/$slug'
+      path: '/$slug'
+      fullPath: '/services/$slug'
+      preLoaderRoute: typeof ServicesSlugRouteImport
+      parentRoute: typeof ServicesRoute
+    }
+    '/service-areas/$area': {
+      id: '/service-areas/$area'
+      path: '/$area'
+      fullPath: '/service-areas/$area'
+      preLoaderRoute: typeof ServiceAreasAreaRouteImport
+      parentRoute: typeof ServiceAreasRoute
+    }
     '/blog/$slug': {
       id: '/blog/$slug'
       path: '/$slug'
@@ -344,6 +382,30 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
+interface ServiceAreasRouteChildren {
+  ServiceAreasAreaRoute: typeof ServiceAreasAreaRoute
+}
+
+const ServiceAreasRouteChildren: ServiceAreasRouteChildren = {
+  ServiceAreasAreaRoute: ServiceAreasAreaRoute,
+}
+
+const ServiceAreasRouteWithChildren = ServiceAreasRoute._addFileChildren(
+  ServiceAreasRouteChildren,
+)
+
+interface ServicesRouteChildren {
+  ServicesSlugRoute: typeof ServicesSlugRoute
+}
+
+const ServicesRouteChildren: ServicesRouteChildren = {
+  ServicesSlugRoute: ServicesSlugRoute,
+}
+
+const ServicesRouteWithChildren = ServicesRoute._addFileChildren(
+  ServicesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -355,8 +417,8 @@ const rootRouteChildren: RootRouteChildren = {
   GalleryRoute: GalleryRoute,
   OffersRoute: OffersRoute,
   PricingRoute: PricingRoute,
-  ServiceAreasRoute: ServiceAreasRoute,
-  ServicesRoute: ServicesRoute,
+  ServiceAreasRoute: ServiceAreasRouteWithChildren,
+  ServicesRoute: ServicesRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TestimonialsRoute: TestimonialsRoute,
 }

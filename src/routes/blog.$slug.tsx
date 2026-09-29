@@ -65,15 +65,23 @@ export const Route = createFileRoute("/blog/$slug")({
           content: loaderData.post.description,
         },
         { property: "og:type", content: "article" },
-        { property: "og:url", content: canonicalUrl || `https://elegancemakeover.makeup/blog/${loaderData.post.slug}` },
+        {
+          property: "og:url",
+          content: canonicalUrl || `https://elegancemakeover.makeup/blog/${loaderData.post.slug}`,
+        },
         {
           property: "og:image",
-          content: loaderData.post.featuredImageUrl || "https://elegancemakeover.makeup/assets/logo.webp",
+          content:
+            loaderData.post.featuredImageUrl || "https://elegancemakeover.makeup/assets/logo.webp",
         },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: loaderData.post.seoTitle },
         { name: "twitter:description", content: loaderData.post.description },
-        { name: "twitter:image", content: loaderData.post.featuredImageUrl || "https://elegancemakeover.makeup/assets/logo.webp" },
+        {
+          name: "twitter:image",
+          content:
+            loaderData.post.featuredImageUrl || "https://elegancemakeover.makeup/assets/logo.webp",
+        },
       ],
       links: canonicalUrl ? [{ rel: "canonical", href: canonicalUrl }] : [],
     };
@@ -177,11 +185,21 @@ function BlogPostPage() {
     dateModified: post.updatedDate,
     author: {
       "@type": "Person",
-      name: post.authorName,
+      name: "Rasmirekha Swain",
+      jobTitle: "Founder & Master Bridal Artist",
+      url: "https://elegancemakeover.makeup/about",
+      sameAs: [
+        "https://www.instagram.com/elegance_makeover_academy",
+        "https://www.facebook.com/elegancemakeoveracademy",
+      ],
     },
     publisher: {
       "@type": "Organization",
       name: siteConfig.siteName,
+      logo: {
+        "@type": "ImageObject",
+        url: "https://elegancemakeover.makeup/assets/logo.webp",
+      },
     },
     mainEntityOfPage: canonicalUrl || undefined,
   };
@@ -290,24 +308,67 @@ function BlogPostPage() {
           <aside className="reveal space-y-6 lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-[2rem] border border-border bg-card p-6 shadow-soft">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl gradient-royal text-[var(--gold)]">
-                  <User className="h-5 w-5" />
+                <div className="h-14 w-14 overflow-hidden rounded-2xl border-2 border-[var(--gold)]/40 shadow-soft shrink-0">
+                  <img
+                    src="/assets/owner.webp"
+                    alt="Rasmirekha Swain"
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
                 </div>
                 <div>
-                  <div className="text-xs uppercase tracking-[0.35em] text-[var(--purple-deep)]">
-                    Author
+                  <div className="text-[10px] uppercase tracking-[0.3em] text-[var(--gold)] font-semibold">
+                    Master Artist & Founder
                   </div>
-                  <div className="font-display text-2xl text-[var(--royal)]">{post.authorName}</div>
+                  <div className="font-display text-xl text-[var(--royal)]">Rasmirekha Swain</div>
                 </div>
               </div>
-              <div className="mt-4 rounded-2xl bg-muted p-4 text-sm text-muted-foreground">
-                Published on {post.publishDate} and last updated on {post.updatedDate}.
+              <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
+                Founder of Elegance Makeover & Academy with 10+ years of bridal artistry in Odisha,
+                500+ brides styled, and 50+ certified academy graduates.
+              </p>
+              <div className="mt-4 rounded-xl bg-muted/60 p-3 text-xs text-muted-foreground">
+                Published {post.publishDate} • Last reviewed {post.updatedDate}
               </div>
-              <div className="mt-4">
-                <div className="text-xs uppercase tracking-[0.35em] text-[var(--purple-deep)]">
-                  Category
-                </div>
-                <div className="mt-2 text-sm text-foreground/85">{post.category}</div>
+            </div>
+
+            {/* TOPIC CLUSTERS: SERVICES & SERVICE AREAS */}
+            <div className="rounded-[2rem] border border-border bg-card p-6 shadow-soft">
+              <span className="text-[10px] uppercase tracking-[0.25em] text-[var(--gold)] font-semibold">
+                Explore Services
+              </span>
+              <h3 className="mt-1 font-display text-lg text-[var(--royal)]">
+                Related Bridal Services
+              </h3>
+              <div className="mt-3 space-y-2 text-xs">
+                <Link
+                  to="/services/$slug"
+                  params={{ slug: "bridal-makeup" }}
+                  className="block py-1.5 px-2.5 rounded-lg bg-muted/40 hover:bg-[var(--gold)]/10 text-foreground/90 hover:text-[var(--gold)] transition-colors font-medium"
+                >
+                  → Signature HD Bridal Makeup
+                </Link>
+                <Link
+                  to="/services/$slug"
+                  params={{ slug: "hd-airbrush-bridal-makeup" }}
+                  className="block py-1.5 px-2.5 rounded-lg bg-muted/40 hover:bg-[var(--gold)]/10 text-foreground/90 hover:text-[var(--gold)] transition-colors font-medium"
+                >
+                  → HD Airbrush Bridal Makeup
+                </Link>
+                <Link
+                  to="/services/$slug"
+                  params={{ slug: "makeup-academy-course" }}
+                  className="block py-1.5 px-2.5 rounded-lg bg-muted/40 hover:bg-[var(--gold)]/10 text-foreground/90 hover:text-[var(--gold)] transition-colors font-medium"
+                >
+                  → Professional Makeup Academy
+                </Link>
+                <Link
+                  to="/service-areas/$area"
+                  params={{ area: "jajpur-road" }}
+                  className="block py-1.5 px-2.5 rounded-lg bg-muted/40 hover:bg-[var(--gold)]/10 text-foreground/90 hover:text-[var(--gold)] transition-colors font-medium"
+                >
+                  → Bridal Studio in Jajpur Road
+                </Link>
               </div>
             </div>
 

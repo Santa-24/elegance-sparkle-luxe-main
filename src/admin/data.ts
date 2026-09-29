@@ -2,6 +2,7 @@ import type {
   AdminAdvertisement,
   AdminBooking,
   AdminGalleryItem,
+  AdminOffer,
   AdminService,
   AdminTestimonial,
 } from "./types";

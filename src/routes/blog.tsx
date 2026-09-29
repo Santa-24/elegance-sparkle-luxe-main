@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { ArrowRight, CalendarDays, Filter, Tag } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -53,7 +53,10 @@ export const Route = createFileRoute("/blog")({
       { property: "og:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Beauty & Bridal Makeup Blog | Elegance Makeover" },
-      { name: "twitter:description", content: "Bridal skincare routines, makeup guides & academy tips from Odisha." },
+      {
+        name: "twitter:description",
+        content: "Bridal skincare routines, makeup guides & academy tips from Odisha.",
+      },
       { name: "twitter:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
     ],
     links: canonicalUrl ? [{ rel: "canonical", href: canonicalUrl }] : [],
@@ -82,14 +85,12 @@ function useScrollReveal() {
 }
 
 function BlogIndexPage() {
+  const routerState = useRouterState();
   const { posts } = Route.useLoaderData() as { posts: BlogPost[] };
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeTag, setActiveTag] = useState("All");
-
   useScrollReveal();
 
-  const featured = posts[0] ?? null;
-  const remainingPosts = posts.slice(1);
   const categories = useMemo(
     () => ["All", ...Array.from(new Set(posts.map((post) => post.category))).filter(Boolean)],
     [posts],
@@ -98,6 +99,14 @@ function BlogIndexPage() {
     () => ["All", ...Array.from(new Set(posts.flatMap((post) => post.tags))).filter(Boolean)],
     [posts],
   );
+
+  const pathname = routerState.location.pathname.replace(/\/+$/, "");
+  if (pathname !== "/blog") {
+    return <Outlet />;
+  }
+
+  const featured = posts[0] ?? null;
+  const remainingPosts = posts.slice(1);
 
   const filteredPosts = remainingPosts.filter((post) => {
     const matchesCategory = activeCategory === "All" || post.category === activeCategory;

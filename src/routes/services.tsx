@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { StructuredData } from "@/components/seo/StructuredData";
@@ -28,14 +28,19 @@ export const Route = createFileRoute("/services")({
       { property: "og:title", content: "Beauty Services & Packages | Elegance Makeover" },
       {
         property: "og:description",
-        content: "Explore our full range of bridal makeup, luxury parlour services and academy training.",
+        content:
+          "Explore our full range of bridal makeup, luxury parlour services and academy training.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://elegancemakeover.makeup/services" },
       { property: "og:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Beauty Services & Packages | Elegance Makeover" },
-      { name: "twitter:description", content: "Bridal makeup, party makeup, hair styling & beauty academy in Jajpur Road, Odisha." },
+      {
+        name: "twitter:description",
+        content:
+          "Bridal makeup, party makeup, hair styling & beauty academy in Jajpur Road, Odisha.",
+      },
       { name: "twitter:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
     ],
   }),
@@ -78,13 +83,32 @@ function getServiceQueryParam(title: string): string {
   return "";
 }
 
+function getServiceDetailSlug(title: string): string | null {
+  const t = title.toLowerCase();
+  if (t.includes("airbrush")) return "hd-airbrush-bridal-makeup";
+  if (t.includes("bridal")) return "bridal-makeup";
+  if (t.includes("party")) return "party-makeup";
+  if (t.includes("engagement")) return "engagement-makeup";
+  if (t.includes("facial") || t.includes("hydra")) return "hydra-facial";
+  if (t.includes("smoothening") || t.includes("keratin")) return "hair-smoothening";
+  if (t.includes("hair")) return "hair-styling";
+  if (t.includes("academy") || t.includes("course")) return "makeup-academy-course";
+  return null;
+}
+
 function ServicesPage() {
+  const routerState = useRouterState();
   const { services } = Route.useLoaderData();
   const [filter, setFilter] = useState<(typeof categories)[number]>("All");
+  useScrollReveal();
+
+  const pathname = routerState.location.pathname.replace(/\/+$/, "");
+  if (pathname !== "/services") {
+    return <Outlet />;
+  }
+
   const filtered = services.filter((s) => filter === "All" || s.category === filter);
   const faqItems = faqSections.find((section) => section.slug === "services")?.items ?? [];
-
-  useScrollReveal();
 
   const serviceSchema = {
     "@context": "https://schema.org",
@@ -100,12 +124,14 @@ function ServicesPage() {
           name: service.title,
           description: `${service.desc} (Duration: ${service.duration})`,
           serviceType: service.category,
-          offers: cleanPrice ? {
-            "@type": "Offer",
-            price: cleanPrice,
-            priceCurrency: "INR",
-            description: service.price,
-          } : undefined,
+          offers: cleanPrice
+            ? {
+                "@type": "Offer",
+                price: cleanPrice,
+                priceCurrency: "INR",
+                description: service.price,
+              }
+            : undefined,
           provider: {
             "@type": "BeautySalon",
             name: siteConfig.siteName,
@@ -149,14 +175,32 @@ function ServicesPage() {
       ) : null}
       <PageHero
         breadcrumbs={[{ label: "Home", to: "/" }, { label: "Services" }]}
-        eyebrow="Services"
+        eyebrow="Services & Pricing"
         title={
           <>
-            Our premium beauty <span className="gradient-gold-text italic">offerings</span>
+            Beauty Services & <span className="gradient-gold-text italic">Bridal Packages</span>
           </>
         }
-        subtitle="Meticulously crafted styles, soothing therapies, and professional training."
+        subtitle="Meticulously crafted bridal looks, advanced skincare facials, and certified academy training in Jajpur Road."
       />
+
+      {/* QUICK ANSWER / AEO DIRECT ANSWER BLOCK */}
+      <section className="bg-background pt-10 pb-4 border-b border-border/40">
+        <div className="mx-auto max-w-5xl px-5 lg:px-8">
+          <div className="reveal rounded-2xl border-2 border-[var(--gold)]/40 bg-card/90 p-6 md:p-8 shadow-gold/10 backdrop-blur-sm">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--gold)]">
+              <Sparkles className="h-4 w-4" /> Quick Answer: Services at Elegance Makeover
+            </div>
+            <p className="mt-3 text-base md:text-lg leading-relaxed font-sans text-foreground/90">
+              Elegance Makeover & Academy provides luxury bridal makeup, HD Airbrush artistry, hydra
+              facials, hair styling, smoothening, and certified makeup academy courses in Jajpur
+              Road, Odisha. Directed by Master Artist Rasmirekha Swain, every session uses authentic
+              luxury international brands (Dior, MAC, Huda Beauty) with transparent pricing starting
+              from ₹2,500.
+            </p>
+          </div>
+        </div>
+      </section>
 
       <section className="bg-background py-24 md:py-[120px] reveal">
         <div className="mx-auto max-w-7xl px-5 lg:px-10">
@@ -240,11 +284,21 @@ function ServicesPage() {
                         </div>
                       )}
                       <div className="mt-5 flex flex-col gap-2">
+                        {getServiceDetailSlug(s.title) ? (
+                          <Link
+                            to="/services/$slug"
+                            params={{ slug: getServiceDetailSlug(s.title)! }}
+                            className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--gold)] hover:underline"
+                          >
+                            Explore Service Guide & Inclusions <ArrowRight className="w-3 h-3" />
+                          </Link>
+                        ) : null}
                         <Link
-                          to={
+                          to="/booking"
+                          search={
                             getServiceQueryParam(s.title)
-                              ? `/booking?service=${getServiceQueryParam(s.title)}`
-                              : "/booking"
+                              ? { service: getServiceQueryParam(s.title) }
+                              : undefined
                           }
                           onClick={() =>
                             trackEvent("booking_cta_click", {
@@ -277,6 +331,93 @@ function ServicesPage() {
                 them here.
               </div>
             )}
+          </div>
+
+          {/* DEDICATED SPECIALIZED SERVICE GUIDES DIRECTORY */}
+          <div className="mt-20 pt-16 border-t border-border/60">
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <span className="text-xs uppercase tracking-[0.3em] text-[var(--gold)] font-semibold">
+                Specialized Service Portfolios
+              </span>
+              <h2 className="mt-3 font-display text-3xl md:text-4xl text-[var(--royal)]">
+                In-Depth Service Guides & Inclusions
+              </h2>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Read step-by-step methodologies, pricing breakdowns, pre-appointment prep, and
+                client FAQs for each specialized treatment.
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                {
+                  title: "Bridal Makeup",
+                  slug: "bridal-makeup",
+                  tag: "Signature HD",
+                  price: "₹8,000+",
+                },
+                {
+                  title: "HD Airbrush Makeup",
+                  slug: "hd-airbrush-bridal-makeup",
+                  tag: "Waterproof 4K",
+                  price: "₹12,000+",
+                },
+                {
+                  title: "Engagement Makeup",
+                  slug: "engagement-makeup",
+                  tag: "Soft Glam",
+                  price: "₹4,500+",
+                },
+                { title: "Party Makeup", slug: "party-makeup", tag: "Occasion", price: "₹2,500+" },
+                {
+                  title: "Hair Styling & Cuts",
+                  slug: "hair-styling",
+                  tag: "Styling & Updos",
+                  price: "₹300+",
+                },
+                {
+                  title: "Hydra Facial",
+                  slug: "hydra-facial",
+                  tag: "Clinical Glow",
+                  price: "₹2,499+",
+                },
+                {
+                  title: "Hair Smoothening",
+                  slug: "hair-smoothening",
+                  tag: "Keratin & L'Oreal",
+                  price: "₹3,999+",
+                },
+                {
+                  title: "Academy Course",
+                  slug: "makeup-academy-course",
+                  tag: "Govt Certified",
+                  price: "₹15,000+",
+                },
+              ].map((item) => (
+                <Link
+                  key={item.slug}
+                  to="/services/$slug"
+                  params={{ slug: item.slug }}
+                  className="rounded-2xl border border-border bg-card p-5 hover:border-[var(--gold)] transition-colors group flex flex-col justify-between shadow-soft"
+                >
+                  <div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-semibold text-[var(--gold)] uppercase tracking-wider">
+                        {item.tag}
+                      </span>
+                      <span className="text-muted-foreground">{item.price}</span>
+                    </div>
+                    <h3 className="mt-3 font-display text-lg text-[var(--royal)] group-hover:text-[var(--gold)] transition-colors">
+                      {item.title}
+                    </h3>
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-border/50 text-xs font-medium text-foreground/80 flex items-center justify-between">
+                    <span>View Guide & Book</span>
+                    <ArrowRight className="h-3.5 w-3.5 text-[var(--gold)] group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>

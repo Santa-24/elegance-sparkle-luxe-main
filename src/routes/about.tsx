@@ -4,6 +4,8 @@ import { Award, Sparkles, GraduationCap } from "lucide-react";
 
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { useSiteContent } from "@/lib/content/site-content";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { buildBreadcrumbSchema, buildFounderPersonSchema } from "@/lib/seo";
 const owner = "/assets/owner.webp";
 const salon = "/assets/interior1.webp";
 
@@ -19,14 +21,19 @@ export const Route = createFileRoute("/about")({
       { property: "og:title", content: "About Us | Elegance Makeover & Academy" },
       {
         property: "og:description",
-        content: "Founder story, certified beauty team and professional makeup academy in Jajpur Road, Odisha.",
+        content:
+          "Founder story, certified beauty team and professional makeup academy in Jajpur Road, Odisha.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://elegancemakeover.makeup/about" },
       { property: "og:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "About Us | Elegance Makeover & Academy" },
-      { name: "twitter:description", content: "10+ years of luxury bridal artistry and certified academy in Jajpur Road, Odisha." },
+      {
+        name: "twitter:description",
+        content:
+          "10+ years of luxury bridal artistry and certified academy in Jajpur Road, Odisha.",
+      },
       { name: "twitter:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
     ],
   }),
@@ -77,9 +84,19 @@ function AboutPage() {
 
   return (
     <SiteLayout>
+      <StructuredData
+        data={buildBreadcrumbSchema(
+          [
+            { name: "Home", url: "/" },
+            { name: "About", url: "/about" },
+          ],
+          "https://elegancemakeover.makeup/about",
+        )}
+      />
+      <StructuredData data={buildFounderPersonSchema()} />
       <PageHero
         breadcrumbs={[{ label: "Home", to: "/" }, { label: "About" }]}
-        eyebrow="Our Story"
+        eyebrow="Our Story & Founder"
         title={
           <>
             {about?.headline || (
@@ -90,9 +107,29 @@ function AboutPage() {
           </>
         }
         subtitle={
-          about?.headline ? about.body : "Crafting confident, radiant women - one bride at a time."
+          about?.headline
+            ? about.body
+            : "Crafting confident, radiant women - one bride at a time in Jajpur Road, Odisha."
         }
       />
+
+      {/* QUICK ANSWER / AEO DIRECT ANSWER BLOCK */}
+      <section className="bg-background pt-10 pb-4 border-b border-border/40">
+        <div className="mx-auto max-w-5xl px-5 lg:px-8">
+          <div className="reveal rounded-2xl border-2 border-[var(--gold)]/40 bg-card/90 p-6 md:p-8 shadow-gold/10 backdrop-blur-sm">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--gold)]">
+              <Sparkles className="h-4 w-4" /> Quick Overview: Elegance Makeover & Academy
+            </div>
+            <p className="mt-3 text-base md:text-lg leading-relaxed font-sans text-foreground/90">
+              Elegance Makeover & Academy is a premier bridal artistry salon and certified beauty
+              academy based in Jajpur Road, Odisha, founded by Master Artist Rasmirekha Swain.
+              Established with over 10 years of professional expertise, the studio has styled 500+
+              brides across Odisha and trained 50+ certified makeup artists using strictly 100%
+              genuine international cosmetics.
+            </p>
+          </div>
+        </div>
+      </section>
 
       <section className="marble-bg py-24 md:py-[120px] reveal">
         <div className="mx-auto grid max-w-7xl items-center gap-14 px-5 lg:grid-cols-2 lg:px-10">
@@ -103,6 +140,7 @@ function AboutPage() {
               width={800}
               height={1024}
               loading="lazy"
+              decoding="async"
               className="w-full object-cover aspect-[4/5] sm:h-[500px] lg:h-[560px]"
             />
           </div>
@@ -206,6 +244,63 @@ function AboutPage() {
                 <p className="mt-1 text-marble/80">{text}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Verified Business Facts for AI and Answer Engines */}
+      <section className="bg-[#161009] text-[#f5e6d0] py-16 border-y border-[#c9a96e]/20 reveal">
+        <div className="max-w-7xl mx-auto px-5 lg:px-10">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <span className="text-xs uppercase tracking-[0.4em] text-[var(--gold)]">
+              Verified Studio Facts
+            </span>
+            <h2 className="font-display text-3xl sm:text-4xl text-[#f5e6d0] mt-2">
+              Elegance Makeover & Academy at a Glance
+            </h2>
+            <div className="gold-divider" />
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div className="p-6 border border-[#c9a96e]/20 bg-[#0d0a07] rounded-xl">
+              <div className="font-display text-3xl sm:text-4xl text-[#c9a96e] font-light">10+</div>
+              <div className="text-xs font-semibold uppercase tracking-wider text-[#f5e6d0] mt-2">
+                Years of Experience
+              </div>
+              <p className="text-[11px] text-[#f5e6d0]/60 mt-1">
+                Practicing professional bridal makeup in Odisha since 2014.
+              </p>
+            </div>
+            <div className="p-6 border border-[#c9a96e]/20 bg-[#0d0a07] rounded-xl">
+              <div className="font-display text-3xl sm:text-4xl text-[#c9a96e] font-light">
+                500+
+              </div>
+              <div className="text-xs font-semibold uppercase tracking-wider text-[#f5e6d0] mt-2">
+                Happy Brides Transformed
+              </div>
+              <p className="text-[11px] text-[#f5e6d0]/60 mt-1">
+                Bridal styling across Jajpur Road, Cuttack, and Bhubaneswar.
+              </p>
+            </div>
+            <div className="p-6 border border-[#c9a96e]/20 bg-[#0d0a07] rounded-xl">
+              <div className="font-display text-3xl sm:text-4xl text-[#c9a96e] font-light">50+</div>
+              <div className="text-xs font-semibold uppercase tracking-wider text-[#f5e6d0] mt-2">
+                Certified Students
+              </div>
+              <p className="text-[11px] text-[#f5e6d0]/60 mt-1">
+                Graduates trained with professional hands-on academy modules.
+              </p>
+            </div>
+            <div className="p-6 border border-[#c9a96e]/20 bg-[#0d0a07] rounded-xl">
+              <div className="font-display text-3xl sm:text-4xl text-[#c9a96e] font-light">
+                100%
+              </div>
+              <div className="text-xs font-semibold uppercase tracking-wider text-[#f5e6d0] mt-2">
+                Authentic Products
+              </div>
+              <p className="text-[11px] text-[#f5e6d0]/60 mt-1">
+                Strict use of genuine international and HD makeup brands only.
+              </p>
+            </div>
           </div>
         </div>
       </section>

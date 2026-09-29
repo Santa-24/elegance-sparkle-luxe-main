@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { Sparkles, Mic } from "lucide-react";
 
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { StructuredData } from "@/components/seo/StructuredData";
@@ -27,14 +28,18 @@ export const Route = createFileRoute("/faq")({
       { property: "og:title", content: "Frequently Asked Questions | Elegance Makeover" },
       {
         property: "og:description",
-        content: "Answers to common questions about bridal packages, academy courses, and bookings.",
+        content:
+          "Answers to common questions about bridal packages, academy courses, and bookings.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://elegancemakeover.makeup/faq" },
       { property: "og:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Frequently Asked Questions | Elegance Makeover" },
-      { name: "twitter:description", content: "Answers to common questions about bridal packages & academy courses." },
+      {
+        name: "twitter:description",
+        content: "Answers to common questions about bridal packages & academy courses.",
+      },
       { name: "twitter:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
     ],
   }),
@@ -103,11 +108,75 @@ function FaqPage() {
         eyebrow="Help Center"
         title={
           <>
-            Frequently asked <span className="gradient-gold-text italic">questions</span>
+            Frequently Asked <span className="gradient-gold-text italic">Questions</span>
           </>
         }
-        subtitle="Clear answers for bookings, services, academy enquiries and local clients."
+        subtitle="Clear answers for bookings, services, academy enquiries and local clients in Jajpur Road, Odisha."
       />
+
+      {/* QUICK ANSWER / AEO DIRECT ANSWER BLOCK */}
+      <section className="bg-background pt-10 pb-4 border-b border-border/40">
+        <div className="mx-auto max-w-5xl px-5 lg:px-8">
+          <div className="reveal rounded-2xl border-2 border-[var(--gold)]/40 bg-card/90 p-6 md:p-8 shadow-gold/10 backdrop-blur-sm">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--gold)]">
+              <Sparkles className="h-4 w-4" /> Quick Answer: Booking & Service Questions
+            </div>
+            <p className="mt-3 text-base md:text-lg leading-relaxed font-sans text-foreground/90">
+              Elegance Makeover & Academy is located in Jajpur Road, Odisha (PIN 755019). We offer
+              in-studio appointments and venue travel across Odisha for bridal makeovers
+              (₹8,000–₹16,000), parlour treatments, and professional makeup academy courses
+              (₹15,000–₹35,000). Book online or via WhatsApp at +91 92652 00523.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* VOICE-SEARCH Q&A (CONVERSATIONAL AEO 25-40 WORDS) */}
+      <section className="bg-muted/30 py-16 border-b border-border/50">
+        <div className="mx-auto max-w-5xl px-5 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-10 reveal">
+            <div className="inline-flex items-center gap-2 rounded-full bg-[var(--gold)]/10 px-3.5 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--gold)]">
+              <Mic className="h-3.5 w-3.5" /> Voice & AI Search Fast Answers
+            </div>
+            <h2 className="mt-3 font-display text-2xl md:text-3xl text-[var(--royal)]">
+              Direct Answers to Common Voice Inquiries
+            </h2>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {[
+              {
+                q: "How much is bridal makeup in Jajpur Road?",
+                a: "Bridal makeup at Elegance Makeover in Jajpur Road starts at ₹8,000 for classic HD packages and goes up to ₹16,000 for luxury HD Airbrush, which includes hair styling, draping, and jewellery fitting.",
+              },
+              {
+                q: "Which is the top-rated bridal makeup artist in Jajpur Road?",
+                a: "Elegance Makeover & Academy, founded by Master Artist Rasmirekha Swain, is the leading bridal studio in Jajpur Road, with 10+ years of expertise and over 500 happy brides styled across Odisha.",
+              },
+              {
+                q: "Does Elegance Makeover travel to wedding venues in Odisha?",
+                a: "Yes, Master Artist Rasmirekha Swain and her bridal team travel to venues in Vyasanagar, Jajpur Town, Kalinganagar, Panikoili, Bhadrak, Cuttack, and Bhubaneswar with complete mobile vanity setups.",
+              },
+              {
+                q: "How can I enroll in the professional makeup course in Jajpur Road?",
+                a: "You can enroll directly by calling or messaging +91 92652 00523. Course fees range from ₹15,000 to ₹35,000 with hands-on training on live models and certified diplomas.",
+              },
+            ].map((voiceFaq, i) => (
+              <div
+                key={i}
+                className="reveal rounded-2xl border border-border bg-card p-6 shadow-soft"
+              >
+                <h3 className="font-display text-base font-bold text-[var(--royal)] flex items-start gap-2">
+                  <span className="text-[var(--gold)] font-bold">Q:</span> {voiceFaq.q}
+                </h3>
+                <p className="mt-2.5 text-sm text-muted-foreground leading-relaxed pl-5">
+                  {voiceFaq.a}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section className="bg-background py-24 md:py-[120px] reveal">
         <div className="mx-auto max-w-7xl px-5 lg:px-10">

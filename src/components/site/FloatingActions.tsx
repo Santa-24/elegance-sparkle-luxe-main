@@ -2,6 +2,7 @@ import { MessageCircle } from "lucide-react";
 
 import { getSiteConfig } from "@/lib/site-config";
 import { useSiteContent } from "@/lib/content/site-content";
+import { trackWhatsAppClick } from "@/lib/analytics";
 
 const siteConfig = getSiteConfig();
 const WA_NUMBER = "919265200523";
@@ -24,6 +25,7 @@ export function FloatingActions() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"
+        onClick={() => trackWhatsAppClick("floating_button")}
         className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center bg-[#c9a96e] text-[#0d0a07] hover:opacity-95 transition-opacity"
       >
         <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6" />

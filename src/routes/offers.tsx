@@ -26,13 +26,19 @@ export const Route = createFileRoute("/offers")({
           "Exclusive wedding season discounts, combo packages, and festive offers at Elegance Makeover in Jajpur Road, Odisha. Save on bridal & parlour services.",
       },
       { property: "og:title", content: "Special Offers & Deals | Elegance Makeover" },
-      { property: "og:description", content: "Limited-time luxury beauty offers and bridal package discounts in Jajpur Road." },
+      {
+        property: "og:description",
+        content: "Limited-time luxury beauty offers and bridal package discounts in Jajpur Road.",
+      },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://elegancemakeover.makeup/offers" },
       { property: "og:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Special Offers & Deals | Elegance Makeover" },
-      { name: "twitter:description", content: "Limited-time luxury beauty offers in Jajpur Road, Odisha." },
+      {
+        name: "twitter:description",
+        content: "Limited-time luxury beauty offers in Jajpur Road, Odisha.",
+      },
       { name: "twitter:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
     ],
   }),
@@ -185,7 +191,8 @@ function OffersPage() {
                   </>
                 ) : (
                   <div className="rounded-[1.75rem] border border-white/15 bg-white/10 p-8 text-center text-marble/80">
-                    Connect with us on WhatsApp to discuss your requirements and get a personalized offer!
+                    Connect with us on WhatsApp to discuss your requirements and get a personalized
+                    offer!
                   </div>
                 )}
               </div>

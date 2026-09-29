@@ -8,7 +8,7 @@ import { StructuredData } from "@/components/seo/StructuredData";
 import { trackEvent } from "@/lib/analytics";
 import { submitContactMessage } from "@/lib/api/contact.functions";
 import { useSiteContent } from "@/lib/content/site-content";
-import { buildBreadcrumbSchema, buildCanonicalUrl } from "@/lib/seo";
+import { buildBreadcrumbSchema, buildCanonicalUrl, buildLocalBusinessSchema } from "@/lib/seo";
 import { getSiteConfig } from "@/lib/site-config";
 
 const siteConfig = getSiteConfig();
@@ -25,14 +25,18 @@ export const Route = createFileRoute("/contact")({
       { property: "og:title", content: "Contact Us & Location | Elegance Makeover" },
       {
         property: "og:description",
-        content: "Get in touch for bridal bookings, academy courses and beauty consultations in Jajpur Road, Odisha.",
+        content:
+          "Get in touch for bridal bookings, academy courses and beauty consultations in Jajpur Road, Odisha.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://elegancemakeover.makeup/contact" },
       { property: "og:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Contact Us & Location | Elegance Makeover" },
-      { name: "twitter:description", content: `Call or visit Elegance Makeover in Jajpur Road, Odisha. ${siteConfig.contactPhone}.` },
+      {
+        name: "twitter:description",
+        content: `Call or visit Elegance Makeover in Jajpur Road, Odisha. ${siteConfig.contactPhone}.`,
+      },
       { name: "twitter:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
     ],
   }),
@@ -208,7 +212,7 @@ function ContactPage() {
 
   return (
     <SiteLayout>
-      <StructuredData data={contactSchema} />
+      <StructuredData data={buildLocalBusinessSchema(siteConfig, canonicalUrl)} />
       <StructuredData data={faqSchema} />
       {canonicalUrl ? (
         <StructuredData

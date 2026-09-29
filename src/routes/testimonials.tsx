@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { Star, Quote, Pen } from "lucide-react";
 import { StructuredData } from "@/components/seo/StructuredData";
+import { buildBreadcrumbSchema } from "@/lib/seo";
 
 import { getLiveTestimonialsFn } from "@/lib/content/live.functions";
 import { getSiteConfig } from "@/lib/site-config";
@@ -23,13 +24,19 @@ export const Route = createFileRoute("/testimonials")({
           "Read ratings and reviews from happy brides and academy students of Elegance Makeover in Jajpur Road, Odisha. 500+ brides styled by Rasmirekha Swain.",
       },
       { property: "og:title", content: "Client Reviews & Ratings | Elegance Makeover" },
-      { property: "og:description", content: "500+ happy brides share their experiences and reviews." },
+      {
+        property: "og:description",
+        content: "500+ happy brides share their experiences and reviews.",
+      },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://elegancemakeover.makeup/testimonials" },
       { property: "og:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Client Reviews & Ratings | Elegance Makeover" },
-      { name: "twitter:description", content: "Real bridal makeup and academy student reviews in Jajpur Road, Odisha." },
+      {
+        name: "twitter:description",
+        content: "Real bridal makeup and academy student reviews in Jajpur Road, Odisha.",
+      },
       { name: "twitter:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
     ],
   }),
@@ -57,6 +64,14 @@ function useScrollReveal() {
     };
   }, []);
 }
+
+type Testimonial = {
+  name: string;
+  service: string;
+  rating: number;
+  text: string;
+  date: string;
+};
 
 const seedTestimonials: Testimonial[] = [
   {
@@ -167,6 +182,15 @@ function TestimonialsPage() {
 
   return (
     <SiteLayout>
+      <StructuredData
+        data={buildBreadcrumbSchema(
+          [
+            { name: "Home", url: "/" },
+            { name: "Reviews", url: "/testimonials" },
+          ],
+          "https://elegancemakeover.makeup/testimonials",
+        )}
+      />
       <StructuredData data={testimonialsSchema} />
       <PageHero
         breadcrumbs={[{ label: "Home", to: "/" }, { label: "Reviews" }]}

@@ -3,6 +3,8 @@ import { useEffect, useState, useRef } from "react";
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { X, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { getLiveGalleryFn } from "@/lib/content/live.functions";
+import { StructuredData } from "@/components/seo/StructuredData";
+import { buildBreadcrumbSchema } from "@/lib/seo";
 
 export const Route = createFileRoute("/gallery")({
   loader: async () => {
@@ -20,14 +22,18 @@ export const Route = createFileRoute("/gallery")({
       { property: "og:title", content: "Bridal & Beauty Gallery | Elegance Makeover" },
       {
         property: "og:description",
-        content: "Premium bridal makeup gallery and beauty transformations from Jajpur Road, Odisha.",
+        content:
+          "Premium bridal makeup gallery and beauty transformations from Jajpur Road, Odisha.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://elegancemakeover.makeup/gallery" },
       { property: "og:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Bridal & Beauty Gallery | Elegance Makeover" },
-      { name: "twitter:description", content: "Explore real bride makeovers and parlour styling by Rasmirekha Swain." },
+      {
+        name: "twitter:description",
+        content: "Explore real bride makeovers and parlour styling by Rasmirekha Swain.",
+      },
       { name: "twitter:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
     ],
   }),
@@ -127,6 +133,15 @@ function GalleryPage() {
 
   return (
     <SiteLayout>
+      <StructuredData
+        data={buildBreadcrumbSchema(
+          [
+            { name: "Home", url: "/" },
+            { name: "Gallery", url: "/gallery" },
+          ],
+          "https://elegancemakeover.makeup/gallery",
+        )}
+      />
       <PageHero
         breadcrumbs={[{ label: "Home", to: "/" }, { label: "Gallery" }]}
         eyebrow="Portfolio"
@@ -174,7 +189,15 @@ function GalleryPage() {
                   onClick={() => setOpen(i)}
                   className="img-zoom group relative block w-full overflow-hidden rounded-[1.75rem] border border-border/60 bg-card shadow-soft break-inside-avoid cursor-pointer"
                 >
-                  <img src={g.src} alt={g.alt} loading="lazy" className="w-full h-auto" />
+                  <img
+                    src={g.src}
+                    alt={g.alt}
+                    width={600}
+                    height={800}
+                    decoding="async"
+                    loading="lazy"
+                    className="w-full h-auto"
+                  />
                   <div className="absolute inset-0 bg-[var(--royal-deep)]/0 transition-all group-hover:bg-[var(--royal-deep)]/55" />
                   <div className="absolute inset-x-0 bottom-0 p-5 opacity-0 transition-all group-hover:opacity-100">
                     <div className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-[0.35em] text-gold backdrop-blur-sm">
@@ -234,6 +257,9 @@ function GalleryPage() {
           <img
             src={items[open].src}
             alt={items[open].alt}
+            width={1200}
+            height={1600}
+            decoding="async"
             className="max-h-[85vh] max-w-[90vw] rounded-2xl shadow-luxury"
           />
         </div>

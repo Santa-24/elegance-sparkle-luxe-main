@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Check, Download, Star } from "lucide-react";
+import { Check, Download, Star, Sparkles, ArrowRight } from "lucide-react";
 
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
 import { StructuredData } from "@/components/seo/StructuredData";
@@ -25,13 +25,19 @@ export const Route = createFileRoute("/pricing")({
           "Transparent bridal makeup packages from ₹6,000 to ₹12,000 in Jajpur Road, Odisha. Compare HD makeup, airbrush, and pre-bridal packages.",
       },
       { property: "og:title", content: "Bridal Packages & Pricing | Elegance Makeover" },
-      { property: "og:description", content: "Premium bridal packages with transparent pricing in Jajpur Road, Odisha." },
+      {
+        property: "og:description",
+        content: "Premium bridal packages with transparent pricing in Jajpur Road, Odisha.",
+      },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://elegancemakeover.makeup/pricing" },
       { property: "og:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Bridal Packages & Pricing | Elegance Makeover" },
-      { name: "twitter:description", content: "Compare luxury HD bridal makeup rates in Jajpur Road, Odisha." },
+      {
+        name: "twitter:description",
+        content: "Compare luxury HD bridal makeup rates in Jajpur Road, Odisha.",
+      },
       { name: "twitter:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
     ],
   }),
@@ -129,14 +135,33 @@ function PricingPage() {
 
       <PageHero
         breadcrumbs={[{ label: "Home", to: "/" }, { label: "Pricing" }]}
-        eyebrow="Pricing"
+        eyebrow="Pricing & Packages"
         title={
           <>
-            Transparent, simple <span className="gradient-gold-text italic">pricing</span>
+            Bridal Packages & <span className="gradient-gold-text italic">Transparent Rates</span>
           </>
         }
-        subtitle="Experience premium luxury beauty options suitable for any budget."
+        subtitle="Experience luxury bridal beauty with clear pricing tailored to every wedding celebration in Jajpur Road."
       />
+
+      {/* QUICK ANSWER / AEO DIRECT ANSWER BLOCK */}
+      <section className="bg-background pt-10 pb-4 border-b border-border/40">
+        <div className="mx-auto max-w-5xl px-5 lg:px-8">
+          <div className="reveal rounded-2xl border-2 border-[var(--gold)]/40 bg-card/90 p-6 md:p-8 shadow-gold/10 backdrop-blur-sm">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--gold)]">
+              <Sparkles className="h-4 w-4" /> Quick Answer: How Much Does Bridal Makeup Cost in
+              Jajpur Road?
+            </div>
+            <p className="mt-3 text-base md:text-lg leading-relaxed font-sans text-foreground/90">
+              Bridal makeup packages at Elegance Makeover in Jajpur Road range from ₹6,000 for
+              Classic Bride HD up to ₹12,000 for Maharani Bride couture looks, with specialized HD
+              Airbrush packages available at ₹12,000 to ₹16,000. Every package includes personalized
+              foundation matching, luxury eye artistry, saree draping, and hair styling curated by
+              Master Artist Rasmirekha Swain.
+            </p>
+          </div>
+        </div>
+      </section>
 
       <section className="bg-background py-24 md:py-[120px] reveal">
         <div className="mx-auto max-w-7xl px-5 lg:px-10">
@@ -181,10 +206,11 @@ function PricingPage() {
                 </ul>
 
                 <Link
-                  to={
+                  to="/booking"
+                  search={
                     getServiceQueryParam(pkg.name)
-                      ? `/booking?service=${getServiceQueryParam(pkg.name)}`
-                      : "/booking"
+                      ? { service: getServiceQueryParam(pkg.name) }
+                      : undefined
                   }
                   className={`mt-6 block rounded-[var(--radius-sm)] px-5 py-3 text-center font-semibold transition-all cursor-pointer ${
                     pkg.popular
@@ -283,6 +309,127 @@ function PricingPage() {
                   </ul>
                 </article>
               ))}
+            </div>
+          </div>
+
+          {/* HD VS AIRBRUSH COMPARISON MATRIX (AEO & SNIPPET RANKING) */}
+          <div className="mt-20 pt-16 border-t border-border">
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <span className="text-xs uppercase tracking-[0.3em] text-[var(--gold)] font-semibold">
+                Bridal Technical Comparison
+              </span>
+              <h2 className="mt-3 font-display text-3xl md:text-4xl text-[var(--royal)]">
+                HD Makeup vs Airbrush Makeup: Which is Right for You?
+              </h2>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Understand the key technical differences in application, camera finish, longevity,
+                and humidity resistance for your Odisha wedding.
+              </p>
+            </div>
+
+            <div className="overflow-hidden rounded-[2rem] border border-border bg-card shadow-soft">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[650px] text-sm">
+                  <thead className="gradient-royal text-marble">
+                    <tr>
+                      <th className="p-4 text-left font-display text-base border-b border-white/10">
+                        Feature / Criteria
+                      </th>
+                      <th className="p-4 text-left font-display text-base border-b border-white/10 text-[var(--gold)]">
+                        HD Bridal Makeup
+                      </th>
+                      <th className="p-4 text-left font-display text-base border-b border-white/10 text-[var(--gold)]">
+                        HD Airbrush Bridal Makeup
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    <tr className="bg-muted/10">
+                      <td className="p-4 font-semibold text-foreground">Application Method</td>
+                      <td className="p-4 text-muted-foreground">
+                        Ultra-fine dense brushes & damp micro-sponges
+                      </td>
+                      <td className="p-4 text-muted-foreground">
+                        Compressor-driven airgun dispersing micro-droplets
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="p-4 font-semibold text-foreground">Base Formulation</td>
+                      <td className="p-4 text-muted-foreground">
+                        High-pigment liquid & cream HD formulations
+                      </td>
+                      <td className="p-4 text-muted-foreground">
+                        Ultra-light silicone-based micro-sprayed formula
+                      </td>
+                    </tr>
+                    <tr className="bg-muted/10">
+                      <td className="p-4 font-semibold text-foreground">
+                        Longevity on Wedding Day
+                      </td>
+                      <td className="p-4 text-muted-foreground">
+                        12 to 14 hours with flawless hold
+                      </td>
+                      <td className="p-4 text-muted-foreground">
+                        18 to 24 hours (extreme durability)
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="p-4 font-semibold text-foreground">
+                        Humidity & Sweat Resistance
+                      </td>
+                      <td className="p-4 text-muted-foreground">
+                        High resistance with setting powders
+                      </td>
+                      <td className="p-4 text-muted-foreground">
+                        100% waterproof, sweatproof, and cry-proof
+                      </td>
+                    </tr>
+                    <tr className="bg-muted/10">
+                      <td className="p-4 font-semibold text-foreground">
+                        4K Camera & Flash Performance
+                      </td>
+                      <td className="p-4 text-muted-foreground">
+                        Diffuses flash reflections; smooth satin finish
+                      </td>
+                      <td className="p-4 text-muted-foreground">
+                        Invisible on 4K cinematic zoom; second-skin feel
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="p-4 font-semibold text-foreground">Price in Jajpur Road</td>
+                      <td className="p-4 text-foreground font-bold">₹8,000 – ₹12,000</td>
+                      <td className="p-4 text-foreground font-bold">₹12,000 – ₹16,000</td>
+                    </tr>
+                    <tr className="bg-muted/10">
+                      <td className="p-4 font-semibold text-foreground">Best Recommended For</td>
+                      <td className="p-4 text-muted-foreground">
+                        Indoor mandaps, cooler winter muhurats, traditional weddings
+                      </td>
+                      <td className="p-4 text-muted-foreground">
+                        Outdoor venues, summer/monsoon weddings, 4K video shoots
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className="mt-8 flex justify-center gap-4">
+              <Link
+                to="/services/$slug"
+                params={{ slug: "bridal-makeup" }}
+                className="text-xs uppercase tracking-wider font-semibold text-[var(--royal)] hover:text-[var(--gold)] inline-flex items-center gap-1"
+              >
+                Learn more about HD Bridal →
+              </Link>
+              <span className="text-muted-foreground">•</span>
+              <Link
+                to="/services/$slug"
+                params={{ slug: "hd-airbrush-bridal-makeup" }}
+                className="text-xs uppercase tracking-wider font-semibold text-[var(--royal)] hover:text-[var(--gold)] inline-flex items-center gap-1"
+              >
+                Learn more about Airbrush Makeup →
+              </Link>
             </div>
           </div>
         </div>

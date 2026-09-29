@@ -29,7 +29,7 @@ export async function recordAdminAuditLog(input: {
     return null;
   }
 
-  const payload: Record<string, any> = {
+  const payload: Record<string, unknown> = {
     user_id: userId,
     action: input.action,
     resource_type: input.resourceType,
@@ -40,7 +40,7 @@ export async function recordAdminAuditLog(input: {
 
   try {
     await supabaseInsert("audit_logs", payload);
-  } catch (error: any) {
+  } catch (error: unknown) {
     const errorStr = JSON.stringify(error) || "";
     // If it fails due to old columns (table_name, record_id) violating not-null constraints, retry with them
     if (

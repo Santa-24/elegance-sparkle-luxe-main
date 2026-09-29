@@ -141,12 +141,15 @@ export function RecordTable({
   const columns = sectionColumns[section] || [];
   const primaryCol = columns.find((c) => c.isPrimary) || columns[0] || { key: "id", header: "ID" };
 
-  const getRowStatus = useCallback((item: any) => {
-    if (section === "Customers") return item.preferred_contact_method || "N/A";
-    if (item.status !== undefined) return item.status;
-    if (item.is_active !== undefined) return item.is_active ? "Active" : "Paused";
-    return "Active";
-  }, [section]);
+  const getRowStatus = useCallback(
+    (item: any) => {
+      if (section === "Customers") return item.preferred_contact_method || "N/A";
+      if (item.status !== undefined) return item.status;
+      if (item.is_active !== undefined) return item.is_active ? "Active" : "Paused";
+      return "Active";
+    },
+    [section],
+  );
 
   const getRowValue = (item: any, key: string) => {
     if (key === "status") {

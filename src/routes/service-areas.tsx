@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { MapPin, Sparkles, ArrowRight } from "lucide-react";
 
 import { SiteLayout, PageHero } from "@/components/site/SiteLayout";
@@ -28,14 +28,18 @@ export const Route = createFileRoute("/service-areas")({
       { property: "og:title", content: "Service Areas & Coverage | Elegance Makeover" },
       {
         property: "og:description",
-        content: "Local beauty service coverage for brides, clients and academy students in Odisha.",
+        content:
+          "Local beauty service coverage for brides, clients and academy students in Odisha.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://elegancemakeover.makeup/service-areas" },
       { property: "og:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Service Areas & Coverage | Elegance Makeover" },
-      { name: "twitter:description", content: "Local beauty service coverage for brides and academy students in Odisha." },
+      {
+        name: "twitter:description",
+        content: "Local beauty service coverage for brides and academy students in Odisha.",
+      },
       { name: "twitter:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
     ],
   }),
@@ -63,8 +67,14 @@ function useScrollReveal() {
 }
 
 function ServiceAreasPage() {
+  const routerState = useRouterState();
   const { serviceAreas } = Route.useLoaderData() as { serviceAreas: ServiceArea[] };
   useScrollReveal();
+
+  const pathname = routerState.location.pathname.replace(/\/+$/, "");
+  if (pathname !== "/service-areas") {
+    return <Outlet />;
+  }
 
   const localBusinessSchema = {
     "@context": "https://schema.org",
@@ -135,6 +145,15 @@ function ServiceAreasPage() {
                     </li>
                   ))}
                 </ul>
+                <div className="mt-6 pt-4 border-t border-border/50">
+                  <Link
+                    to="/service-areas/$area"
+                    params={{ area: area.slug }}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[var(--royal)] hover:text-[var(--gold)] transition-colors"
+                  >
+                    Explore {area.name} Bridal Services <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
               </article>
             ))}
           </div>

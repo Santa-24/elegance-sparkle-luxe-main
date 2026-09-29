@@ -2,6 +2,12 @@
 // GALLERY DATA - Consolidated & Modular
 // ============================================
 
+export type GalleryImage = {
+  src: string;
+  alt: string;
+  cat: string;
+};
+
 // Frontend gallery display data
 export const galleryImages: GalleryImage[] = [
   {
