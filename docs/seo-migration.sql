@@ -60,10 +60,23 @@ update public.services set slug = 'hair-styling' where slug is null and lower(ti
 update public.services set slug = 'hydra-facial' where slug is null and (lower(title) like '%facial%' or lower(title) like '%hydra%');
 update public.services set slug = 'hair-smoothening' where slug is null and lower(title) like '%smoothen%';
 update public.services set slug = 'makeup-academy-course' where slug is null and (lower(title) like '%academy%' or lower(title) like '%course%');
+update public.services set slug = 'service-' || id where slug is null;
 
-create unique index if not exists idx_services_slug
-  on public.services (slug)
-  where deleted_at is null;
+-- Deduplicate any duplicate slugs before unique indexing
+with duplicates as (
+  select id, row_number() over (partition by slug order by id) as rnum
+  from public.services
+  where slug is not null
+)
+update public.services s
+set slug = s.slug || '-' || s.id
+from duplicates d
+where s.id = d.id and d.rnum > 1;
+
+-- Drop legacy partial index/constraint and create unconditional unique index for ON CONFLICT
+alter table public.services drop constraint if exists services_slug_key;
+drop index if exists public.idx_services_slug;
+create unique index if not exists idx_services_slug on public.services (slug);
 
 -- Ensure 8 primary SEO services exist with rich metadata
 insert into public.services (
@@ -242,10 +255,24 @@ update public.service_areas set slug = 'kuakhia' where slug is null and lower(na
 update public.service_areas set slug = 'bhadrak' where slug is null and lower(name) like '%bhadrak%';
 update public.service_areas set slug = 'cuttack' where slug is null and lower(name) like '%cuttack%';
 update public.service_areas set slug = 'bhubaneswar' where slug is null and lower(name) like '%bhubaneswar%';
+update public.service_areas set slug = 'area-' || id where slug is null;
 
--- Ensure slug is not null and uniquely constrained
-create unique index if not exists idx_service_areas_slug_unique
-  on public.service_areas (slug);
+-- Deduplicate any duplicate slugs before unique indexing
+with duplicates as (
+  select id, row_number() over (partition by slug order by id) as rnum
+  from public.service_areas
+  where slug is not null
+)
+update public.service_areas sa
+set slug = sa.slug || '-' || sa.id
+from duplicates d
+where sa.id = d.id and d.rnum > 1;
+
+-- Drop legacy partial index/constraint and create unconditional unique index for ON CONFLICT
+alter table public.service_areas drop constraint if exists service_areas_slug_key;
+drop index if exists public.idx_service_areas_slug;
+drop index if exists public.idx_service_areas_slug_unique;
+create unique index if not exists idx_service_areas_slug on public.service_areas (slug);
 
 -- Upsert all 10 priority service areas
 insert into public.service_areas (
@@ -456,6 +483,11 @@ alter table public.blog_posts
   add column if not exists last_reviewed_at timestamptz default now(),
   add column if not exists reviewer_slug text default 'rasmirekha-swain',
   add column if not exists faq_json jsonb default '[]'::jsonb;
+
+-- Ensure slug is unconditionally uniquely indexed for ON CONFLICT
+alter table public.blog_posts drop constraint if exists blog_posts_slug_key;
+drop index if exists public.idx_blog_posts_slug;
+create unique index if not exists idx_blog_posts_slug on public.blog_posts (slug);
 
 -- Upsert the 12 Cornerstone Blog Posts
 insert into public.blog_posts (

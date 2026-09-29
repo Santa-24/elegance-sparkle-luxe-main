@@ -65,6 +65,8 @@ create table if not exists public.admin_users (
   updated_at timestamptz not null default now()
 );
 
+create unique index if not exists idx_admin_users_email
+  on public.admin_users (email);
 create index if not exists idx_admin_users_auth_user_id
   on public.admin_users (auth_user_id);
 create index if not exists idx_admin_users_role
@@ -123,9 +125,32 @@ alter table public.services
   add column if not exists og_image varchar(255),
   add column if not exists faq_json jsonb default '[]'::jsonb;
 
-create unique index if not exists idx_services_slug
-  on public.services (slug)
-  where deleted_at is null;
+-- Populate default slugs for any pre-existing services
+update public.services set slug = 'bridal-makeup' where slug is null and lower(title) like '%bridal%' and lower(title) not like '%airbrush%';
+update public.services set slug = 'hd-airbrush-bridal-makeup' where slug is null and lower(title) like '%airbrush%';
+update public.services set slug = 'engagement-makeup' where slug is null and lower(title) like '%engagement%';
+update public.services set slug = 'party-makeup' where slug is null and lower(title) like '%party%';
+update public.services set slug = 'hair-styling' where slug is null and lower(title) like '%hair%' and lower(title) not like '%smoothen%';
+update public.services set slug = 'hydra-facial' where slug is null and (lower(title) like '%facial%' or lower(title) like '%hydra%');
+update public.services set slug = 'hair-smoothening' where slug is null and lower(title) like '%smoothen%';
+update public.services set slug = 'makeup-academy-course' where slug is null and (lower(title) like '%academy%' or lower(title) like '%course%');
+update public.services set slug = 'service-' || id where slug is null;
+
+-- Deduplicate any duplicate slugs before unique indexing
+with duplicates as (
+  select id, row_number() over (partition by slug order by id) as rnum
+  from public.services
+  where slug is not null
+)
+update public.services s
+set slug = s.slug || '-' || s.id
+from duplicates d
+where s.id = d.id and d.rnum > 1;
+
+-- Drop legacy partial index/constraint and create unconditional unique index for ON CONFLICT
+alter table public.services drop constraint if exists services_slug_key;
+drop index if exists public.idx_services_slug;
+create unique index if not exists idx_services_slug on public.services (slug);
 
 create index if not exists idx_services_category
   on public.services (category)
@@ -556,7 +581,10 @@ create table if not exists public.customer_preferences (
   updated_at timestamptz not null default now()
 );
 
-create index if not exists idx_customer_preferences_phone
+-- Ensure customer_phone is unconditionally uniquely indexed for trigger ON CONFLICT
+alter table public.customer_preferences drop constraint if exists customer_preferences_customer_phone_key;
+drop index if exists public.idx_customer_preferences_phone;
+create unique index if not exists idx_customer_preferences_phone
   on public.customer_preferences (customer_phone);
 create index if not exists idx_customer_preferences_email
   on public.customer_preferences (customer_email);
@@ -701,6 +729,11 @@ create table if not exists public.pricing_packages (
   deleted_at timestamptz
 );
 
+-- Ensure pricing packages name is unconditionally uniquely indexed for ON CONFLICT
+alter table public.pricing_packages drop constraint if exists pricing_packages_name_key;
+drop index if exists public.idx_pricing_packages_name;
+create unique index if not exists idx_pricing_packages_name
+  on public.pricing_packages (name);
 create index if not exists idx_pricing_packages_active
   on public.pricing_packages (is_active)
   where deleted_at is null;
@@ -780,9 +813,24 @@ update public.service_areas set slug = 'kuakhia' where slug is null and lower(na
 update public.service_areas set slug = 'bhadrak' where slug is null and lower(name) like '%bhadrak%';
 update public.service_areas set slug = 'cuttack' where slug is null and lower(name) like '%cuttack%';
 update public.service_areas set slug = 'bhubaneswar' where slug is null and lower(name) like '%bhubaneswar%';
+update public.service_areas set slug = 'area-' || id where slug is null;
 
-create unique index if not exists idx_service_areas_slug
-  on public.service_areas (slug);
+-- Deduplicate any duplicate slugs before unique indexing
+with duplicates as (
+  select id, row_number() over (partition by slug order by id) as rnum
+  from public.service_areas
+  where slug is not null
+)
+update public.service_areas sa
+set slug = sa.slug || '-' || sa.id
+from duplicates d
+where sa.id = d.id and d.rnum > 1;
+
+-- Drop legacy partial index/constraint and create unconditional unique index for ON CONFLICT
+alter table public.service_areas drop constraint if exists service_areas_slug_key;
+drop index if exists public.idx_service_areas_slug;
+drop index if exists public.idx_service_areas_slug_unique;
+create unique index if not exists idx_service_areas_slug on public.service_areas (slug);
 
 create index if not exists idx_service_areas_active
   on public.service_areas (is_active)
@@ -1026,6 +1074,11 @@ alter table public.blog_posts
   add column if not exists last_reviewed_at timestamptz default now(),
   add column if not exists reviewer_slug text default 'rasmirekha-swain',
   add column if not exists faq_json jsonb default '[]'::jsonb;
+
+-- Ensure slug is unconditionally uniquely indexed for ON CONFLICT
+alter table public.blog_posts drop constraint if exists blog_posts_slug_key;
+drop index if exists public.idx_blog_posts_slug;
+create unique index if not exists idx_blog_posts_slug on public.blog_posts (slug);
 
 create index if not exists idx_blog_posts_published
   on public.blog_posts (is_published, published_at desc)
@@ -1312,7 +1365,13 @@ values
     3,
     true
   )
-on conflict do nothing;
+on conflict (name) do update set
+  price = excluded.price,
+  popular = excluded.popular,
+  features_text = excluded.features_text,
+  sort_order = excluded.sort_order,
+  is_active = excluded.is_active,
+  updated_at = now();
 
 create index if not exists idx_hero_content_active
   on public.hero_content (is_active);
