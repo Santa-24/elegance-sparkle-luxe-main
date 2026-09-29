@@ -485,6 +485,16 @@ alter table public.blog_posts
   add column if not exists faq_json jsonb default '[]'::jsonb;
 
 -- Ensure slug is unconditionally uniquely indexed for ON CONFLICT
+with duplicates as (
+  select id, row_number() over (partition by slug order by id) as rnum
+  from public.blog_posts
+  where slug is not null
+)
+update public.blog_posts bp
+set slug = bp.slug || '-' || bp.id
+from duplicates d
+where bp.id = d.id and d.rnum > 1;
+
 alter table public.blog_posts drop constraint if exists blog_posts_slug_key;
 drop index if exists public.idx_blog_posts_slug;
 create unique index if not exists idx_blog_posts_slug on public.blog_posts (slug);

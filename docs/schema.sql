@@ -65,6 +65,18 @@ create table if not exists public.admin_users (
   updated_at timestamptz not null default now()
 );
 
+-- Deduplicate any existing admin users by email before creating unique index
+with duplicates as (
+  select id, row_number() over (partition by email order by id) as rnum
+  from public.admin_users
+  where email is not null
+)
+delete from public.admin_users au
+using duplicates d
+where au.id = d.id and d.rnum > 1;
+
+alter table public.admin_users drop constraint if exists admin_users_email_key;
+drop index if exists public.idx_admin_users_email;
 create unique index if not exists idx_admin_users_email
   on public.admin_users (email);
 create index if not exists idx_admin_users_auth_user_id
@@ -582,6 +594,15 @@ create table if not exists public.customer_preferences (
 );
 
 -- Ensure customer_phone is unconditionally uniquely indexed for trigger ON CONFLICT
+with duplicates as (
+  select id, row_number() over (partition by customer_phone order by id) as rnum
+  from public.customer_preferences
+  where customer_phone is not null
+)
+delete from public.customer_preferences cp
+using duplicates d
+where cp.id = d.id and d.rnum > 1;
+
 alter table public.customer_preferences drop constraint if exists customer_preferences_customer_phone_key;
 drop index if exists public.idx_customer_preferences_phone;
 create unique index if not exists idx_customer_preferences_phone
@@ -730,6 +751,15 @@ create table if not exists public.pricing_packages (
 );
 
 -- Ensure pricing packages name is unconditionally uniquely indexed for ON CONFLICT
+with duplicates as (
+  select id, row_number() over (partition by name order by id) as rnum
+  from public.pricing_packages
+  where name is not null
+)
+delete from public.pricing_packages p
+using duplicates d
+where p.id = d.id and d.rnum > 1;
+
 alter table public.pricing_packages drop constraint if exists pricing_packages_name_key;
 drop index if exists public.idx_pricing_packages_name;
 create unique index if not exists idx_pricing_packages_name
@@ -1076,6 +1106,16 @@ alter table public.blog_posts
   add column if not exists faq_json jsonb default '[]'::jsonb;
 
 -- Ensure slug is unconditionally uniquely indexed for ON CONFLICT
+with duplicates as (
+  select id, row_number() over (partition by slug order by id) as rnum
+  from public.blog_posts
+  where slug is not null
+)
+update public.blog_posts bp
+set slug = bp.slug || '-' || bp.id
+from duplicates d
+where bp.id = d.id and d.rnum > 1;
+
 alter table public.blog_posts drop constraint if exists blog_posts_slug_key;
 drop index if exists public.idx_blog_posts_slug;
 create unique index if not exists idx_blog_posts_slug on public.blog_posts (slug);
