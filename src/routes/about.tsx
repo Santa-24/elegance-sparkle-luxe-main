@@ -12,11 +12,11 @@ const salon = "/assets/interior1.webp";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Us | Elegance Makeover & Academy - Jajpur Road" },
+      { title: "About Us | Best Parlor & Salon in Jajpur Road - Elegance Makeover" },
       {
         name: "description",
         content:
-          "Meet Rasmirekha Swain, founder of Elegance Makeover & Academy. 10+ years of luxury bridal artistry and certified academy in Jajpur Road, Odisha.",
+          "Meet Rasmirekha Swain, founder of Elegance Makeover & Academy — the best parlor and luxury saloon in Jajpur Road, Odisha. 10+ years of bridal artistry & academy courses.",
       },
       { property: "og:title", content: "About Us | Elegance Makeover & Academy" },
       {

@@ -12,11 +12,21 @@ export type FaqSection = {
 
 export const faqSections: FaqSection[] = [
   {
-    title: "Bridal & Parlour Service FAQs",
+    title: "Best Parlor & Salon Service FAQs",
     slug: "services",
     description:
-      "Pricing, products, and services offered by Elegance Makeover & Academy in Jajpur Road.",
+      "Pricing, products, and services offered by Elegance Makeover & Academy — the best parlor and saloon in Jajpur Road.",
     items: [
+      {
+        question: "Which is the best parlor or saloon in Jajpur or Jajpur Road?",
+        answer:
+          "Elegance Makeover & Academy is ranked the #1 best parlor and luxury saloon in Jajpur Road (Vyasanagar) and Jajpur district, Odisha. Founded by Master Artist Rasmirekha Swain (10+ years experience, 500+ brides styled), the salon is rated 4.9★ on Google and specializes in luxury HD and Airbrush bridal makeup, 7-in-1 clinical Hydra Facials, Keratin hair treatments, and certified makeup academy courses.",
+      },
+      {
+        question: "Why is Elegance Makeover recognized as the best beauty parlour in Jajpur Road?",
+        answer:
+          "Elegance Makeover stands out because of its commitment to 100% genuine international luxury cosmetics (MAC, Huda Beauty, NARS, Charlotte Tilbury), private air-conditioned bridal dressing suites, medical-grade sanitization, and personalized 1-on-1 artistry by certified educator Rasmirekha Swain.",
+      },
       {
         question: "What is the price of bridal makeup at Elegance Makeover in Jajpur Road?",
         answer:

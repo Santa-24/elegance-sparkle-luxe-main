@@ -19,11 +19,11 @@ export const Route = createFileRoute("/faq")({
   },
   head: () => ({
     meta: [
-      { title: "Frequently Asked Questions | Elegance Makeover & Academy" },
+      { title: "Frequently Asked Questions | Best Parlor & Salon in Jajpur Road - Elegance Makeover" },
       {
         name: "description",
         content:
-          "Frequently asked questions about bridal makeup, salon services, academy certification and bookings in Jajpur Road, Odisha.",
+          "Answers about bridal makeup, best parlor and saloon services in Jajpur Road, prices, academy courses and bookings in Odisha.",
       },
       { property: "og:title", content: "Frequently Asked Questions | Elegance Makeover" },
       {

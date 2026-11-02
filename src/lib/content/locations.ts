@@ -30,24 +30,26 @@ export const locationsData: Record<string, LocationArea> = {
     slug: "jajpur-road",
     name: "Jajpur Road",
     district: "Jajpur, Odisha",
-    title: "Bridal Makeup Artist in Jajpur Road | Elegance Makeover",
+    title: "Best Parlor & Salon in Jajpur Road | Bridal Makeup & Parlour - Elegance Makeover",
     metaDescription:
-      "Looking for the best bridal makeup artist in Jajpur Road? Certified HD & airbrush bridal makeovers, pre-bridal salon care & academy by Rasmirekha Swain.",
-    h1: "Bridal Makeup Artist in Jajpur Road",
+      "Searching for the best parlor or saloon in Jajpur Road? Elegance Makeover & Academy by Rasmirekha Swain is the #1 rated beauty parlour for HD bridal makeup, airbrush, hydra facials, hair spa & academy.",
+    h1: "Best Parlor & Salon in Jajpur Road (Vyasanagar)",
     quickAnswer:
-      "Elegance Makeover & Academy in Jajpur Road is the area's premier bridal makeup studio led by master artist Rasmirekha Swain. Located centrally in Jajpur Road (Vyasanagar), the studio offers international-grade HD and airbrush bridal makeup, saree draping, hairstyling, and pre-bridal packages starting from ₹6,000.",
+      "Elegance Makeover & Academy is recognized as the best parlor and luxury saloon in Jajpur Road (Vyasanagar), Odisha. Led by Master Artist Rasmirekha Swain with 10+ years of professional artistry and 500+ brides styled, the studio offers international-grade HD and airbrush bridal makeup, 7-in-1 Hydra Facials, Keratin hair smoothening, and pre-bridal packages starting from ₹6,000.",
     distanceFromStudio: "0 km (Main Studio Location)",
     travelTime: "Walk-in & In-Studio Sessions",
     travelPolicy:
-      "Full in-studio luxury suites available with dedicated bridal trial and dressing rooms. On-location venue visits within Jajpur Road are available upon advance reservation for weddings and receptions.",
+      "Full in-studio luxury suites available with dedicated bridal trial and private VIP dressing rooms. On-location venue visits within Jajpur Road and nearby mandaps are available upon advance reservation for weddings and receptions.",
     landmarkContext:
       "Centrally situated near the Jajpur Keonjhar Road Railway Station corridor and Vyasanagar commercial marketplace, easily accessible from Chorda and station road.",
     venueContext:
       "We regularly style brides hosting weddings at popular Jajpur Road venues including local Kalyan Mandaps, hotel banquet halls, and private family residences across town.",
     highlights: [
+      "Voted #1 Best Parlour & Saloon in Jajpur Road with 4.9★ Google rating",
       "Headquarters studio with complete bridal dressing and private changing suites",
       "Trial sessions available with master artist Rasmirekha Swain",
       "Specialist in authentic Odia bridal styling: Mukuta placement, Chandan bindi, and Alta",
+      "Clinical 7-in-1 Hydra Facial & formaldehyde-free Keratin hair smoothing",
       "Walk-in consultation friendly with parking and changing amenities",
     ],
     servicesOffered: [
@@ -74,12 +76,17 @@ export const locationsData: Record<string, LocationArea> = {
     ],
     faqs: [
       {
+        question: "Which is the best parlor or saloon in Jajpur Road?",
+        answer:
+          "Elegance Makeover & Academy is widely rated as the best parlor and saloon in Jajpur Road (Vyasanagar). With a 4.9-star rating, 10+ years of master artistry by Rasmirekha Swain, and 500+ satisfied brides, it provides the highest standard of bridal makeovers, skin facials, and hair treatments in Jajpur district.",
+      },
+      {
         question: "Where is Elegance Makeover studio located in Jajpur Road?",
         answer:
           "Our flagship studio is conveniently located in the heart of Jajpur Road (Vyasanagar), Odisha 755019, close to the railway station and market center. Direct WhatsApp support and Google Maps navigation are available.",
       },
       {
-        question: "How much does bridal makeup cost in Jajpur Road?",
+        question: "How much does bridal makeup cost at the best salon in Jajpur Road?",
         answer:
           "Bridal makeup packages at Elegance Makeover start from ₹6,000 for standard HD bridal makeup up to ₹12,000 - ₹15,000 for luxury HD Airbrush bridal packages with hair styling, lashes, and draping included.",
       },
@@ -89,14 +96,14 @@ export const locationsData: Record<string, LocationArea> = {
           "Yes. While many brides prefer the air-conditioned comfort and ring lights of our luxury private dressing suite, our senior artist team also travels to hotels, mandaps, and homes across Jajpur Road on wedding day.",
       },
       {
+        question: "What beauty parlour services are available for everyday and party care?",
+        answer:
+          "We offer complete parlour services including 7-in-1 Hydra Facials, L'Oreal hair spa and keratin smoothening, threading, waxing, party makeup, and certified makeup academy training.",
+      },
+      {
         question: "How early should I book my bridal date at Jajpur Road?",
         answer:
           "During the peak wedding season in Odisha (November to March, and April/May lagna dates), we strongly recommend booking 4 to 12 weeks in advance to secure your preferred morning or evening muhurat slot.",
-      },
-      {
-        question: "Can family members get makeup done alongside the bride?",
-        answer:
-          "Yes. We offer coordinated family and bridesmaid packages for mothers, sisters, and close relatives, scheduled seamlessly with the bride's timeline.",
       },
     ],
     nearbyAreas: [
@@ -211,12 +218,12 @@ export const locationsData: Record<string, LocationArea> = {
     slug: "jajpur-town",
     name: "Jajpur Town",
     district: "Jajpur, Odisha",
-    title: "Bridal Makeup Artist in Jajpur Town | Elegance Makeover",
+    title: "Best Parlor & Saloon in Jajpur | Bridal Makeup & Beauty Parlour - Elegance Makeover",
     metaDescription:
-      "Expert bridal makeup artist serving Jajpur Town (Biraja Kshetra). Luxury HD bridal makeup, authentic Odia bride styling, on-venue travel by Rasmirekha Swain.",
-    h1: "Bridal Makeup Artist in Jajpur Town",
+      "Looking for the best parlor or saloon in Jajpur (Biraja Kshetra)? Elegance Makeover & Academy offers 5-star bridal makeup, HD airbrushing, pre-bridal skincare & on-venue mandap travel.",
+    h1: "Best Parlor & Salon in Jajpur (Biraja Kshetra)",
     quickAnswer:
-      "Brides in historic Jajpur Town (Biraja Kshetra) trust Elegance Makeover & Academy for luxury bridal and reception makeup. Located approximately 30 km from Jajpur Town via SH-11, our master bridal team provides both in-studio VIP dressing and on-venue makeup artist travel directly to mandaps and ancestral homes in Jajpur Town.",
+      "For clients seeking the best parlor or saloon in Jajpur and Biraja Kshetra, Elegance Makeover & Academy delivers award-winning bridal artistry and luxury salon services. Located approximately 30 km from Jajpur Town via SH-11, our master bridal team provides VIP in-studio dressing at our Jajpur Road flagship as well as on-venue mobile makeup artist visits directly to mandaps and residences throughout Jajpur Town.",
     distanceFromStudio: "30 km via SH-11",
     travelTime: "40 - 50 minutes by road",
     travelPolicy:
@@ -226,6 +233,7 @@ export const locationsData: Record<string, LocationArea> = {
     venueContext:
       "We cater to destination and local weddings hosted at prominent Jajpur Town Kalyan Mandaps, heritage family homes, and temple wedding pavilions.",
     highlights: [
+      "Top-rated bridal parlour and saloon serving Jajpur Town & Biraja Kshetra",
       "Frequent on-venue wedding service to Jajpur Town with dedicated bridal assistance",
       "Expertise in traditional Odia Biraja Kshetra cultural wedding customs",
       "Full portable bridal makeup setup with high-CRI lighting for on-location mandap rooms",
@@ -254,6 +262,11 @@ export const locationsData: Record<string, LocationArea> = {
       },
     ],
     faqs: [
+      {
+        question: "Which is the best parlor or saloon for bridal makeup in Jajpur?",
+        answer:
+          "Elegance Makeover & Academy is widely regarded as the best parlor and bridal saloon serving Jajpur. Brides choose Master Artist Rasmirekha Swain for her unmatched expertise in HD Airbrush makeup, traditional Odia Mukuta draping, and reliable on-venue service to Jajpur Town.",
+      },
       {
         question: "Does Elegance Makeover travel to Jajpur Town for bridal makeup?",
         answer:

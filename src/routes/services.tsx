@@ -19,11 +19,11 @@ export const Route = createFileRoute("/services")({
   },
   head: () => ({
     meta: [
-      { title: "Services & Beauty Menu | Elegance Makeover & Academy" },
+      { title: "Services & Parlour Menu | Best Parlor & Salon in Jajpur Road - Elegance Makeover" },
       {
         name: "description",
         content:
-          "Bridal makeup, HD party makeup, hydra facials, hair styling, threading and certified academy courses in Jajpur Road, Odisha.",
+          "Bridal makeup, HD airbrush, Hydra Facials, and keratin hair treatments at the best parlor and luxury saloon in Jajpur Road, Odisha.",
       },
       { property: "og:title", content: "Beauty Services & Packages | Elegance Makeover" },
       {

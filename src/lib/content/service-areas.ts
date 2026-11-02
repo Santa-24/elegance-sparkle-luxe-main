@@ -11,9 +11,10 @@ export const serviceAreas: ServiceArea[] = [
     slug: "jajpur-road",
     name: "Jajpur Road",
     summary:
-      "Primary studio base and flagship academy salon. Instant appointment confirmations, bridal consultations, and walk-in parlour services.",
-    searchIntent: "Bridal makeup artist, beauty parlour, and makeup academy in Jajpur Road.",
+      "Voted #1 best parlor and luxury saloon in Jajpur Road. Primary studio base & flagship academy. Walk-in parlour care, Hydra Facials, and bridal consultations.",
+    searchIntent: "Best parlor in Jajpur Road, best saloon in Jajpur Road, beauty parlour and bridal makeup.",
     highlights: [
+      "#1 Best Parlor & Saloon in Jajpur Road",
       "Studio base & flagship academy",
       "Walk-in & bridal trials",
       "Same-day booking coordination",
@@ -23,8 +24,8 @@ export const serviceAreas: ServiceArea[] = [
     slug: "vyasanagar",
     name: "Vyasanagar",
     summary:
-      "Direct municipal twin city to Jajpur Road. Fast venue dispatch for morning lagna rituals, reception styling, and party makeovers.",
-    searchIntent: "Bridal makeup artist in Vyasanagar Odisha and beauty parlour services.",
+      "Direct municipal twin city to Jajpur Road. Fast venue dispatch for morning lagna rituals, reception styling, and top parlour makeovers.",
+    searchIntent: "Best parlor in Vyasanagar, best saloon in Vyasanagar Odisha and beauty parlour services.",
     highlights: [
       "5-10 min venue arrival",
       "Multi-person bridesmaid packages",
@@ -35,9 +36,10 @@ export const serviceAreas: ServiceArea[] = [
     slug: "jajpur-town",
     name: "Jajpur Town",
     summary:
-      "Heritage hub of the Biraja Temple. Full bridal entourage styling, mandap touchups, and sacred ritual longevity makeup.",
-    searchIntent: "Bridal makeup artist in Jajpur Town near Biraja Temple.",
+      "Heritage hub of the Biraja Temple. Top bridal saloon and parlour services with on-location mandap travel across Jajpur Town.",
+    searchIntent: "Best parlor in Jajpur, best saloon in Jajpur, bridal makeup artist near Biraja Temple.",
     highlights: [
+      "Top-rated bridal parlour for Jajpur Town",
       "Biraja Kshetra wedding expertise",
       "High-humidity smudge resistance",
       "Ritual-proof makeup",

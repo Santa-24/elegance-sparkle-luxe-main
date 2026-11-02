@@ -60,8 +60,9 @@ export const Route = createFileRoute("/sitemap.xml")({
             images: [
               {
                 loc: `${baseUrl}/assets/hero-bride.webp`,
-                title: "Luxury Bridal Makeup Artist in Jajpur Road - Elegance Makeover",
-                caption: "Master bridal transformation by Rasmirekha Swain in Jajpur Road, Odisha",
+                title: "Best Parlor & Salon in Jajpur Road - Elegance Makeover & Academy",
+                caption:
+                  "Master bridal transformation by Rasmirekha Swain at the best parlor and saloon in Jajpur Road, Odisha",
               },
               {
                 loc: `${baseUrl}/assets/logo.webp`,

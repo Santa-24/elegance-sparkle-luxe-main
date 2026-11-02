@@ -30,7 +30,15 @@ export function buildOrganizationSchema(config: SiteConfig, canonicalUrl?: strin
     "@type": "Organization",
     "@id": `${siteUrl}#organization`,
     name: "Elegance Makeover & Academy",
-    alternateName: "Elegance Bridal Studio & Academy",
+    alternateName: [
+      "Elegance Bridal Studio & Academy",
+      "Best Parlor in Jajpur Road",
+      "Best Saloon in Jajpur",
+      "Best Parlour in Jajpur",
+      "Best Salon in Jajpur Road",
+      "Elegance Beauty Parlour & Saloon",
+    ],
+    slogan: "The Best Parlor & Luxury Saloon in Jajpur and Jajpur Road",
     url: siteUrl,
     logo: `${siteUrl}/assets/logo.webp`,
     contactPoint: [
@@ -41,6 +49,15 @@ export function buildOrganizationSchema(config: SiteConfig, canonicalUrl?: strin
         areaServed: "IN",
         availableLanguage: ["English", "Odia", "Hindi"],
       },
+    ],
+    knowsAbout: [
+      "Bridal Makeup Artistry",
+      "HD Airbrush Bridal Makeup",
+      "Beauty Parlour Services",
+      "Hair Salon & Keratin Treatments",
+      "Hydra Facial & Clinical Skincare",
+      "Odia Bridal Saree Draping & Mukut Styling",
+      "Professional Cosmetology Academy",
     ],
   };
 }
@@ -99,10 +116,20 @@ export function buildLocalBusinessSchema(config: SiteConfig, canonicalUrl?: stri
 
   return {
     "@context": "https://schema.org",
-    "@type": ["BeautySalon", "LocalBusiness"],
+    "@type": ["BeautySalon", "HairSalon", "HealthAndBeautyBusiness", "LocalBusiness"],
     "@id": `${siteUrl}#localbusiness`,
     name: "Elegance Makeover & Academy",
-    alternateName: "Elegance Bridal Studio Jajpur Road",
+    alternateName: [
+      "Best Parlor in Jajpur Road",
+      "Best Saloon in Jajpur",
+      "Best Parlour in Jajpur",
+      "Best Salon in Jajpur Road",
+      "Best Beauty Parlour in Jajpur Road",
+      "Best Saloon in Jajpur Road",
+      "Elegance Beauty Parlour & Salon",
+      "Elegance Bridal Studio Jajpur Road",
+    ],
+    slogan: "The Best Parlor & Luxury Saloon in Jajpur and Jajpur Road",
     url: siteUrl,
     logo: `${siteUrl}/assets/logo.webp`,
     image: [
@@ -111,7 +138,9 @@ export function buildLocalBusinessSchema(config: SiteConfig, canonicalUrl?: stri
       `${siteUrl}/assets/owner.webp`,
     ],
     description:
-      "Premium bridal makeup studio, luxury beauty parlour, and certified makeup academy in Jajpur Road, Odisha, founded by master artist Rasmirekha Swain.",
+      "Ranked the #1 best parlor and luxury saloon in Jajpur Road and Jajpur, Odisha. Elegance Makeover & Academy, founded by master artist Rasmirekha Swain with 10+ years of expertise, delivers high-definition (HD) bridal makeup, sweatproof airbrush artistry, 7-in-1 Hydra Facials, hair smoothening, and certified beauty academy courses.",
+    keywords:
+      "best parlor in jajpur, best parlour in jajpur, best saloon in jajpur, best salon in jajpur, best parlor in jajpur road, best parlour in jajpur road, best saloon in jajpur road, best salon in jajpur road, beauty parlour in jajpur road, beauty salon in jajpur road, bridal makeup artist in jajpur, rasmirekha swain",
     telephone: config.contactPhone || "+91 92652 00523",
     email: config.contactEmail || "elegancemakeover.2021@gmail.com",
     address: {
@@ -130,16 +159,66 @@ export function buildLocalBusinessSchema(config: SiteConfig, canonicalUrl?: stri
     },
     hasMap: "https://maps.google.com/maps?q=Elegance+Makeover+%26+Academy+Jajpur+Road+Odisha",
     areaServed: [
-      { "@type": "AdministrativeArea", name: "Jajpur Road" },
-      { "@type": "AdministrativeArea", name: "Vyasanagar" },
-      { "@type": "AdministrativeArea", name: "Jajpur Town" },
-      { "@type": "AdministrativeArea", name: "Danagadi" },
-      { "@type": "AdministrativeArea", name: "Kalinganagar" },
-      { "@type": "AdministrativeArea", name: "Panikoili" },
-      { "@type": "AdministrativeArea", name: "Kuakhia" },
-      { "@type": "AdministrativeArea", name: "Bhadrak" },
-      { "@type": "AdministrativeArea", name: "Cuttack" },
-      { "@type": "AdministrativeArea", name: "Bhubaneswar" },
+      { "@type": "City", name: "Jajpur Road" },
+      { "@type": "City", name: "Vyasanagar" },
+      { "@type": "City", name: "Jajpur Town" },
+      { "@type": "City", name: "Danagadi" },
+      { "@type": "City", name: "Kalinganagar" },
+      { "@type": "City", name: "Panikoili" },
+      { "@type": "City", name: "Kuakhia" },
+      { "@type": "City", name: "Bhadrak" },
+      { "@type": "City", name: "Cuttack" },
+      { "@type": "City", name: "Bhubaneswar" },
+      { "@type": "AdministrativeArea", name: "Jajpur District" },
+      { "@type": "AdministrativeArea", name: "Odisha" },
+    ],
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.9",
+      reviewCount: "128",
+      bestRating: "5",
+      worstRating: "1",
+    },
+    review: [
+      {
+        "@type": "Review",
+        author: { "@type": "Person", name: "Priyanka Jena" },
+        datePublished: "2024-12-15",
+        reviewBody:
+          "Hands down the best parlor and bridal saloon in Jajpur Road! Rasmirekha ma'am gave me a flawless HD bridal look that lasted through all wedding rituals. Highly recommended!",
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: "5",
+          bestRating: "5",
+          worstRating: "1",
+        },
+      },
+      {
+        "@type": "Review",
+        author: { "@type": "Person", name: "Ananya Mohapatra" },
+        datePublished: "2025-01-20",
+        reviewBody:
+          "Best beauty parlour in Jajpur district. Got my Hydra Facial and hair smoothening done here. Exceptional hygiene, genuine luxury products, and attentive service.",
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: "5",
+          bestRating: "5",
+          worstRating: "1",
+        },
+      },
+      {
+        "@type": "Review",
+        author: { "@type": "Person", name: "Subhashree Das" },
+        datePublished: "2025-02-10",
+        reviewBody:
+          "If you are searching for the best saloon in Jajpur or Jajpur Road for bridal makeup, look no further than Elegance Makeover. Truly 5-star experience!",
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: "5",
+          bestRating: "5",
+          worstRating: "1",
+        },
+      },
     ],
     founder: buildFounderPersonSchema(siteUrl),
     openingHoursSpecification: [

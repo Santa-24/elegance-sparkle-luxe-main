@@ -88,12 +88,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Elegance Makeover & Academy - Premium Bridal & Beauty in Jajpur Road" },
+      {
+        title:
+          "Elegance Makeover & Academy | Best Parlor & Salon in Jajpur Road - Top Saloon in Jajpur",
+      },
       {
         name: "description",
         content:
-          "Premium bridal makeup, beauty parlour and certified academy by Rasmirekha Swain in Jajpur Road, Odisha. Book your luxury beauty experience today.",
+          "Ranked the best parlor and luxury saloon in Jajpur Road & Jajpur, Odisha. Elegance Makeover & Academy by Rasmirekha Swain offers bridal makeup, HD airbrush, hair spa, hydra facials, and beauty courses.",
       },
+      {
+        name: "keywords",
+        content:
+          "best parlor in jajpur, best parlour in jajpur, best saloon in jajpur, best salon in jajpur, best parlor in jajpur road, best parlour in jajpur road, best saloon in jajpur road, best salon in jajpur road, beauty parlour in jajpur road, beauty salon in jajpur road, bridal makeup artist in jajpur, rasmirekha swain",
+      },
+      { name: "geo.region", content: "IN-OR" },
+      { name: "geo.placename", content: "Jajpur Road, Odisha" },
+      { name: "geo.position", content: "20.9507;86.1378" },
+      { name: "ICBM", content: "20.9507, 86.1378" },
       { name: "author", content: "Elegance Makeover & Academy" },
       { name: "application-name", content: "Elegance Makeover & Academy" },
       { name: "theme-color", content: "#0B132B" },
@@ -104,12 +116,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "msapplication-config", content: "/browserconfig.xml" },
       {
         property: "og:title",
-        content: "Elegance Makeover & Academy | Bridal Makeup Salon",
+        content:
+          "Elegance Makeover & Academy | Best Parlor & Salon in Jajpur Road - Top Saloon in Jajpur",
       },
       {
         property: "og:description",
         content:
-          "Premium bridal makeup, beauty parlour and certified academy by Rasmirekha Swain in Jajpur Road, Odisha. Book your luxury beauty experience today.",
+          "Ranked the best parlor and luxury saloon in Jajpur Road & Jajpur, Odisha. Elegance Makeover & Academy by Rasmirekha Swain offers bridal makeup, HD airbrush, hair spa, hydra facials, and beauty courses.",
       },
       { property: "og:type", content: "website" },
       { property: "og:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
@@ -119,12 +132,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       {
         name: "twitter:title",
-        content: "Elegance Makeover & Academy | Bridal Makeup Salon",
+        content:
+          "Elegance Makeover & Academy | Best Parlor & Salon in Jajpur Road - Top Saloon in Jajpur",
       },
       {
         name: "twitter:description",
         content:
-          "Premium bridal makeup, beauty parlour and certified academy by Rasmirekha Swain in Jajpur Road, Odisha. Book your luxury beauty experience today.",
+          "Ranked the best parlor and luxury saloon in Jajpur Road & Jajpur, Odisha. Elegance Makeover & Academy by Rasmirekha Swain offers bridal makeup, HD airbrush, hair spa, hydra facials, and beauty courses.",
       },
       { name: "twitter:image", content: "https://elegancemakeover.makeup/assets/logo.webp" },
     ],
