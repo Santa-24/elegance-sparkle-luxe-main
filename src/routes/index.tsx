@@ -234,8 +234,6 @@ function HomePage() {
         advertisement={featuredAdvertisement}
         onOpen={() => setOpenAdIndex(0)}
       />
-      <HomeQuickAnswer />
-      <WhyRankedBestSalon />
       <AboutPreview />
       <Services services={services} />
       <BridalShowcase gallery={gallery} />
@@ -274,38 +272,10 @@ function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
-  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    // Check if user prefers reduced motion or is on a 2g / data-saver connection
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const nav = navigator as unknown as {
-      connection?: { effectiveType?: string; saveData?: boolean };
-    };
-    const isSlow =
-      nav.connection?.saveData ||
-      nav.connection?.effectiveType === "2g" ||
-      nav.connection?.effectiveType === "slow-2g";
-
-    if (!prefersReduced && !isSlow) {
-      // Defer video loading until after initial LCP paint
-      if ("requestIdleCallback" in window) {
-        const handle = (
-          window as unknown as {
-            requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number;
-            cancelIdleCallback: (id: number) => void;
-          }
-        ).requestIdleCallback(() => setShouldLoadVideo(true), { timeout: 2500 });
-        return () =>
-          (window as unknown as { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(
-            handle,
-          );
-      } else {
-        const timer = setTimeout(() => setShouldLoadVideo(true), 1500);
-        return () => clearTimeout(timer);
-      }
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
     }
   }, []);
 
@@ -328,40 +298,24 @@ function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
 
   return (
     <section className="relative h-[100dvh] flex items-center justify-center overflow-hidden bg-[#0d0a07]">
-      {/* Background LCP Image / Fallback to prevent CLS and fire instant LCP */}
-      <img
-        src="/assets/hero-bride.webp"
-        alt="Master Bridal Makeup Artist in Jajpur Road, Odisha - Elegance Makeover & Academy"
-        width={1920}
-        height={1080}
-        fetchPriority="high"
-        decoding="async"
-        className={`absolute inset-0 w-full h-full object-cover object-center z-0 transition-opacity duration-1000 ${
-          shouldLoadVideo ? "opacity-0" : "opacity-100"
-        }`}
-      />
+      {/* Background Video directly without fallback photo */}
+      <video
+        ref={videoRef}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-0"
+      >
+        <source src="/assets/video/Cinematic_luxury_bridal_salon.mp4" type="video/mp4" />
+        <source src="/assets/video/hero-loop.mp4" type="video/mp4" />
+      </video>
 
-      {/* Background Video - Loaded after LCP to preserve speed */}
-      {shouldLoadVideo ? (
-        <video
-          ref={videoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster="/assets/hero-bride.webp"
-          preload="metadata"
-          className="absolute inset-0 w-full h-full object-cover object-center opacity-100 pointer-events-none z-0"
-        >
-          <source src="/assets/video/Cinematic_luxury_bridal_salon.mp4" type="video/mp4" />
-        </video>
-      ) : null}
-
-      {/* Top Gradient for header text legibility */}
-      <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-[#0d0a07]/80 to-transparent pointer-events-none z-10" />
-
-      {/* Bottom Gradient for scroll indicator/transition legibility */}
-      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#0d0a07]/90 to-transparent pointer-events-none z-10" />
+      {/* Atmospheric Contrast Overlays */}
+      <div className="absolute inset-0 bg-[#0d0a07]/50 pointer-events-none z-[1]" />
+      <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-[#0d0a07]/90 via-[#0d0a07]/40 to-transparent pointer-events-none z-10" />
+      <div className="absolute bottom-0 left-0 right-0 h-56 bg-gradient-to-t from-[#0d0a07] via-[#0d0a07]/60 to-transparent pointer-events-none z-10" />
 
       {/* Dual Vertical Gold Rules */}
       <div className="absolute left-6 md:left-12 top-0 bottom-0 w-[1px] bg-[#c9a96e]/15 hidden sm:block z-10" />
@@ -960,114 +914,295 @@ function Services({ services }: { services: Service[] }) {
   );
 }
 
-/* ---------------- BRIDAL SHOWCASE ---------------- */
+/* ---------------- HAUTE COUTURE BRIDAL SHOWCASE (AWWWARDS EDITORIAL) ---------------- */
 function BridalShowcase({ gallery }: { gallery: GalleryImage[] }) {
-  const bridalImages = gallery.filter((image): image is GalleryImage =>
-    Boolean(image?.src && image?.alt),
-  );
-  const bridalOnly = bridalImages.filter((image) => image.cat === "Bridal");
-  const featuredImage = bridalOnly[0];
-  const secondaryImages = bridalOnly.slice(1, 5);
+  const [selectedFilter, setSelectedFilter] = useState<string>("All");
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  // Curate high-resolution editorial bridal transformations
+  const curatedShowcase = [
+    {
+      src: "/assets/bridal-1.webp",
+      alt: "Signature Odia bridal transformation with Mukut & Alta",
+      tag: "Traditional Odia",
+      title: "Royal Odia Bridal Look",
+      category: "Bridal",
+      focus: "object-[center_18%]",
+    },
+    {
+      src: "/assets/bridal-2.webp",
+      alt: "Soft luminous bridal portrait with handcrafted Maang Tikka",
+      tag: "HD Glass Skin",
+      title: "Luminous Bridal Glam",
+      category: "Bridal",
+      focus: "object-[center_15%]",
+    },
+    {
+      src: "/assets/bridal-5.webp",
+      alt: "Classic bride draped in rich crimson red Banarasi veil",
+      tag: "Classic Red",
+      title: "Crimson Wedding Veil",
+      category: "Bridal",
+      focus: "object-[center_15%]",
+    },
+    {
+      src: "/assets/bridal-6.webp",
+      alt: "Sweatproof airbrush side profile with floral hair ornamentation",
+      tag: "HD Airbrush",
+      title: "Sculpted Airbrush Finish",
+      category: "Airbrush",
+      focus: "object-[center_20%]",
+    },
+    {
+      src: "/assets/bridal-7.webp",
+      alt: "Traditional heritage saree draping with antique temple jewelry",
+      tag: "Heritage Bride",
+      title: "Temple Jewelry Artistry",
+      category: "Bridal",
+      focus: "object-[center_18%]",
+    },
+    {
+      src: "/assets/bridal-11.webp",
+      alt: "Macro 4K bridal eye makeup and waterproof micro-contouring",
+      tag: "Macro Artistry",
+      title: "Couture Eye Detailing",
+      category: "Airbrush",
+      focus: "object-[center_22%]",
+    },
+  ];
+
+  const filterTabs = [
+    { id: "All", label: "All Looks" },
+    { id: "Bridal", label: "Signature Bridal" },
+    { id: "Airbrush", label: "HD Airbrush" },
+  ];
+
+  const filteredImages =
+    selectedFilter === "All"
+      ? curatedShowcase
+      : curatedShowcase.filter((img) => img.category === selectedFilter);
+
+  const activeImage = lightboxIndex !== null ? filteredImages[lightboxIndex] : null;
+
+  useEffect(() => {
+    if (lightboxIndex === null) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightboxIndex(null);
+      if (e.key === "ArrowLeft") {
+        setLightboxIndex((prev) =>
+          prev === null ? 0 : (prev - 1 + filteredImages.length) % filteredImages.length,
+        );
+      }
+      if (e.key === "ArrowRight") {
+        setLightboxIndex((prev) =>
+          prev === null ? 0 : (prev + 1) % filteredImages.length,
+        );
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [lightboxIndex, filteredImages.length]);
 
   return (
-    <section className="bg-[#f9f5ef] text-[#0d0a07] py-24 md:py-[120px] reveal border-t border-[#c9a96e]/20">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="mx-auto mb-16 max-w-2xl text-center">
-          <div className="text-[10px] tracking-[0.3em] uppercase text-[#c9a96e] mb-3">
-            Latest Bridal Work
+    <section className="bg-[#090705] text-[#f5e6d0] py-24 md:py-32 reveal border-t border-[#c9a96e]/20 relative overflow-hidden">
+      {/* Ambient background gold glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[#c9a96e]/5 blur-[140px] pointer-events-none rounded-full" />
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        {/* Section Header */}
+        <div className="mx-auto mb-14 max-w-3xl text-center">
+          <div className="text-[10px] tracking-[0.4em] uppercase text-[#c9a96e] mb-3 font-semibold flex items-center justify-center gap-2">
+            <Sparkles className="w-3.5 h-3.5" /> Haute Couture Bridal Portfolio
           </div>
-          <h2 className="font-display text-3xl md:text-5xl font-light text-[#0d0a07]">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-light text-[#f5e6d0] leading-tight">
             Bridal transformations <span className="italic text-[#c9a96e]">in focus</span>
           </h2>
-          <div className="w-16 h-[1px] bg-[#c9a96e] mx-auto mt-4" />
-          <p className="mt-4 text-xs md:text-sm text-[#0d0a07]/80 font-light leading-relaxed max-w-md mx-auto">
-            A curated look at our newest bridal transformations, chosen to feel polished, editorial,
-            and unmistakably premium.
+          <div className="w-20 h-[1px] bg-[#c9a96e] mx-auto mt-4" />
+          <p className="mt-4 text-xs md:text-sm text-[#f5e6d0]/75 font-light leading-relaxed max-w-lg mx-auto">
+            Every bride is a canvas of heritage and timeless elegance. Explore curated, uncompressed
+            transformations styled by Master Artist Rasmirekha Swain.
           </p>
+
+          {/* Interactive Editorial Category Filter */}
+          <div className="mt-8 inline-flex p-1 bg-[#140e09] border border-[#c9a96e]/30 rounded-none gap-1">
+            {filterTabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => {
+                  setSelectedFilter(tab.id);
+                  setLightboxIndex(null);
+                }}
+                className={`px-5 py-2 text-[10px] tracking-[0.2em] uppercase font-semibold transition-all duration-300 ${
+                  selectedFilter === tab.id
+                    ? "bg-[#c9a96e] text-[#0d0a07] shadow-lg"
+                    : "text-[#f5e6d0]/70 hover:text-[#c9a96e] hover:bg-[#c9a96e]/10"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Asymmetric Grid */}
-        <div className="grid gap-6 md:grid-cols-3">
-          {/* 1 Large Cell (spans 2 columns and 2 rows on desktop) */}
-          {featuredImage ? (
-            <div className="md:col-span-2 md:row-span-2 relative group overflow-hidden border border-[#c9a96e]/20 aspect-[4/3] md:aspect-auto">
-              <img
-                src={featuredImage.src}
-                alt={featuredImage.alt}
-                width={800}
-                height={600}
-                decoding="async"
-                loading="lazy"
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-[#0d0a07]/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6 md:p-8" />
-              <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 text-[#f5e6d0] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span className="inline-block border border-[#c9a96e]/40 bg-[#0d0a07] px-2.5 py-0.5 text-[8px] uppercase tracking-[0.2em] text-[#c9a96e]">
-                  Featured Transformation
-                </span>
-                <h3 className="mt-2 font-display text-2xl font-light">{featuredImage.alt}</h3>
-              </div>
-            </div>
-          ) : (
-            <div className="md:col-span-2 md:row-span-2 flex min-h-[320px] items-center justify-center border border-[#c9a96e]/20 bg-[#0d0a07]/5 p-8 text-center text-xs text-[#0d0a07]/75">
-              Featured bridal imagery will appear here soon.
-            </div>
-          )}
+        {/* Editorial Responsive Portrait Gallery Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredImages.map((img, idx) => (
+            <div
+              key={img.src}
+              onClick={() => setLightboxIndex(idx)}
+              className="relative group cursor-pointer overflow-hidden border border-[#c9a96e]/30 bg-[#140e09] aspect-[3/4] shadow-2xl transition-all duration-700 hover:border-[#c9a96e]"
+            >
+              {/* Corner brackets for luxury editorial framing */}
+              <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#c9a96e] z-10 transition-all duration-500 group-hover:w-6 group-hover:h-6" />
+              <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#c9a96e] z-10 transition-all duration-500 group-hover:w-6 group-hover:h-6" />
+              <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#c9a96e] z-10 transition-all duration-500 group-hover:w-6 group-hover:h-6" />
+              <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#c9a96e] z-10 transition-all duration-500 group-hover:w-6 group-hover:h-6" />
 
-          {/* 4 Smaller Cells */}
-          {secondaryImages.length > 0 ? (
-            secondaryImages.map((img) => (
-              <div
-                key={img.src}
-                className="relative group overflow-hidden border border-[#c9a96e]/20 aspect-square"
-              >
-                <img
-                  src={img.src}
-                  alt={img.alt}
-                  width={400}
-                  height={400}
-                  decoding="async"
-                  loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-[#0d0a07]/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4" />
-                <div className="absolute inset-x-0 bottom-0 p-4 text-[#f5e6d0] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="text-[8px] uppercase tracking-[0.25em] text-[#c9a96e] block">
-                    {img.cat}
+              {/* Perfectly framed portrait image (never cuts off mukut or jewelry) */}
+              <img
+                src={img.src}
+                alt={img.alt}
+                width={600}
+                height={800}
+                loading="lazy"
+                decoding="async"
+                className={`w-full h-full object-cover ${img.focus} transition-transform duration-1000 ease-out group-hover:scale-108 filter contrast-[1.03]`}
+              />
+
+              {/* Luxury dark gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#090705] via-[#090705]/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
+
+              {/* Top Tag Chip */}
+              <div className="absolute top-4 left-4 z-20">
+                <span className="inline-block border border-[#c9a96e]/40 bg-[#090705]/90 px-3 py-1 text-[8px] uppercase tracking-[0.25em] text-[#c9a96e] font-semibold backdrop-blur-sm">
+                  {img.tag}
+                </span>
+              </div>
+
+              {/* Bottom Editorial Caption */}
+              <div className="absolute inset-x-0 bottom-0 p-6 z-20 transition-transform duration-500 transform translate-y-1 group-hover:translate-y-0">
+                <div className="text-[9px] uppercase tracking-[0.25em] text-[#c9a96e]/80 font-medium">
+                  Master Artistry
+                </div>
+                <h3 className="mt-1 font-display text-xl sm:text-2xl font-light text-[#f5e6d0] group-hover:text-[#c9a96e] transition-colors">
+                  {img.title}
+                </h3>
+                <p className="mt-1 text-xs text-[#f5e6d0]/70 font-light line-clamp-1">
+                  {img.alt}
+                </p>
+
+                {/* Inspect Link on Hover */}
+                <div className="mt-3 pt-3 border-t border-[#c9a96e]/20 flex items-center justify-between text-[9px] uppercase tracking-[0.2em] text-[#c9a96e] font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="flex items-center gap-1.5">
+                    <Eye className="w-3.5 h-3.5" /> Tap to zoom
                   </span>
-                  <h4 className="mt-1 font-display text-sm font-light">{img.alt}</h4>
+                  <span>Rasmirekha Swain</span>
                 </div>
               </div>
-            ))
-          ) : (
-            <div className="col-span-1 flex items-center justify-center border border-[#c9a96e]/20 bg-[#0d0a07]/5 p-6 text-center text-xs text-[#0d0a07]/60 animate-pulse">
-              Bridal transformations coming soon.
             </div>
-          )}
-
-          {/* Fill up if there are fewer than 4 secondary images */}
-          {secondaryImages.length > 0 &&
-            secondaryImages.length < 4 &&
-            Array.from({ length: 4 - secondaryImages.length }).map((_, i) => (
-              <div
-                key={i}
-                className="hidden md:flex items-center justify-center border border-[#c9a96e]/20 bg-[#0d0a07]/5 p-6 text-center text-xs text-[#0d0a07]/60 aspect-square"
-              >
-                Coming soon
-              </div>
-            ))}
+          ))}
         </div>
 
-        <div className="text-center mt-12">
+        {/* Gallery Footer CTAs */}
+        <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-6 text-center">
           <Link
             to="/gallery"
             onClick={() => trackEvent("gallery_cta_click", { location: "home_showcase" })}
-            className="inline-block text-xs uppercase tracking-[0.25em] text-[#0d0a07] border-b border-[#c9a96e] pb-1 font-semibold hover:text-[#c9a96e] transition-colors"
+            className="inline-flex h-12 items-center justify-center gap-2 px-8 bg-[#c9a96e] text-[#0d0a07] font-semibold text-xs tracking-[0.2em] uppercase hover:bg-[#d9c49e] transition-colors"
           >
-            Explore Full Gallery
+            Explore Complete Portfolio (20+ Looks) <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+          <Link
+            to="/booking"
+            className="inline-flex h-12 items-center justify-center gap-2 px-8 border border-[#c9a96e]/40 text-[#c9a96e] hover:bg-[#c9a96e]/10 transition-colors font-semibold text-xs tracking-[0.2em] uppercase"
+          >
+            Book Bridal Consultation
           </Link>
         </div>
       </div>
+
+      {/* Fullscreen Interactive Lightbox Modal */}
+      {activeImage ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#090705]/95 backdrop-blur-md p-4 sm:p-8 animate-fade-in"
+          onClick={() => setLightboxIndex(null)}
+        >
+          <div
+            className="relative max-w-4xl w-full border border-[#c9a96e]/30 bg-[#120d08] p-4 sm:p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              type="button"
+              onClick={() => setLightboxIndex(null)}
+              className="absolute top-4 right-4 z-30 w-10 h-10 border border-[#c9a96e]/40 bg-[#090705] text-[#c9a96e] hover:bg-[#c9a96e] hover:text-[#090705] flex items-center justify-center transition-colors cursor-pointer"
+              aria-label="Close modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Main Modal Image */}
+            <div className="relative aspect-[3/4] max-h-[75vh] w-full overflow-hidden border border-[#c9a96e]/20 bg-[#090705]">
+              <img
+                src={activeImage.src}
+                alt={activeImage.alt}
+                className="w-full h-full object-contain"
+              />
+            </div>
+
+            {/* Modal Info Bar */}
+            <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-3 border-t border-[#c9a96e]/20">
+              <div>
+                <span className="text-[9px] uppercase tracking-[0.25em] text-[#c9a96e] font-semibold">
+                  {activeImage.tag}
+                </span>
+                <h4 className="font-display text-xl sm:text-2xl font-light text-[#f5e6d0]">
+                  {activeImage.title}
+                </h4>
+                <p className="text-xs text-[#f5e6d0]/70 font-light mt-0.5">{activeImage.alt}</p>
+              </div>
+
+              {/* Prev / Next controls */}
+              <div className="flex items-center gap-2 self-end sm:self-auto">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setLightboxIndex((prev) =>
+                      prev === null ? 0 : (prev - 1 + filteredImages.length) % filteredImages.length,
+                    )
+                  }
+                  className="w-9 h-9 border border-[#c9a96e]/40 text-[#c9a96e] hover:bg-[#c9a96e]/20 flex items-center justify-center transition-colors cursor-pointer"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <span className="text-[10px] text-[#f5e6d0]/60 px-2 uppercase tracking-wider">
+                  {(lightboxIndex ?? 0) + 1} / {filteredImages.length}
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setLightboxIndex((prev) =>
+                      prev === null ? 0 : (prev + 1) % filteredImages.length,
+                    )
+                  }
+                  className="w-9 h-9 border border-[#c9a96e]/40 text-[#c9a96e] hover:bg-[#c9a96e]/20 flex items-center justify-center transition-colors cursor-pointer"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

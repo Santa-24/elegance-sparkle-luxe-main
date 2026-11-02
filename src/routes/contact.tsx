@@ -282,7 +282,10 @@ function ContactPage() {
                   <div className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
                     Location
                   </div>
-                  <div className="font-semibold text-foreground">{contactAddress}</div>
+                  <div className="font-semibold text-foreground space-y-1">
+                    <div>Branch 1: Near Sishumandir, College Square, Dhabalagiri, Byasanagar, Jajpur Road (+91 99384 87907)</div>
+                    <div>2nd Branch: Raj Mahal Road, College Square, Dhabalagiri, Byasanagar, Jajpur Road (+91 92652 00523)</div>
+                  </div>
                 </div>
               </div>
             </div>

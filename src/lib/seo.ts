@@ -146,7 +146,7 @@ export function buildLocalBusinessSchema(config: SiteConfig, canonicalUrl?: stri
     address: {
       "@type": "PostalAddress",
       streetAddress:
-        config.contactAddress || "Near Railway Station, Jajpur Road, Vyasanagar, Odisha 755019",
+        config.contactAddress || "College Square, Dhabalagiri, Byasanagar, Jajpur Road, Odisha 755019",
       addressLocality: "Jajpur Road",
       addressRegion: "Odisha",
       postalCode: "755019",
