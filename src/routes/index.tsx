@@ -308,8 +308,7 @@ function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
         preload="auto"
         className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-0"
       >
-        <source src="/assets/video/Cinematic_luxury_bridal_salon.mp4" type="video/mp4" />
-        <source src="/assets/video/hero-loop.mp4" type="video/mp4" />
+        <source src="/assets/video/hero-video.mp4" type="video/mp4" />
       </video>
 
       {/* Atmospheric Contrast Overlays */}
