@@ -30,6 +30,7 @@ import {
   Check,
   HelpCircle,
   ChevronDown,
+  MapPin,
 } from "lucide-react";
 import type { GalleryImage, Offer, Service, Testimonial } from "@/lib/data";
 import {
@@ -272,305 +273,246 @@ function Hero({ advertisement }: { advertisement: LiveAdvertisement }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
+  const [isVideoReady, setIsVideoReady] = useState(false);
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play().catch(() => {});
+    const v = videoRef.current;
+    if (!v) return;
+
+    // Ensure muted DOM properties are strictly true for browser autoplay policy
+    v.muted = true;
+    v.defaultMuted = true;
+    v.playsInline = true;
+
+    const startPlayback = () => {
+      const p = v.play();
+      if (p !== undefined) {
+        p.then(() => {
+          setIsPlaying(true);
+          setIsVideoReady(true);
+        }).catch((err) => {
+          console.warn("Autoplay policy delayed playback:", err);
+          setIsPlaying(false);
+        });
+      }
+    };
+
+    if (v.readyState >= 2) {
+      startPlayback();
+    } else {
+      v.addEventListener("canplay", startPlayback, { once: true });
+      v.addEventListener("loadeddata", () => setIsVideoReady(true), { once: true });
+      v.load();
     }
+
+    return () => {
+      v.removeEventListener("canplay", startPlayback);
+    };
   }, []);
 
   const togglePlay = () => {
-    if (!videoRef.current) return;
+    const v = videoRef.current;
+    if (!v) return;
     if (isPlaying) {
-      videoRef.current.pause();
+      v.pause();
       setIsPlaying(false);
     } else {
-      videoRef.current.play().catch(() => {});
-      setIsPlaying(true);
+      v.play()
+        .then(() => setIsPlaying(true))
+        .catch(() => setIsPlaying(false));
     }
   };
 
   const toggleMute = () => {
-    if (!videoRef.current) return;
-    videoRef.current.muted = !isMuted;
-    setIsMuted(!isMuted);
+    const v = videoRef.current;
+    if (!v) return;
+    const nextMuted = !isMuted;
+    v.muted = nextMuted;
+    setIsMuted(nextMuted);
+    if (!nextMuted && v.paused) {
+      v.play().catch(() => {});
+      setIsPlaying(true);
+    }
   };
 
   return (
-    <section className="relative h-[100dvh] flex items-center justify-center overflow-hidden bg-[#0d0a07]">
-      {/* Background Video directly without fallback photo */}
+    <section className="relative min-h-[100dvh] flex items-center overflow-hidden bg-[#0d0a07]">
+      {/* High-definition First-Frame Poster for 0ms Instant Visual Rendering */}
+      <img
+        src="/assets/hero-video-poster.jpg"
+        alt="Regal Odia Bride Makeover by Master Artist Rasmirekha Swain - Elegance Makeover Jajpur Road"
+        width={1280}
+        height={720}
+        fetchPriority="high"
+        decoding="async"
+        className={`absolute inset-0 w-full h-full object-cover object-[center_35%] lg:object-[68%_center] z-0 transition-opacity duration-1000 ${
+          isVideoReady ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
+      />
+
+      {/* Cinematic Background Video with Direct Source & Event Handlers */}
       <video
         ref={videoRef}
+        src="/assets/video/hero-video.mp4"
+        poster="/assets/hero-video-poster.jpg"
         autoPlay
         loop
         muted
         playsInline
         preload="auto"
-        className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none z-0"
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onLoadedData={() => setIsVideoReady(true)}
+        onPlaying={() => setIsVideoReady(true)}
+        className="absolute inset-0 w-full h-full object-cover object-[center_35%] lg:object-[68%_center] pointer-events-none z-0"
       >
         <source src="/assets/video/hero-video.mp4" type="video/mp4" />
       </video>
 
-      {/* Atmospheric Contrast Overlays */}
-      <div className="absolute inset-0 bg-[#0d0a07]/50 pointer-events-none z-[1]" />
-      <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-[#0d0a07]/90 via-[#0d0a07]/40 to-transparent pointer-events-none z-10" />
-      <div className="absolute bottom-0 left-0 right-0 h-56 bg-gradient-to-t from-[#0d0a07] via-[#0d0a07]/60 to-transparent pointer-events-none z-10" />
+      {/* Asymmetric Left Vignette: leaves bride radiant on right, guarantees text clarity on left */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0d0a07]/95 via-[#0d0a07]/80 to-transparent sm:via-[#0d0a07]/60 lg:w-[68%] pointer-events-none z-[1]" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0a07] via-transparent to-[#0d0a07]/70 pointer-events-none z-[1]" />
 
-      {/* Dual Vertical Gold Rules */}
-      <div className="absolute left-6 md:left-12 top-0 bottom-0 w-[1px] bg-[#c9a96e]/15 hidden sm:block z-10" />
-      <div className="absolute right-6 md:right-12 top-0 bottom-0 w-[1px] bg-[#c9a96e]/15 hidden sm:block z-10" />
+      {/* Atmospheric Top & Bottom Contrast Transitions */}
+      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#0d0a07]/90 via-[#0d0a07]/40 to-transparent pointer-events-none z-10" />
+      <div className="absolute bottom-0 left-0 right-0 h-44 bg-gradient-to-t from-[#0d0a07] via-[#0d0a07]/75 to-transparent pointer-events-none z-10" />
 
-      {/* Centered Luxury Content Card - Unblurred and Transparent */}
-      <div className="relative z-20 max-w-4xl mx-auto px-6 text-center text-[#f5e6d0] pt-12 md:pt-16">
-        <div className="bg-[#0d0a07]/20 border border-[#c9a96e]/20 p-8 md:p-12 shadow-2xl relative">
-          {/* Corner accents */}
-          <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-[#c9a96e]/60" />
-          <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-[#c9a96e]/60" />
-          <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-[#c9a96e]/60" />
-          <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-[#c9a96e]/60" />
+      {/* Haute Couture Vertical Gold Accent Rule */}
+      <div className="absolute left-6 md:left-12 top-28 bottom-28 w-[1px] bg-gradient-to-b from-transparent via-[#c9a96e]/25 to-transparent hidden lg:block z-10" />
 
-          {/* Active Promotion Chip inline to prevent overlap */}
-          <div className="inline-flex justify-center mb-5 animate-fade-up">
-            <div className="border border-[#c9a96e]/30 bg-[#161009]/80 px-4 py-1.5 text-[#f5e6d0] text-[10px] tracking-[0.2em] uppercase flex items-center gap-2 max-w-[92vw]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#c9a96e] animate-pulse" />
-              {advertisement ? "Featured Offer" : "Now booking 2026 wedding season"}
+      {/* Hero Content Container: Left-Aligned Editorial Architecture */}
+      <div className="relative z-20 max-w-7xl mx-auto px-6 lg:px-12 w-full h-full flex flex-col justify-between pt-28 sm:pt-36 pb-12">
+        {/* Eyebrow Brand Badges */}
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+          <div className="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1.5 border border-[#c9a96e]/30 bg-[#161009]/85 backdrop-blur-md text-[10px] sm:text-[11px] tracking-[0.25em] uppercase text-[#f5e6d0]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#c9a96e] animate-pulse" />
+            Maison de Beauté • Jajpur Road, Odisha
+          </div>
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-[#c9a96e]/20 bg-[#0d0a07]/60 backdrop-blur-md text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-[#c9a96e]">
+            <Crown className="w-3 h-3 text-[#c9a96e]" />
+            Voted #1 Best Parlour & Saloon
+          </div>
+          {advertisement ? (
+            <div className="hidden md:inline-flex items-center gap-2 px-3 py-1.5 border border-amber-500/30 bg-amber-950/40 backdrop-blur-md text-[10px] tracking-[0.2em] uppercase text-amber-200">
+              <Sparkles className="w-3 h-3" /> Special Bridal Offer Active
             </div>
+          ) : null}
+        </div>
+
+        {/* Center Editorial Title & Value Proposition */}
+        <div className="max-w-2xl lg:max-w-3xl my-auto py-8">
+          <div className="text-[11px] sm:text-xs tracking-[0.35em] uppercase text-[#c9a96e] font-semibold mb-3.5 flex items-center gap-2">
+            <Sparkles className="w-3.5 h-3.5 text-[#c9a96e]" /> Haute Bridal Makeover Studio & Academy
           </div>
 
-          <div className="text-[10px] tracking-[0.4em] uppercase text-[#c9a96e] mb-4 animate-fade-up font-semibold">
-            Voted #1 Best Parlor & Saloon in Jajpur Road • Bridal & Academy
-          </div>
-
-          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-light leading-[1.1] tracking-tight animate-fade-up delay-100">
-            Where every bride <br />
-            becomes <span className="italic font-display text-[#c9a96e]">unforgettable</span>
+          <h1 className="font-display text-4xl sm:text-6xl md:text-7xl lg:text-[5.2rem] font-light leading-[1.04] tracking-tight text-[#f5e6d0]">
+            Where Bridal Elegance <br className="hidden sm:inline" />
+            Becomes{" "}
+            <span className="italic font-display text-transparent bg-clip-text bg-gradient-to-r from-[#e5cfab] via-[#c9a96e] to-[#edd9b6]">
+              Timeless Art.
+            </span>
           </h1>
 
-          <p className="mt-6 text-xs sm:text-sm md:text-base text-[#f5e6d0]/80 max-w-xl mx-auto font-light leading-relaxed animate-fade-up delay-200">
-            The top-rated beauty parlour and luxury saloon in Jajpur Road and Jajpur district. Expert
-            HD & Airbrush bridal makeup, 7-in-1 Hydra Facials, and certified academy courses by
-            Master Artist Rasmirekha Swain.
+          <p className="mt-5 text-xs sm:text-sm md:text-base text-[#f5e6d0]/85 font-light leading-relaxed max-w-xl">
+            Ranked the #1 beauty parlour and luxury saloon in Jajpur Road (Vyasanagar) and Jajpur district. Directed by Master Artist{" "}
+            <strong className="text-[#f5e6d0] font-normal underline decoration-[#c9a96e]/50 underline-offset-4">
+              Rasmirekha Swain
+            </strong>{" "}
+            with 10+ years of professional artistry and 500+ Odia brides styled. Signature HD & Airbrush bridal artistry, clinical Hydra glow facials, and luxury salon rituals.
           </p>
 
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-up delay-300">
+          {/* Action Buttons Group */}
+          <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 sm:gap-4">
             <Link
               to="/booking"
               onClick={() => trackEvent("booking_cta_click", { location: "home_hero" })}
-              className="w-full sm:w-auto inline-flex h-11 items-center justify-center gap-2 px-8 bg-[#c9a96e] text-[#0d0a07] font-semibold text-xs tracking-[0.2em] uppercase hover:bg-[#d9c49e] transition-colors rounded-none"
+              className="group inline-flex h-12 items-center justify-center gap-2.5 px-8 bg-gradient-to-r from-[#c9a96e] via-[#dfc79e] to-[#c9a96e] text-[#0d0a07] font-semibold text-xs tracking-[0.22em] uppercase shadow-[0_0_25px_rgba(201,169,110,0.35)] hover:shadow-[0_0_35px_rgba(201,169,110,0.55)] hover:scale-[1.02] transition-all duration-300 rounded-none cursor-pointer"
             >
-              Book Appointment <ArrowRight className="w-3.5 h-3.5" />
+              Book Appointment
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
+
             <Link
               to="/services"
               onClick={() => trackEvent("service_cta_click", { location: "home_hero" })}
-              className="w-full sm:w-auto inline-flex h-11 items-center justify-center gap-2 px-8 border border-[#c9a96e]/40 text-[#c9a96e] hover:bg-[#c9a96e]/10 transition-colors font-semibold text-xs tracking-[0.2em] uppercase rounded-none"
+              className="inline-flex h-12 items-center justify-center gap-2 px-7 border border-[#c9a96e]/40 bg-[#161009]/60 backdrop-blur-md text-[#f5e6d0] hover:text-[#c9a96e] hover:border-[#c9a96e] hover:bg-[#c9a96e]/10 font-semibold text-xs tracking-[0.2em] uppercase transition-all duration-300 rounded-none cursor-pointer"
             >
-              View Services
+              Explore Services
             </Link>
+
+            <a
+              href={`https://wa.me/${siteConfig.contactPhone?.replace(/[^0-9]/g, "")}?text=Hi%20Elegance%20Makeover,%20I%20want%20to%20inquire%20about%20bridal%20makeup%20packages`}
+              target="_blank"
+              rel="noreferrer"
+              className="hidden sm:inline-flex h-12 items-center justify-center gap-2 px-5 border border-emerald-500/35 bg-emerald-950/35 backdrop-blur-md text-emerald-300 hover:text-emerald-200 hover:border-emerald-500/70 font-semibold text-xs tracking-[0.15em] uppercase transition-all duration-300"
+            >
+              WhatsApp Us
+            </a>
           </div>
 
-          {/* Stats Band inside Hero with thin gold lines */}
-          <div className="border-t border-[#c9a96e]/20 pt-8 mt-10 grid grid-cols-3 gap-4 sm:gap-6 max-w-2xl mx-auto animate-fade-up delay-500">
-            {[
-              ["10+", "Years Experience"],
-              ["500+", "Happy Brides"],
-              ["50+", "Certified Students"],
-            ].map(([n, l]) => (
-              <div key={l} className="text-center px-2">
-                <div className="font-display text-2xl sm:text-3xl text-[#c9a96e] font-light">
-                  {n}
-                </div>
-                <div className="text-[9px] uppercase tracking-[0.2em] text-[#f5e6d0]/60 mt-1 font-body">
-                  {l}
-                </div>
+          {/* Verified 2 Branches Indicator */}
+          <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-2 text-[11px] text-[#f5e6d0]/75">
+            <span className="flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-[#c9a96e]" />
+              <strong>Branch 1:</strong> Near Sishumandir, College Sq
+            </span>
+            <span className="flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-[#c9a96e]" />
+              <strong>2nd Branch:</strong> Raj Mahal Rd, Dhabalagiri
+            </span>
+          </div>
+        </div>
+
+        {/* Bottom Bar: Luxury Credentials Strip + Floating Live Studio Reel Controls */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 border-t border-[#c9a96e]/20 pt-6">
+          {/* 3 Luxury Credential Metrics */}
+          <div className="grid grid-cols-3 gap-6 sm:gap-10">
+            <div>
+              <div className="font-display text-2xl sm:text-3xl lg:text-4xl text-[#c9a96e] font-light">10+</div>
+              <div className="text-[9px] uppercase tracking-[0.2em] text-[#f5e6d0]/65 mt-0.5">Years Artistry</div>
+            </div>
+            <div className="border-l border-[#c9a96e]/20 pl-6 sm:pl-10">
+              <div className="font-display text-2xl sm:text-3xl lg:text-4xl text-[#c9a96e] font-light">500+</div>
+              <div className="text-[9px] uppercase tracking-[0.2em] text-[#f5e6d0]/65 mt-0.5">Regal Brides</div>
+            </div>
+            <div className="border-l border-[#c9a96e]/20 pl-6 sm:pl-10">
+              <div className="font-display text-2xl sm:text-3xl lg:text-4xl text-[#c9a96e] font-light">4.9 ★</div>
+              <div className="text-[9px] uppercase tracking-[0.2em] text-[#f5e6d0]/65 mt-0.5">Google Rating</div>
+            </div>
+          </div>
+
+          {/* Glassmorphic Live Video Reel Controller */}
+          <div className="flex items-center gap-3 bg-[#0d0a07]/80 backdrop-blur-md border border-[#c9a96e]/30 px-4 py-2 self-end">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={togglePlay}
+                className="w-8 h-8 rounded-full border border-[#c9a96e]/50 bg-[#161009] text-[#c9a96e] hover:bg-[#c9a96e] hover:text-[#0d0a07] flex items-center justify-center transition-all duration-300 cursor-pointer"
+                title={isPlaying ? "Pause video" : "Play video"}
+                aria-label={isPlaying ? "Pause video" : "Play video"}
+              >
+                {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 fill-current" />}
+              </button>
+              <button
+                type="button"
+                onClick={toggleMute}
+                className="w-8 h-8 rounded-full border border-[#c9a96e]/50 bg-[#161009] text-[#c9a96e] hover:bg-[#c9a96e] hover:text-[#0d0a07] flex items-center justify-center transition-all duration-300 cursor-pointer"
+                title={isMuted ? "Unmute audio" : "Mute audio"}
+                aria-label={isMuted ? "Unmute audio" : "Mute audio"}
+              >
+                {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+              </button>
+            </div>
+
+            <div className="border-l border-[#c9a96e]/20 pl-3">
+              <div className="text-[10px] uppercase tracking-[0.2em] text-[#f5e6d0] font-medium flex items-center gap-1.5">
+                <span className={`w-1.5 h-1.5 rounded-full ${isPlaying ? "bg-emerald-400 animate-pulse" : "bg-zinc-500"}`} />
+                Studio Reel
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Play/Pause & Mute/Unmute Premium Video Controls */}
-      <div className="absolute bottom-8 right-8 md:right-16 z-20 flex items-center gap-3">
-        <button
-          onClick={togglePlay}
-          className="w-10 h-10 rounded-full border border-[#c9a96e]/40 bg-[#0d0a07]/60 text-[#c9a96e] hover:bg-[#c9a96e]/20 hover:border-[#c9a96e] flex items-center justify-center transition-all duration-300 backdrop-blur-sm cursor-pointer shadow-lg"
-          title={isPlaying ? "Pause video" : "Play video"}
-          aria-label={isPlaying ? "Pause video" : "Play video"}
-        >
-          {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
-        </button>
-        <button
-          onClick={toggleMute}
-          className="w-10 h-10 rounded-full border border-[#c9a96e]/40 bg-[#0d0a07]/60 text-[#c9a96e] hover:bg-[#c9a96e]/20 hover:border-[#c9a96e] flex items-center justify-center transition-all duration-300 backdrop-blur-sm cursor-pointer shadow-lg"
-          title={isMuted ? "Unmute sound" : "Mute sound"}
-          aria-label={isMuted ? "Unmute sound" : "Mute sound"}
-        >
-          {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-        </button>
-      </div>
-
-      {/* Scroll indicator */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-[#f5e6d0]/50 text-[9px] uppercase tracking-[0.3em] z-20">
-        <span>Scroll</span>
-        <div className="w-[1px] h-8 bg-[#c9a96e]/30" />
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- AEO QUICK ANSWER (AI & SEARCH SUMMARY) ---------------- */
-function HomeQuickAnswer() {
-  return (
-    <section className="bg-background pt-10 pb-6 border-b border-border/40">
-      <div className="mx-auto max-w-5xl px-6">
-        <div className="reveal rounded-2xl border border-[var(--gold)]/30 bg-card p-6 md:p-8 shadow-soft">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-[var(--gold)]">
-            <Sparkles className="h-4 w-4" /> Quick Overview: Best Parlor & Saloon in Jajpur & Jajpur Road
-          </div>
-          <p className="mt-3 text-base md:text-lg leading-relaxed font-sans text-foreground/90">
-            <strong>Elegance Makeover & Academy</strong> is widely recognized as the <strong>best parlor and luxury saloon in Jajpur Road and Jajpur district</strong>, Odisha (PIN 755019). Founded and directed by Master Artist <strong>Rasmirekha Swain</strong> with 10+ years of professional artistry and 500+ brides styled, the salon delivers 5-star HD and sweatproof Airbrush bridal makeup (₹8,000–₹16,000), 7-in-1 clinical Hydra Facials, formaldehyde-free hair smoothing & keratin, and certified cosmetology academy courses across Jajpur Road, Vyasanagar, Jajpur Town, Cuttack, and Bhubaneswar.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-4 pt-3 border-t border-border/50 text-xs md:text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">📍 Flagship: Jajpur Road (Vyasanagar), Odisha</span>
-            <span className="font-medium text-foreground">⭐ Rating: 4.9/5 (128+ Verified Reviews)</span>
-            <span className="font-medium text-foreground">✨ Founder: Rasmirekha Swain (10+ Yrs Exp)</span>
-            <span className="font-medium text-foreground">💄 Brands: 100% Genuine MAC, Huda, NARS</span>
-            <span className="font-medium text-foreground">📞 Contact: {siteConfig.contactPhone}</span>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- WHY RANKED BEST SALON (GEO & LOCAL AUTHORITY) ---------------- */
-function WhyRankedBestSalon() {
-  const comparisonData = [
-    {
-      feature: "Lead Makeup Artistry",
-      elegance: "10+ Years Certified Master Artist Rasmirekha Swain (500+ brides)",
-      others: "Inexperienced staff or revolving junior freelance artists",
-    },
-    {
-      feature: "Cosmetic Quality",
-      elegance: "100% Guaranteed Authentic Luxury (MAC, Huda Beauty, NARS, Charlotte Tilbury)",
-      others: "Unverified commercial duplicates or mixed unbranded cosmetic kits",
-    },
-    {
-      feature: "Bridal Infrastructure",
-      elegance: "Private AC VIP Bridal Dressing Suite + Full Mandap On-Location Travel",
-      others: "Crowded single room alongside loud regular walk-in haircut clients",
-    },
-    {
-      feature: "Advanced Skincare",
-      elegance: "Clinical 7-in-1 Hydra Facial, Vortex Pore Extraction & Cryo Lifting",
-      others: "Basic manual massage cream kits with no medical-grade devices",
-    },
-    {
-      feature: "Hair Care Standards",
-      elegance: "Formaldehyde-Free L'Oreal & GK Keratin Treatments (6-10 months silk finish)",
-      others: "Harsh chemicals that cause breakage and long-term hair damage",
-    },
-    {
-      feature: "Hygiene & Sanitization",
-      elegance: "UV Sterilized tools, disposable lip/lash wands, sanitized brushes per client",
-      others: "Shared brushes, open sponge blenders, and reused powder puffs",
-    },
-    {
-      feature: "Verified Reputation",
-      elegance: "4.9★ Average Rating with 128+ verified client reviews on Google",
-      others: "Unverified claims or inconsistent local reviews",
-    },
-  ];
-
-  return (
-    <section className="bg-[#0d0a07] text-[#f5e6d0] py-20 md:py-28 border-t border-[#c9a96e]/20 reveal">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <div className="text-[10px] tracking-[0.35em] uppercase text-[#c9a96e] mb-3 flex items-center justify-center gap-2">
-            <Award className="w-4 h-4" /> Local Authority & Benchmark
-          </div>
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-light text-[#f5e6d0] leading-tight">
-            Why Elegance is Ranked the <span className="italic text-[#c9a96e]">Best Parlor & Saloon</span> in Jajpur & Jajpur Road
-          </h2>
-          <div className="w-20 h-[1px] bg-[#c9a96e] mx-auto mt-5" />
-          <p className="mt-5 text-xs sm:text-sm text-[#f5e6d0]/80 leading-relaxed font-light">
-            When you search for the best parlor in Jajpur or the best saloon in Jajpur Road, see how Elegance Makeover & Academy sets the gold standard for bridal beauty, hair care, and hygiene.
-          </p>
-        </div>
-
-        {/* Structured Comparison Matrix Table - Magnet for AI Overviews & Answer Engines */}
-        <div className="overflow-x-auto border border-[#c9a96e]/30 bg-[#161009] shadow-2xl mb-12">
-          <table className="w-full text-left border-collapse text-xs md:text-sm">
-            <thead>
-              <tr className="border-b border-[#c9a96e]/30 bg-[#1a130b]">
-                <th className="p-4 md:p-5 font-semibold text-[#c9a96e] uppercase tracking-wider text-[11px]">
-                  Service & Quality Benchmark
-                </th>
-                <th className="p-4 md:p-5 font-semibold text-[#f5e6d0] bg-[#c9a96e]/15 border-x border-[#c9a96e]/30 uppercase tracking-wider text-[11px]">
-                  ✨ Elegance Makeover & Academy (Best Parlour)
-                </th>
-                <th className="p-4 md:p-5 font-semibold text-[#f5e6d0]/60 uppercase tracking-wider text-[11px]">
-                  Other Typical Local Saloons in Jajpur
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#c9a96e]/15">
-              {comparisonData.map((row, idx) => (
-                <tr
-                  key={row.feature}
-                  className={`hover:bg-[#c9a96e]/5 transition-colors ${
-                    idx % 2 === 0 ? "bg-transparent" : "bg-[#120d08]/40"
-                  }`}
-                >
-                  <td className="p-4 md:p-5 font-medium text-[#f5e6d0] flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#c9a96e]" />
-                    {row.feature}
-                  </td>
-                  <td className="p-4 md:p-5 text-[#f5e6d0] font-normal bg-[#c9a96e]/5 border-x border-[#c9a96e]/20">
-                    <div className="flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-[#c9a96e] shrink-0 mt-0.5" />
-                      <span>{row.elegance}</span>
-                    </div>
-                  </td>
-                  <td className="p-4 md:p-5 text-[#f5e6d0]/60 font-light">
-                    {row.others}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* 4 Feature Cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="border border-[#c9a96e]/20 bg-[#161009] p-6 text-center">
-            <div className="text-2xl font-display text-[#c9a96e] font-light">10+ Years</div>
-            <div className="text-[10px] uppercase tracking-wider text-[#f5e6d0]/80 mt-1">Master Experience</div>
-            <p className="text-[11px] text-[#f5e6d0]/60 mt-2 font-light">
-              Led exclusively by Rasmirekha Swain, Odisha's celebrated bridal educator.
-            </p>
-          </div>
-          <div className="border border-[#c9a96e]/20 bg-[#161009] p-6 text-center">
-            <div className="text-2xl font-display text-[#c9a96e] font-light">4.9 ★ Rating</div>
-            <div className="text-[10px] uppercase tracking-wider text-[#f5e6d0]/80 mt-1">128+ Verified Reviews</div>
-            <p className="text-[11px] text-[#f5e6d0]/60 mt-2 font-light">
-              Ranked highest on Google Search for customer satisfaction and bridal elegance.
-            </p>
-          </div>
-          <div className="border border-[#c9a96e]/20 bg-[#161009] p-6 text-center">
-            <div className="text-2xl font-display text-[#c9a96e] font-light">100% Genuine</div>
-            <div className="text-[10px] uppercase tracking-wider text-[#f5e6d0]/80 mt-1">Luxury Products</div>
-            <p className="text-[11px] text-[#f5e6d0]/60 mt-2 font-light">
-              No counterfeit or expired products. Authentic MAC, Huda Beauty & Charlotte Tilbury.
-            </p>
-          </div>
-          <div className="border border-[#c9a96e]/20 bg-[#161009] p-6 text-center">
-            <div className="text-2xl font-display text-[#c9a96e] font-light">10 Regions</div>
-            <div className="text-[10px] uppercase tracking-wider text-[#f5e6d0]/80 mt-1">On-Venue Mandap Travel</div>
-            <p className="text-[11px] text-[#f5e6d0]/60 mt-2 font-light">
-              Full bridal vanity dispatch to Jajpur Town, Vyasanagar, Kalinganagar, and beyond.
-            </p>
+              <div className="text-[8px] uppercase tracking-wider text-[#c9a96e]/80">
+                {isMuted ? "Audio Muted" : "Audio Playing"}
+              </div>
+            </div>
           </div>
         </div>
       </div>
